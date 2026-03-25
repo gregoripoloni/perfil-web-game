@@ -43,7 +43,7 @@
 </script>
 
 <template>
-  <div class="flex flex-col gap-4 p-4 max-h-full overflow-y-auto lg:h-screen">
+  <div class="flex flex-col gap-4 p-4 max-h-full overflow-y-auto">
     <span class="text-md text-left">Categoria</span>
     <h1 class="text-5xl font-bold text-left">{{ roundStore.card.category }}</h1>
     <span class="text-md text-left">Dicas reveladas: {{ revealedTipsCount }}/{{ roundStore.tips.length }}</span>
