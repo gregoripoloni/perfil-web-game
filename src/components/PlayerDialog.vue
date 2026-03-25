@@ -31,7 +31,7 @@
   <Dialog v-model:visible="visible" modal header="Informe seu nome" :closable="false" :style="{ width: '25rem' }">
     <div class="flex flex-col gap-4">
       <InputText id="username" class="flex-auto" autocomplete="off" v-model="username" @keydown.prevent.enter="handleSave" />
-      <Button type="button" label="Salvar" @click="handleSave" />
+      <Button type="button" label="Jogar" @click="handleSave" />
     </div>
   </Dialog>
 </template>

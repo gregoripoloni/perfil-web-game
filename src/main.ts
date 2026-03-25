@@ -11,7 +11,10 @@ const app = createApp(App);
 app.use(pinia);
 app.use(PrimeVue, {
   theme: {
-    preset: Aura
+    preset: Aura,
+    options: {
+      darkModeSelector: true,
+    }
   }
 });
 app.mount('#app');

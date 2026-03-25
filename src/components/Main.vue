@@ -43,12 +43,12 @@
 </script>
 
 <template>
-  <div class="flex flex-col gap-4 p-4 lg:h-screen">
+  <div class="flex flex-col gap-4 p-4 max-h-full overflow-y-auto lg:h-screen">
     <span class="text-md text-left">Categoria</span>
     <h1 class="text-5xl font-bold text-left">{{ roundStore.card.category }}</h1>
     <span class="text-md text-left">Dicas reveladas: {{ revealedTipsCount }}/{{ roundStore.tips.length }}</span>
     <div class="flex flex-col max-h-full overflow-y-auto">
-      <div class="grid grid-cols-4 gap-4 p-4 max-h-full overflow-y-auto">
+      <div class="grid grid-cols-2 gap-4 p-4 max-h-full overflow-y-auto lg:grid-cols-4">
         <Card
           v-for="(tip, index) in roundStore.tips"
           :key="tip.text" class="col-span-1"
