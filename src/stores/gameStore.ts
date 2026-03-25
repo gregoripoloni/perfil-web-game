@@ -2,9 +2,9 @@ import { ref } from 'vue';
 import { defineStore } from 'pinia';
 
 export const useGameStore = defineStore('game', () => {
-  const players = ref<{ id: number; name: string; points: number }[]>([]);
+  const players = ref<{ id: string; name: string; points: number }[]>([]);
 
-  const addPlayer = (id: number, name: string) => {
+  const addPlayer = (id: string, name: string) => {
     players.value.push({
       id,
       name,
@@ -12,12 +12,16 @@ export const useGameStore = defineStore('game', () => {
     });
   };
 
-  const addPointsToPlayer = (playerId: number, points: number) => {
+  const addPointsToPlayer = (playerId: string, points: number) => {
     const player = players.value.find(p => p.id === playerId);
     if (player) {
       player.points += points;
     }
   };
 
-  return { players, addPlayer, addPointsToPlayer };
+  const setPlayers = (nextPlayers: { id: string; name: string; points: number }[]) => {
+    players.value = nextPlayers;
+  };
+
+  return { players, addPlayer, addPointsToPlayer, setPlayers };
 });

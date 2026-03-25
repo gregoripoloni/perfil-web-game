@@ -4,10 +4,10 @@
   import { InputText } from 'primevue';
   import { Button } from 'primevue';
   import { usePlayerStore } from '../stores/playerStore';
-  import { useGameStore } from '../stores/gameStore';
+  import { useMultiplayerGame } from '../composables/useMultiplayer';
 
   const playerStore = usePlayerStore();
-  const gameStore = useGameStore();
+  const multiplayer = useMultiplayerGame();
 
   const visible = ref(true);
   const username = ref('');
@@ -17,11 +17,10 @@
       return;
     }
 
-    const id = gameStore.players.length + 1;
     const name = username.value.trim().toLowerCase();
 
-    gameStore.addPlayer(id, name);
-    playerStore.setPlayer(id, name);
+    multiplayer.joinGame(name);
+    playerStore.setPlayer(multiplayer.clientId, name);
 
     visible.value = false;
   };

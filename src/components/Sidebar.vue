@@ -15,7 +15,7 @@
           :key="player.id"
           :name="player.name"
           :points="player.points"
-          :isActive="player.id === roundStore.activePlayer.id"
+          :isActive="player.id === roundStore.activePlayer?.id"
         />
       </div>
   </div>
