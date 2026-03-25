@@ -11,9 +11,12 @@
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-between p-2 rounded-xl transition-colors lg:flex-row" :class="isActive ? 'bg-primary-950' : ''">
+  <div
+    class="flex flex-col items-center justify-between p-2 rounded-xl border-2 border-surface-800 transition-colors lg:flex-row"
+    :class="isActive ? 'bg-primary-950 border-primary-800!' : ''"
+  >
     <div class="flex flex-col items-center gap-2 lg:flex-row">
-      <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-surface-700" :class="isActive ? 'bg-primary-400!' : ''">
+      <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-surface-400" :class="isActive ? 'bg-primary-400!' : ''">
         <span class="text-xl font-semibold text-surface-950">{{ letter }}</span>
       </div>
       <span class="text-sm text-left" :class="isActive ? 'text-primary-400' : ''">{{ name }}</span>

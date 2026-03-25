@@ -66,15 +66,21 @@ p {
   .p-textarea {
     font-weight: 600 !important;
     text-transform: uppercase !important;
+    border-width: 2px !important;
   }
 
   .p-inputtext {
     font-weight: 600 !important;
     text-transform: uppercase !important;
+    border-width: 2px !important;
   }
 
   .p-button-label {
     font-weight: 600 !important;
     text-transform: uppercase !important;
+  }
+
+  .p-dialog {
+    border-width: 2px !important;
   }
 }

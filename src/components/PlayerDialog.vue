@@ -28,7 +28,7 @@
 </script>
 
 <template>
-  <Dialog v-model:visible="visible" modal header="Informe seu nome" :closable="false" :style="{ width: '25rem' }">
+  <Dialog v-model:visible="visible" modal header="Informe seu nome" :closable="false" :style="{ width: '25rem', maxWidth: '90%' }">
     <div class="flex flex-col gap-4">
       <InputText id="username" class="flex-auto" autocomplete="off" v-model="username" @keydown.prevent.enter="handleSave" />
       <Button type="button" label="Jogar" @click="handleSave" />
