@@ -8,7 +8,7 @@
 </script>
 
 <template>
-  <div class="grid grid-cols-1 h-screen lg:grid-cols-4">
+  <div class="grid grid-cols-1 h-full lg:grid-cols-4">
     <Sidebar class="col-span-1" />
     <Main v-if="gameStore.players.length > 0" class="col-span-3" />
   </div>

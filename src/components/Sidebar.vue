@@ -8,7 +8,7 @@
 </script>
 
 <template>
-  <div class="flex flex-col gap-8 p-4 lg:border-r lg:border-surface-800">
+  <div class="flex flex-col gap-4 p-6 pb-0 lg:border-r lg:border-surface-800">
       <span class="text-md text-left">
         Jogadores
       </span>

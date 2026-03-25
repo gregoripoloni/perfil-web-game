@@ -51,20 +51,20 @@
 </script>
 
 <template>
-  <div class="flex flex-col gap-4 p-4 max-h-full overflow-y-auto">
-    <div class="flex items-center justify-between">
+  <div class="flex flex-col gap-2 p-6 max-h-full overflow-y-auto">
+    <div class="flex items-center justify-between gap-6">
       <h1 class="text-2xl font-black text-left text-primary-400">{{ guideText }}</h1>
-      <div class="flex flex-col shrink-0 gap-4">
+      <div class="flex flex-col shrink-0 gap-2">
         <span class="text-md text-left">
           Categoria: <span class="font-semibold">{{ roundStore.card.category }}</span>
         </span>
         <span class="text-md text-left">
-          Dicas reveladas: <span class="font-semibold">{{ revealedTipsCount }}/{{ roundStore.tips.length }}</span>
+          Dicas: <span class="font-semibold">{{ revealedTipsCount }}/{{ roundStore.tips.length }}</span>
         </span>
       </div>
     </div>
     <div class="flex flex-col max-h-full overflow-y-auto">
-      <div class="grid grid-cols-2 gap-4 p-4 max-h-full overflow-y-auto lg:grid-cols-4">
+      <div class="grid grid-cols-2 gap-2 p-2 max-h-full overflow-y-auto lg:grid-cols-4">
         <Card
           v-for="(tip, index) in roundStore.tips"
           :key="tip.text" class="col-span-1"
