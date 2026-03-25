@@ -9,10 +9,7 @@
 
 <template>
   <div class="flex flex-col gap-4 p-6 pb-0 lg:border-r lg:border-surface-800">
-      <span class="text-md text-left">
-        Jogadores
-      </span>
-      <div class="flex gap-2 lg:flex-col">
+      <div class="grid grid-cols-4 gap-2 lg:flex lg:flex-col">
         <Player
           v-for="player in gameStore.players"
           :key="player.id"

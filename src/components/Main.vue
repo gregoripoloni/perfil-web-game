@@ -53,13 +53,13 @@
 <template>
   <div class="flex flex-col gap-2 p-6 max-h-full overflow-y-auto">
     <div class="flex items-center justify-between gap-6">
-      <h1 class="text-2xl font-black text-left text-primary-400">{{ guideText }}</h1>
+      <h1 class="text-xl font-black text-left text-primary-400">{{ guideText }}</h1>
       <div class="flex flex-col shrink-0 gap-2">
-        <span class="text-md text-left">
-          Categoria: <span class="font-semibold">{{ roundStore.card.category }}</span>
+        <span class="text-sm text-left">
+          Categoria:<span class="font-semibold">{{ roundStore.card.category }}</span>
         </span>
-        <span class="text-md text-left">
-          Dicas: <span class="font-semibold">{{ revealedTipsCount }}/{{ roundStore.tips.length }}</span>
+        <span class="text-sm text-left">
+          Dicas:<span class="font-semibold">{{ revealedTipsCount }}/{{ roundStore.tips.length }}</span>
         </span>
       </div>
     </div>
