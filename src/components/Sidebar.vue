@@ -12,7 +12,7 @@
       <span class="text-md text-left">
         Jogadores
       </span>
-      <div class="flex flex-col gap-2">
+      <div class="flex gap-2 lg:flex-col">
         <Player
           v-for="player in gameStore.players"
           :key="player.id"

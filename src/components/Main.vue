@@ -44,9 +44,12 @@
 
 <template>
   <div class="flex flex-col gap-4 p-4 max-h-full overflow-y-auto">
-    <span class="text-md text-left">Categoria</span>
-    <h1 class="text-5xl font-bold text-left">{{ roundStore.card.category }}</h1>
-    <span class="text-md text-left">Dicas reveladas: {{ revealedTipsCount }}/{{ roundStore.tips.length }}</span>
+    <span class="text-md text-left">
+      Categoria: <b>{{ roundStore.card.category }}</b>
+    </span>
+    <span class="text-md text-left">
+      Dicas reveladas: <b>{{ revealedTipsCount }}/{{ roundStore.tips.length }}</b>
+    </span>
     <div class="flex flex-col max-h-full overflow-y-auto">
       <div class="grid grid-cols-2 gap-4 p-4 max-h-full overflow-y-auto lg:grid-cols-4">
         <Card
@@ -58,16 +61,17 @@
           @click="handleCardClick(tip.id)"
         />
       </div>
-      <div class="flex flex-col gap-2">
-        <Textarea
-          class="w-full"
-          placeholder="Digite seu palpite..."
-          :disabled="isDisabledSendAnswer"
-          v-model="answer"
-          @keydown.prevent.enter="handleSendAnswer"
-        />
-        <Button label="Enviar resposta" @click="handleSendAnswer" :disabled="isDisabledSendAnswer" />
-      </div>
+      <Transition>
+        <div v-if="!isDisabledSendAnswer" class="flex flex-col gap-2">
+          <Textarea
+            class="w-full"
+            placeholder="Digite seu palpite..."
+            v-model="answer"
+            @keydown.prevent.enter="handleSendAnswer"
+          />
+          <Button label="Enviar resposta" @click="handleSendAnswer" />
+        </div>
+      </Transition>
     </div>
   </div>
 </template>
