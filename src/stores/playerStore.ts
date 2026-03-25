@@ -2,7 +2,11 @@ import { ref } from 'vue';
 import { defineStore } from 'pinia';
 
 export const usePlayerStore = defineStore('player', () => {
-  const player = ref({ id: 1, name: 'Player 1' });
+  const player = ref<{ id: number; name: string }>();
 
-  return { player };
+  const setPlayer = (id: number, name: string) => {
+    player.value = { id, name };
+  };
+
+  return { player, setPlayer };
 });

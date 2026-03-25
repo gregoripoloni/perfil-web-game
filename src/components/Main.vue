@@ -14,7 +14,7 @@
 
   const revealedTipsCount = computed(() => roundStore.tips.filter(tip => tip.isOpen).length);
 
-  const isActivePlayer = computed(() => playerStore.player.id === roundStore.activePlayer.id);
+  const isActivePlayer = computed(() => playerStore.player?.id === roundStore.activePlayer.id);
 
   const isDisabledSendAnswer = computed(() => !isActivePlayer.value || roundStore.gameStatus !== 'guessing');
 
@@ -32,7 +32,7 @@
     }
 
     if (answer.value.trim().toLowerCase() === roundStore.card.response.toLowerCase()) {
-      gameStore.addPointsToPlayer(playerStore.player.id, roundStore.tips.length - revealedTipsCount.value);
+      gameStore.addPointsToPlayer(playerStore.player?.id ?? 0, roundStore.tips.length - revealedTipsCount.value);
       roundStore.updateCardAndTips();
     }
 

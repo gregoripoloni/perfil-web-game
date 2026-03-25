@@ -19,11 +19,14 @@ export const useRoundStore = defineStore('round', () => {
   }
 
   const changeTipStatus = (id: number) => {
-    changeGameStatus();
     const tip = tips.value.find(tip => tip.id === id);
-    if (tip) {
-      tip.isOpen = true;
+
+    if (!tip || tip.isOpen) {
+      return;
     }
+
+    tip.isOpen = true;
+    changeGameStatus();
   };
 
   const gameStore = useGameStore();

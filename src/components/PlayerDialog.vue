@@ -1,0 +1,37 @@
+<script setup lang="ts">
+  import { ref } from 'vue';
+  import { Dialog } from 'primevue';
+  import { InputText } from 'primevue';
+  import { Button } from 'primevue';
+  import { usePlayerStore } from '../stores/playerStore';
+  import { useGameStore } from '../stores/gameStore';
+
+  const playerStore = usePlayerStore();
+  const gameStore = useGameStore();
+
+  const visible = ref(true);
+  const username = ref('');
+
+  const handleSave = () => {
+    if (username.value.trim() === '') {
+      return;
+    }
+
+    const id = gameStore.players.length + 1;
+    const name = username.value.trim().toLowerCase();
+
+    gameStore.addPlayer(id, name);
+    playerStore.setPlayer(id, name);
+
+    visible.value = false;
+  };
+</script>
+
+<template>
+  <Dialog v-model:visible="visible" modal header="Informe seu nome" :closable="false" :style="{ width: '25rem' }">
+    <div class="flex flex-col gap-4">
+      <InputText id="username" class="flex-auto" autocomplete="off" v-model="username" @keydown.prevent.enter="handleSave" />
+      <Button type="button" label="Salvar" @click="handleSave" />
+    </div>
+  </Dialog>
+</template>
