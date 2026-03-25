@@ -13,7 +13,7 @@
     <template #content>
       <div class="flex items-center justify-center h-16">
         <Transition mode="out-in">
-          <span v-if="!isOpen" class="text-xl text-surface-500 font-bold transition-colors" :class="{ 'group-hover:text-primary-50': !isDisabled }">
+          <span v-if="!isOpen" class="text-xl text-surface-500 font-black transition-colors" :class="{ 'group-hover:text-primary-50': !isDisabled }">
             {{ text }}
           </span>
           <span v-else class="text-xs text-surface-950 font-semibold">

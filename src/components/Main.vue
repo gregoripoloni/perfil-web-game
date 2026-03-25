@@ -18,6 +18,14 @@
 
   const isDisabledSendAnswer = computed(() => !isActivePlayer.value || roundStore.gameStatus !== 'guessing');
 
+  const guideText = computed(() => {
+    if (!isActivePlayer.value) {
+      return `Aguardando ${roundStore.activePlayer.name}...`;
+    }
+
+    return roundStore.gameStatus === 'selectingCard' ? 'Selecione uma dica' : 'Digite seu palpite';
+  });
+
   const handleCardClick = (id: number) => {
     if (!isActivePlayer.value || roundStore.gameStatus !== 'selectingCard') {
       return;
@@ -44,12 +52,17 @@
 
 <template>
   <div class="flex flex-col gap-4 p-4 max-h-full overflow-y-auto">
-    <span class="text-md text-left">
-      Categoria: <b>{{ roundStore.card.category }}</b>
-    </span>
-    <span class="text-md text-left">
-      Dicas reveladas: <b>{{ revealedTipsCount }}/{{ roundStore.tips.length }}</b>
-    </span>
+    <div class="flex items-center justify-between">
+      <h1 class="text-2xl font-black text-left text-primary-400">{{ guideText }}</h1>
+      <div class="flex flex-col shrink-0 gap-4">
+        <span class="text-md text-left">
+          Categoria: <span class="font-semibold">{{ roundStore.card.category }}</span>
+        </span>
+        <span class="text-md text-left">
+          Dicas reveladas: <span class="font-semibold">{{ revealedTipsCount }}/{{ roundStore.tips.length }}</span>
+        </span>
+      </div>
+    </div>
     <div class="flex flex-col max-h-full overflow-y-auto">
       <div class="grid grid-cols-2 gap-4 p-4 max-h-full overflow-y-auto lg:grid-cols-4">
         <Card
