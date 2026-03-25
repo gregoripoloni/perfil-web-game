@@ -2,6 +2,7 @@
   import { ref, computed } from 'vue';
   import { Textarea, Button } from 'primevue';
   import Card from './Card.vue';
+  import ResponseDialog from './ResponseDialog.vue';
   import { usePlayerStore } from '../stores/playerStore';
   import { useRoundStore } from '../stores/roundStore';
   import { useGameStore } from '../stores/gameStore';
@@ -11,11 +12,10 @@
   const gameStore = useGameStore();
 
   const answer = ref('');
-
-  const revealedTipsCount = computed(() => roundStore.tips.filter(tip => tip.isOpen).length);
+  const isAnswerCorrect = ref(false);
+  const showResponseDialog = ref(false);
 
   const isActivePlayer = computed(() => playerStore.player?.id === roundStore.activePlayer.id);
-
   const isDisabledSendAnswer = computed(() => !isActivePlayer.value || roundStore.gameStatus !== 'guessing');
 
   const guideText = computed(() => {
@@ -39,14 +39,20 @@
       return;
     }
 
-    if (answer.value.trim().toLowerCase() === roundStore.card.response.toLowerCase()) {
-      gameStore.addPointsToPlayer(playerStore.player?.id ?? 0, roundStore.tips.length - revealedTipsCount.value);
-      roundStore.updateCardAndTips();
-    }
+    isAnswerCorrect.value = answer.value.trim().toLowerCase() === roundStore.card.response.toLowerCase();
+    showResponseDialog.value = true;
 
-    roundStore.changeToNextPlayer();
+    setTimeout(() => {
+      if (isAnswerCorrect.value) {
+        gameStore.addPointsToPlayer(playerStore.player?.id ?? 0, roundStore.tips.length - roundStore.revealedTipsCount);
+        roundStore.updateCardAndTips();
+      }
 
-    answer.value = '';
+      showResponseDialog.value = false;
+      answer.value = '';
+      isAnswerCorrect.value = false;
+      roundStore.changeToNextPlayer();
+    }, 3000);
   };
 </script>
 
@@ -59,7 +65,7 @@
           Categoria:<span class="font-semibold">{{ roundStore.card.category }}</span>
         </span>
         <span class="text-sm text-left">
-          Dicas:<span class="font-semibold">{{ revealedTipsCount }}/{{ roundStore.tips.length }}</span>
+          Dicas:<span class="font-semibold">{{ roundStore.revealedTipsCount }}/{{ roundStore.tips.length }}</span>
         </span>
       </div>
     </div>
@@ -86,5 +92,10 @@
         </div>
       </Transition>
     </div>
+    <ResponseDialog
+      :isVisible="showResponseDialog"
+      :isCorrect="isAnswerCorrect"
+      :response="answer"
+    />
   </div>
 </template>

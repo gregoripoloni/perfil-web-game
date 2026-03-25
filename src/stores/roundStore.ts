@@ -29,6 +29,8 @@ export const useRoundStore = defineStore('round', () => {
     changeGameStatus();
   };
 
+  const revealedTipsCount = computed(() => tips.value.filter(tip => tip.isOpen).length);
+
   const gameStore = useGameStore();
 
   const activePlayerIndex = ref(0);
@@ -61,6 +63,7 @@ export const useRoundStore = defineStore('round', () => {
     tips,
     updateCardAndTips,
     changeTipStatus,
+    revealedTipsCount,
     activePlayer,
     changeToNextPlayer,
     gameStatus,
