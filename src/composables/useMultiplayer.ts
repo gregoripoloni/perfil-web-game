@@ -1,6 +1,10 @@
-import { ref as vueRef, onMounted, onUnmounted } from "vue";
+import { ref as vueRef, onMounted, onUnmounted, watch } from "vue";
 import type { DataSnapshot } from "firebase/database";
 import { db, ref, onValue, set, update, remove } from "../firebase";
+import { useGameStore } from "../stores/gameStore";
+import { usePlayerStore } from "../stores/playerStore";
+import { useRoundStateStore } from "../stores/roundStateStore";
+import { CARDS } from '../constants/cards';
 
 type GamePhase = "selectingTip" | "guessing" | "result";
 
@@ -12,6 +16,8 @@ interface MultiplayerPlayer {
 }
 
 interface RoundState {
+  cardId: number | null;
+  openedTipsIds: number[];
   gamePhase: GamePhase;
   activePlayerId: string | null;
   selectedTipId: number | null;
@@ -26,6 +32,8 @@ const clientId = `${Date.now().toString(36)}${Math.random().toString(36).slice(2
 const roomId = "room1";
 
 const defaultRoundState: RoundState = {
+  cardId: null,
+  openedTipsIds: [],
   gamePhase: "selectingTip",
   activePlayerId: null,
   selectedTipId: null,
@@ -37,6 +45,10 @@ const defaultRoundState: RoundState = {
 };
 
 export function useMultiplayerGame() {
+  const gameStore = useGameStore();
+  const playerStore = usePlayerStore();
+  const roundStateStore = useRoundStateStore();
+
   const playerName = vueRef("");
   const players = vueRef<Record<string, MultiplayerPlayer>>({});
   const roundState = vueRef<RoundState>({ ...defaultRoundState });
@@ -57,13 +69,24 @@ export function useMultiplayerGame() {
     };
 
     set(myPlayerRef, myPlayer);
+    playerStore.setPlayer(myPlayer.id, myPlayer.name);
 
     if (!roundState.value.activePlayerId) {
-      update(roundStateRef, {
-        activePlayerId: clientId,
-        updatedAt: Date.now(),
-      });
+      setActivePlayer(clientId);
     }
+
+    if (!roundState.value.cardId) {
+      setRandomCard();
+    }
+  }
+
+  function setRandomCard() {
+    const cardId = CARDS[Math.floor(Math.random() * CARDS.length)].id;
+
+    update(roundStateRef, {
+      cardId,
+      updatedAt: Date.now(),
+    });
   }
 
   function setActivePlayer(playerId: string) {
@@ -76,28 +99,26 @@ export function useMultiplayerGame() {
   function selectTip(tipId: number) {
     update(roundStateRef, {
       gamePhase: "guessing",
-      selectedTipId: tipId,
-      submittedAnswer: "",
-      answeredBy: null,
-      isAnswerCorrect: null,
-      pointsAwarded: 0,
+      openedTipsIds: [tipId],
       updatedAt: Date.now(),
     });
   }
 
-  function submitAnswer(answer: string, answeredById = clientId) {
+  function submitAnswer(answer: string, isCorrect: boolean, pointsAwarded = 0) {
     update(roundStateRef, {
       gamePhase: "result",
       submittedAnswer: answer.trim(),
-      answeredBy: answeredById,
+      isAnswerCorrect: isCorrect,
+      pointsAwarded,
       updatedAt: Date.now(),
     });
   }
 
-  function setRoundResult(isCorrect: boolean, pointsAwarded = 0) {
+  function setNextActivePlayer() {
+    const activePlayerIndex = gameStore.players.findIndex(player => player.id === roundState.value.activePlayerId);
     update(roundStateRef, {
-      isAnswerCorrect: isCorrect,
-      pointsAwarded,
+      gamePhase: "selectingTip",
+      activePlayerId: activePlayerIndex === gameStore.players.length - 1 ? gameStore.players[0].id : gameStore.players[activePlayerIndex + 1].id,
       updatedAt: Date.now(),
     });
   }
@@ -143,6 +164,27 @@ export function useMultiplayerGame() {
     leaveGame();
   });
 
+  watch(
+    players,
+    (playersMap) => {
+      const players = Object.values(playersMap)
+        .sort((a, b) => a.timestamp - b.timestamp)
+        .map(player => ({
+          id: player.id,
+          name: player.name,
+          points: player.points ?? 0,
+        }));
+
+      gameStore.players = players;
+    },
+    { immediate: true, deep: true }
+  );
+
+  watch(roundState, (newState) => {
+    console.log(newState);
+    roundStateStore.setState(newState);
+  });
+
   return {
     clientId,
     playerName,
@@ -150,10 +192,11 @@ export function useMultiplayerGame() {
     roundState,
     joinGame,
     leaveGame,
+    setRandomCard,
     setActivePlayer,
     selectTip,
     submitAnswer,
-    setRoundResult,
+    setNextActivePlayer,
     resetRound,
     addPointsToPlayer,
   };

@@ -3,39 +3,52 @@
   import { Textarea, Button } from 'primevue';
   import Card from './Card.vue';
   import ResponseDialog from './ResponseDialog.vue';
+  import { useGame } from '../composables/useGame';
   import { usePlayerStore } from '../stores/playerStore';
-  import { useRoundStore } from '../stores/roundStore';
-  import { useGameStore } from '../stores/gameStore';
-  import { useMultiplayerGame } from '../composables/useMultiplayer';
+  // import { useGameStore } from '../stores/gameStore';
+  // import { useMultiplayerGame } from '../composables/useMultiplayer';
+
+  const props = defineProps<{
+    selectTip: (id: number) => void;
+    submitAnswer: (answer: string, isCorrect: boolean, pointsAwarded: number) => void;
+    setNextActivePlayer: () => void;
+  }>();
 
   const playerStore = usePlayerStore();
-  const roundStore = useRoundStore();
-  const gameStore = useGameStore();
-  const multiplayer = useMultiplayerGame();
+  // const gameStore = useGameStore();
+  // const multiplayer = useMultiplayerGame();
+
+  const {
+    currentCard,
+    currentTips,
+    revealedTipsCount,
+    gamePhase,
+    activePlayer,
+    isActivePlayer,
+    isDisabledSendAnswer,
+    submittedAnswer,
+    isCorrectAnswer
+  } = useGame();
 
   const answer = ref('');
-  const isAnswerCorrect = ref(false);
+  // const isAnswerCorrect = ref(false);
   const showResponseDialog = ref(false);
-  const lastProcessedResultAt = ref(0);
-
-  const isActivePlayer = computed(() => playerStore.player?.id === roundStore.activePlayer?.id);
-  const isDisabledSendAnswer = computed(() => !isActivePlayer.value || roundStore.gameStatus !== 'guessing');
+  // const lastProcessedResultAt = ref(0);
 
   const guideText = computed(() => {
     if (!isActivePlayer.value) {
-      return `Aguardando ${roundStore.activePlayer?.name ?? 'jogador'}...`;
+      return `Aguardando ${activePlayer.value?.name ?? 'jogador'}...`;
     }
 
-    return roundStore.gameStatus === 'selectingCard' ? 'Selecione uma dica' : 'Digite seu palpite';
+    return gamePhase.value === 'selectingTip' ? 'Selecione uma dica' : 'Digite seu palpite';
   });
 
   const handleCardClick = (id: number) => {
-    if (!isActivePlayer.value || roundStore.gameStatus !== 'selectingCard') {
+    if (!isActivePlayer.value || gamePhase.value !== 'selectingTip') {
       return;
     }
 
-    roundStore.changeTipStatus(id);
-    multiplayer.selectTip(id);
+    props.selectTip(id);
   };
 
   const handleSendAnswer = () => {
@@ -43,71 +56,87 @@
       return;
     }
 
-    isAnswerCorrect.value = answer.value.trim().toLowerCase() === roundStore.card.response.toLowerCase();
-    const pointsAwarded = isAnswerCorrect.value ? roundStore.tips.length - roundStore.revealedTipsCount : 0;
+    const isCorrect = answer.value.trim().toLowerCase() === currentCard.value?.response.toLowerCase();
+    const pointsAwarded = isCorrect ? currentTips.value.length - revealedTipsCount.value : 0;
 
-    multiplayer.submitAnswer(answer.value, playerStore.player.id);
-    multiplayer.setRoundResult(isAnswerCorrect.value, pointsAwarded);
-    if (isAnswerCorrect.value) {
-      multiplayer.addPointsToPlayer(playerStore.player.id, pointsAwarded);
-    }
+    props.submitAnswer(answer.value, isCorrect, pointsAwarded);
+    // multiplayer.submitAnswer(answer.value, playerStore.player.id);
+    // multiplayer.setRoundResult(isAnswerCorrect.value, pointsAwarded);
+    // if (isAnswerCorrect.value) {
+    //   multiplayer.addPointsToPlayer(playerStore.player.id, pointsAwarded);
+    // }
   };
 
-  const getNextPlayerId = () => {
-    if (!roundStore.activePlayer || gameStore.players.length === 0) {
-      return undefined;
+  // const getNextPlayerId = () => {
+  //   if (!roundStore.activePlayer || gameStore.players.length === 0) {
+  //     return undefined;
+  //   }
+
+  //   const currentIndex = gameStore.players.findIndex(player => player.id === roundStore.activePlayer.id);
+  //   if (currentIndex < 0) {
+  //     return gameStore.players[0]?.id;
+  //   }
+
+  //   const nextIndex = currentIndex === gameStore.players.length - 1 ? 0 : currentIndex + 1;
+  //   return gameStore.players[nextIndex]?.id;
+  // };
+
+  // watch(
+  //   multiplayer.roundState,
+  //   (state) => {
+  //     if (state.activePlayerId) {
+  //       roundStore.setActivePlayerById(state.activePlayerId);
+  //     }
+
+  //     if (state.gamePhase === 'selectingTip') {
+  //       roundStore.setGameStatus('selectingCard');
+  //     } else {
+  //       roundStore.setGameStatus(state.gamePhase);
+  //     }
+
+  //     if (state.selectedTipId !== null) {
+  //       roundStore.openTipById(state.selectedTipId);
+  //     }
+
+  //     if (state.gamePhase === 'result' && state.updatedAt > lastProcessedResultAt.value && state.isAnswerCorrect !== null) {
+  //       lastProcessedResultAt.value = state.updatedAt;
+  //       answer.value = state.submittedAnswer;
+  //       isAnswerCorrect.value = state.isAnswerCorrect;
+  //       showResponseDialog.value = true;
+
+  //       setTimeout(() => {
+  //         showResponseDialog.value = false;
+  //         answer.value = '';
+  //         isAnswerCorrect.value = false;
+
+  //         if (playerStore.player?.id === state.answeredBy) {
+  //           if (state.isAnswerCorrect) {
+  //             roundStore.updateCardAndTips();
+  //           }
+
+  //           roundStore.changeToNextPlayer();
+  //           multiplayer.resetRound(getNextPlayerId());
+  //         }
+  //       }, 3000);
+  //     }
+  //   },
+  //   { immediate: true, deep: true }
+  // );
+
+  watch(gamePhase, () => {
+    if (gamePhase.value !== 'result') {
+      return;
     }
 
-    const currentIndex = gameStore.players.findIndex(player => player.id === roundStore.activePlayer.id);
-    if (currentIndex < 0) {
-      return gameStore.players[0]?.id;
-    }
+    showResponseDialog.value = true;
 
-    const nextIndex = currentIndex === gameStore.players.length - 1 ? 0 : currentIndex + 1;
-    return gameStore.players[nextIndex]?.id;
-  };
-
-  watch(
-    multiplayer.roundState,
-    (state) => {
-      if (state.activePlayerId) {
-        roundStore.setActivePlayerById(state.activePlayerId);
+    setTimeout(() => {
+      showResponseDialog.value = false;
+      if (isActivePlayer) {
+        props.setNextActivePlayer();
       }
-
-      if (state.gamePhase === 'selectingTip') {
-        roundStore.setGameStatus('selectingCard');
-      } else {
-        roundStore.setGameStatus(state.gamePhase);
-      }
-
-      if (state.selectedTipId !== null) {
-        roundStore.openTipById(state.selectedTipId);
-      }
-
-      if (state.gamePhase === 'result' && state.updatedAt > lastProcessedResultAt.value && state.isAnswerCorrect !== null) {
-        lastProcessedResultAt.value = state.updatedAt;
-        answer.value = state.submittedAnswer;
-        isAnswerCorrect.value = state.isAnswerCorrect;
-        showResponseDialog.value = true;
-
-        setTimeout(() => {
-          showResponseDialog.value = false;
-          answer.value = '';
-          isAnswerCorrect.value = false;
-
-          if (playerStore.player?.id === state.answeredBy) {
-            if (state.isAnswerCorrect) {
-              roundStore.updateCardAndTips();
-            }
-
-            roundStore.changeToNextPlayer();
-            multiplayer.resetRound(getNextPlayerId());
-          }
-        }, 3000);
-      }
-    },
-    { immediate: true, deep: true }
-  );
+    }, 3000);
+  });
 </script>
 
 <template>
@@ -116,21 +145,21 @@
       <h1 class="text-xl font-black text-left text-primary-400">{{ guideText }}</h1>
       <div class="flex flex-col shrink-0 gap-2">
         <span class="text-sm text-left">
-          Categoria:<span class="font-semibold">{{ roundStore.card.category }}</span>
+          Categoria:<span class="font-semibold">{{ currentCard?.category }}</span>
         </span>
         <span class="text-sm text-left">
-          Dicas:<span class="font-semibold">{{ roundStore.revealedTipsCount }}/{{ roundStore.tips.length }}</span>
+          Dicas:<span class="font-semibold">{{ revealedTipsCount }}/{{ currentTips.length }}</span>
         </span>
       </div>
     </div>
     <div class="flex flex-col max-h-full overflow-y-auto">
       <div class="grid grid-cols-2 gap-2 p-2 max-h-full overflow-y-auto lg:grid-cols-4">
         <Card
-          v-for="(tip, index) in roundStore.tips"
+          v-for="(tip, index) in currentTips"
           :key="tip.text" class="col-span-1"
           :text="tip.isOpen ? tip.text : `${index + 1}`"
           :isOpen="tip.isOpen"
-          :isDisabled="!isActivePlayer || roundStore.gameStatus !== 'selectingCard'"
+          :isDisabled="!isActivePlayer || gamePhase !== 'selectingTip'"
           @click="handleCardClick(tip.id)"
         />
       </div>
@@ -148,8 +177,8 @@
     </div>
     <ResponseDialog
       :isVisible="showResponseDialog"
-      :isCorrect="isAnswerCorrect"
-      :response="answer"
+      :isCorrect="isCorrectAnswer"
+      :response="submittedAnswer"
     />
   </div>
 </template>

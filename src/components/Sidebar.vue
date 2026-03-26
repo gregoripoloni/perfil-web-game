@@ -1,10 +1,11 @@
 <script setup lang="ts">
   import Player from './Player.vue';
   import { useGameStore } from '../stores/gameStore';
-  import { useRoundStore } from '../stores/roundStore';
+  import { useGame } from '../composables/useGame';
+
+  const { activePlayer } = useGame();
 
   const gameStore = useGameStore();
-  const roundStore = useRoundStore();
 </script>
 
 <template>
@@ -15,7 +16,7 @@
           :key="player.id"
           :name="player.name"
           :points="player.points"
-          :isActive="player.id === roundStore.activePlayer?.id"
+          :isActive="player.id === activePlayer?.id"
         />
       </div>
   </div>

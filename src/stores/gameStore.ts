@@ -19,9 +19,5 @@ export const useGameStore = defineStore('game', () => {
     }
   };
 
-  const setPlayers = (nextPlayers: { id: string; name: string; points: number }[]) => {
-    players.value = nextPlayers;
-  };
-
-  return { players, addPlayer, addPointsToPlayer, setPlayers };
+  return { players, addPlayer, addPointsToPlayer };
 });
