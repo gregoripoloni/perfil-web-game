@@ -52,7 +52,14 @@
       return;
     }
 
-    const isCorrect = answer.value.trim().toLowerCase() === currentCard.value?.response.toLowerCase();
+    const normalizeAnswer = (value?: string) =>
+      (value ?? '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .trim()
+        .toLowerCase();
+
+    const isCorrect = normalizeAnswer(answer.value) === normalizeAnswer(currentCard.value?.response);
     const pointsAwarded = isCorrect ? currentTips.value.length - revealedTipsCount.value : 0;
 
     props.submitAnswer(answer.value, playerStore.player.name, isCorrect, pointsAwarded);
