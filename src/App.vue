@@ -9,7 +9,7 @@
   const gameStore = useGameStore();
   const playerStore = usePlayerStore();
 
-  const { joinGame, selectTip, submitAnswer, setNextActivePlayer } = useMultiplayerGame();
+  const { joinGame, selectTip, submitAnswer, setNextActivePlayer, addPointsToPlayer, resetRound } = useMultiplayerGame();
 </script>
 
 <template>
@@ -19,6 +19,8 @@
       :select-tip
       :submit-answer
       :set-next-active-player
+      :add-points-to-player
+      :reset-round
       class="col-span-3"
     />
   </div>

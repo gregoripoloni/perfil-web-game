@@ -41,7 +41,11 @@ export const useGame = () => {
 
   const submittedAnswer = computed(() => roundStateStore.state.submittedAnswer);
 
+  const answeredBy = computed(() => roundStateStore.state.answeredBy);
+
   const isCorrectAnswer = computed(() => roundStateStore.state.isAnswerCorrect ?? false);
+
+  const pointsAwarded = computed(() => roundStateStore.state.pointsAwarded);
 
   return {
     currentCard,
@@ -52,6 +56,8 @@ export const useGame = () => {
     isActivePlayer,
     isDisabledSendAnswer,
     submittedAnswer,
-    isCorrectAnswer
+    answeredBy,
+    isCorrectAnswer,
+    pointsAwarded
   };
 }

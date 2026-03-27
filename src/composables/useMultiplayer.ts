@@ -20,7 +20,6 @@ interface RoundState {
   openedTipsIds: number[];
   gamePhase: GamePhase;
   activePlayerId: string | null;
-  selectedTipId: number | null;
   submittedAnswer: string;
   answeredBy: string | null;
   isAnswerCorrect: boolean | null;
@@ -36,7 +35,6 @@ const defaultRoundState: RoundState = {
   openedTipsIds: [],
   gamePhase: "selectingTip",
   activePlayerId: null,
-  selectedTipId: null,
   submittedAnswer: "",
   answeredBy: null,
   isAnswerCorrect: null,
@@ -97,17 +95,20 @@ export function useMultiplayerGame() {
   }
 
   function selectTip(tipId: number) {
+    const openedTips = Array.isArray(roundState.value.openedTipsIds) ? roundState.value.openedTipsIds : [];
+    openedTips.push(tipId);
     update(roundStateRef, {
       gamePhase: "guessing",
-      openedTipsIds: [tipId],
+      openedTipsIds: openedTips,
       updatedAt: Date.now(),
     });
   }
 
-  function submitAnswer(answer: string, isCorrect: boolean, pointsAwarded = 0) {
+  function submitAnswer(answer: string, answeredBy: string, isCorrect: boolean, pointsAwarded = 0) {
     update(roundStateRef, {
       gamePhase: "result",
       submittedAnswer: answer.trim(),
+      answeredBy,
       isAnswerCorrect: isCorrect,
       pointsAwarded,
       updatedAt: Date.now(),
@@ -123,15 +124,18 @@ export function useMultiplayerGame() {
     });
   }
 
-  function resetRound(nextActivePlayerId?: string) {
+  function resetRound() {
+    const cardId = CARDS[Math.floor(Math.random() * CARDS.length)].id;
+    const activePlayerIndex = gameStore.players.findIndex(player => player.id === roundState.value.activePlayerId);
     update(roundStateRef, {
+      cardId,
       gamePhase: "selectingTip",
-      selectedTipId: null,
+      openedTipsIds: [],
       submittedAnswer: "",
       answeredBy: null,
       isAnswerCorrect: null,
       pointsAwarded: 0,
-      activePlayerId: nextActivePlayerId ?? roundState.value.activePlayerId,
+      activePlayerId: activePlayerIndex === gameStore.players.length - 1 ? gameStore.players[0].id : gameStore.players[activePlayerIndex + 1].id,
       updatedAt: Date.now(),
     });
   }

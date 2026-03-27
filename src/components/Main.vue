@@ -5,18 +5,16 @@
   import ResponseDialog from './ResponseDialog.vue';
   import { useGame } from '../composables/useGame';
   import { usePlayerStore } from '../stores/playerStore';
-  // import { useGameStore } from '../stores/gameStore';
-  // import { useMultiplayerGame } from '../composables/useMultiplayer';
 
   const props = defineProps<{
     selectTip: (id: number) => void;
-    submitAnswer: (answer: string, isCorrect: boolean, pointsAwarded: number) => void;
+    submitAnswer: (answer: string, answeredBy: string, isCorrect: boolean, pointsAwarded: number) => void;
     setNextActivePlayer: () => void;
+    addPointsToPlayer: (playerId: string, points: number) => void;
+    resetRound: () => void;
   }>();
 
   const playerStore = usePlayerStore();
-  // const gameStore = useGameStore();
-  // const multiplayer = useMultiplayerGame();
 
   const {
     currentCard,
@@ -31,9 +29,7 @@
   } = useGame();
 
   const answer = ref('');
-  // const isAnswerCorrect = ref(false);
   const showResponseDialog = ref(false);
-  // const lastProcessedResultAt = ref(0);
 
   const guideText = computed(() => {
     if (!isActivePlayer.value) {
@@ -59,82 +55,27 @@
     const isCorrect = answer.value.trim().toLowerCase() === currentCard.value?.response.toLowerCase();
     const pointsAwarded = isCorrect ? currentTips.value.length - revealedTipsCount.value : 0;
 
-    props.submitAnswer(answer.value, isCorrect, pointsAwarded);
-    // multiplayer.submitAnswer(answer.value, playerStore.player.id);
-    // multiplayer.setRoundResult(isAnswerCorrect.value, pointsAwarded);
-    // if (isAnswerCorrect.value) {
-    //   multiplayer.addPointsToPlayer(playerStore.player.id, pointsAwarded);
-    // }
+    props.submitAnswer(answer.value, playerStore.player.name, isCorrect, pointsAwarded);
+
+    if (isCorrect) {
+      props.addPointsToPlayer(playerStore.player.id, pointsAwarded);
+      setTimeout(props.resetRound, 3000);
+      return;
+    }
+
+    setTimeout(props.setNextActivePlayer, 3000);
   };
-
-  // const getNextPlayerId = () => {
-  //   if (!roundStore.activePlayer || gameStore.players.length === 0) {
-  //     return undefined;
-  //   }
-
-  //   const currentIndex = gameStore.players.findIndex(player => player.id === roundStore.activePlayer.id);
-  //   if (currentIndex < 0) {
-  //     return gameStore.players[0]?.id;
-  //   }
-
-  //   const nextIndex = currentIndex === gameStore.players.length - 1 ? 0 : currentIndex + 1;
-  //   return gameStore.players[nextIndex]?.id;
-  // };
-
-  // watch(
-  //   multiplayer.roundState,
-  //   (state) => {
-  //     if (state.activePlayerId) {
-  //       roundStore.setActivePlayerById(state.activePlayerId);
-  //     }
-
-  //     if (state.gamePhase === 'selectingTip') {
-  //       roundStore.setGameStatus('selectingCard');
-  //     } else {
-  //       roundStore.setGameStatus(state.gamePhase);
-  //     }
-
-  //     if (state.selectedTipId !== null) {
-  //       roundStore.openTipById(state.selectedTipId);
-  //     }
-
-  //     if (state.gamePhase === 'result' && state.updatedAt > lastProcessedResultAt.value && state.isAnswerCorrect !== null) {
-  //       lastProcessedResultAt.value = state.updatedAt;
-  //       answer.value = state.submittedAnswer;
-  //       isAnswerCorrect.value = state.isAnswerCorrect;
-  //       showResponseDialog.value = true;
-
-  //       setTimeout(() => {
-  //         showResponseDialog.value = false;
-  //         answer.value = '';
-  //         isAnswerCorrect.value = false;
-
-  //         if (playerStore.player?.id === state.answeredBy) {
-  //           if (state.isAnswerCorrect) {
-  //             roundStore.updateCardAndTips();
-  //           }
-
-  //           roundStore.changeToNextPlayer();
-  //           multiplayer.resetRound(getNextPlayerId());
-  //         }
-  //       }, 3000);
-  //     }
-  //   },
-  //   { immediate: true, deep: true }
-  // );
 
   watch(gamePhase, () => {
     if (gamePhase.value !== 'result') {
       return;
     }
 
+    answer.value = '';
     showResponseDialog.value = true;
 
     setTimeout(() => {
       showResponseDialog.value = false;
-      if (isActivePlayer) {
-        props.setNextActivePlayer();
-      }
     }, 3000);
   });
 </script>
