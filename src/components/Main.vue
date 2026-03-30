@@ -1,7 +1,8 @@
 <script setup lang="ts">
   import { ref, computed, watch } from 'vue';
   import { Textarea, Button } from 'primevue';
-  import Card from './Card.vue';
+  import RevealedTip from './RevealedTip.vue';
+  import TipSelectionDialog from './TipSelectionDialog.vue';
   import ResponseDialog from './ResponseDialog.vue';
   import { useGame } from '../composables/useGame';
   import { usePlayerStore } from '../stores/playerStore';
@@ -19,7 +20,7 @@
   const {
     currentCard,
     currentTips,
-    revealedTipsCount,
+    revealedTips,
     gamePhase,
     activePlayer,
     isActivePlayer,
@@ -29,6 +30,7 @@
   } = useGame();
 
   const answer = ref('');
+  const showTipSelectionDialog = ref(false);
   const showResponseDialog = ref(false);
 
   const guideText = computed(() => {
@@ -45,6 +47,7 @@
     }
 
     props.selectTip(id);
+    showTipSelectionDialog.value = false;
   };
 
   const handleSendAnswer = () => {
@@ -60,7 +63,7 @@
         .toLowerCase();
 
     const isCorrect = normalizeAnswer(answer.value) === normalizeAnswer(currentCard.value?.response);
-    const pointsAwarded = isCorrect ? currentTips.value.length - revealedTipsCount.value : 0;
+    const pointsAwarded = isCorrect ? currentTips.value.length - revealedTips.value.length : 0;
 
     props.submitAnswer(answer.value, playerStore.player.name, isCorrect, pointsAwarded);
 
@@ -73,18 +76,26 @@
     setTimeout(props.setNextActivePlayer, 3000);
   };
 
-  watch(gamePhase, () => {
-    if (gamePhase.value !== 'result') {
-      return;
-    }
+  watch(
+    gamePhase,
+    () => {
+      if (gamePhase.value === 'selectingTip' && isActivePlayer.value) {
+        showTipSelectionDialog.value = true;
+      }
 
-    answer.value = '';
-    showResponseDialog.value = true;
+      if (gamePhase.value !== 'result') {
+        return;
+      }
 
-    setTimeout(() => {
-      showResponseDialog.value = false;
-    }, 3000);
-  });
+      answer.value = '';
+      showResponseDialog.value = true;
+
+      setTimeout(() => {
+        showResponseDialog.value = false;
+      }, 3000);
+    },
+    { immediate: true }
+  );
 </script>
 
 <template>
@@ -96,19 +107,16 @@
           Categoria:<span class="font-semibold">{{ currentCard?.category }}</span>
         </span>
         <span class="text-sm text-left">
-          Dicas:<span class="font-semibold">{{ revealedTipsCount }}/{{ currentTips.length }}</span>
+          Dicas:<span class="font-semibold">{{ revealedTips.length }}/{{ currentTips.length }}</span>
         </span>
       </div>
     </div>
-    <div class="flex flex-col max-h-full overflow-y-auto">
-      <div class="grid grid-cols-2 gap-2 p-2 max-h-full overflow-y-auto lg:grid-cols-4">
-        <Card
-          v-for="(tip, index) in currentTips"
-          :key="tip.text" class="col-span-1"
-          :text="tip.isOpen ? tip.text : `${index + 1}`"
-          :isOpen="tip.isOpen"
-          :isDisabled="!isActivePlayer || gamePhase !== 'selectingTip'"
-          @click="handleCardClick(tip.id)"
+    <div class="flex flex-col justify-between h-full max-h-full overflow-y-auto">
+      <div class="grid grid-cols-1 gap-2 p-2 max-h-full overflow-y-auto">
+        <RevealedTip
+          v-for="tip in revealedTips"
+          :key="tip.text"
+          :text="tip.text"
         />
       </div>
       <Transition>
@@ -123,6 +131,10 @@
         </div>
       </Transition>
     </div>
+    <TipSelectionDialog
+      :isVisible="showTipSelectionDialog"
+      @selectTip="handleCardClick"
+    />
     <ResponseDialog
       :isVisible="showResponseDialog"
       :isCorrect="isCorrectAnswer"

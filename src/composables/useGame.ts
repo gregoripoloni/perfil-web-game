@@ -25,8 +25,7 @@ export const useGame = () => {
     }));
   });
 
-  const revealedTipsCount = computed(() => currentTips.value.filter(tip => tip.isOpen).length);
-
+  const revealedTips = computed(() => currentTips.value.filter(tip => tip.isOpen));
   const gamePhase = computed(() => roundStateStore.state.gamePhase);
 
   const activePlayer = computed(() => {
@@ -38,19 +37,15 @@ export const useGame = () => {
   });
 
   const isDisabledSendAnswer = computed(() => !isActivePlayer.value || gamePhase.value !== 'guessing');
-
   const submittedAnswer = computed(() => roundStateStore.state.submittedAnswer);
-
   const answeredBy = computed(() => roundStateStore.state.answeredBy);
-
   const isCorrectAnswer = computed(() => roundStateStore.state.isAnswerCorrect ?? false);
-
   const pointsAwarded = computed(() => roundStateStore.state.pointsAwarded);
 
   return {
     currentCard,
     currentTips,
-    revealedTipsCount,
+    revealedTips,
     gamePhase,
     activePlayer,
     isActivePlayer,
