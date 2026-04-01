@@ -446,5 +446,6 @@ export const TIPS = Object.entries(CARD_TIPS).flatMap(([cardId, tips]) =>
     id: (Number(cardId) - 1) * 20 + index + 1,
     cardId: Number(cardId),
     text,
+    number: index + 1,
   })),
 )

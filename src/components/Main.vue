@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import { ref, computed, watch } from 'vue';
-  import { Textarea, Button } from 'primevue';
+  import { ref, watch } from 'vue';
+  import { Card, InputText, InputGroup, InputGroupAddon, Button } from 'primevue';
   import RevealedTip from './RevealedTip.vue';
   import TipSelectionDialog from './TipSelectionDialog.vue';
   import ResponseDialog from './ResponseDialog.vue';
@@ -22,7 +22,6 @@
     currentTips,
     revealedTips,
     gamePhase,
-    activePlayer,
     isActivePlayer,
     isDisabledSendAnswer,
     submittedAnswer,
@@ -32,14 +31,6 @@
   const answer = ref('');
   const showTipSelectionDialog = ref(false);
   const showResponseDialog = ref(false);
-
-  const guideText = computed(() => {
-    if (!isActivePlayer.value) {
-      return `Aguardando ${activePlayer.value?.name ?? 'jogador'}...`;
-    }
-
-    return gamePhase.value === 'selectingTip' ? 'Selecione uma dica' : 'Digite seu palpite';
-  });
 
   const handleCardClick = (id: number) => {
     if (!isActivePlayer.value || gamePhase.value !== 'selectingTip') {
@@ -51,7 +42,7 @@
   };
 
   const handleSendAnswer = () => {
-    if (!isActivePlayer.value || !playerStore.player) {
+    if (!isActivePlayer.value || !playerStore.player || !answer.value.length) {
       return;
     }
 
@@ -99,46 +90,65 @@
 </script>
 
 <template>
-  <div class="flex flex-col gap-2 p-6 max-h-full overflow-y-auto">
-    <div class="flex items-center justify-between gap-6">
-      <h1 class="text-xl font-black text-left text-primary-400">{{ guideText }}</h1>
-      <div class="flex flex-col shrink-0 gap-2">
-        <span class="text-sm text-left">
-          Categoria:<span class="font-semibold">{{ currentCard?.category }}</span>
-        </span>
-        <span class="text-sm text-left">
-          Dicas:<span class="font-semibold">{{ revealedTips.length }}/{{ currentTips.length }}</span>
-        </span>
-      </div>
-    </div>
-    <div class="flex flex-col justify-between h-full max-h-full overflow-y-auto">
-      <div class="grid grid-cols-1 gap-2 p-2 max-h-full overflow-y-auto">
-        <RevealedTip
-          v-for="tip in revealedTips"
-          :key="tip.text"
-          :text="tip.text"
+  <Card class="Main h-full overflow-y-auto bg-surface-950!">
+    <template #content>
+      <div class="flex flex-col gap-2 h-full overflow-y-auto">
+        <div class="flex flex-col shrink-0 gap-2">
+          <span class="text-sm text-left">
+            Categoria:<span class="font-semibold">{{ currentCard?.category }}</span>
+          </span>
+          <span class="text-sm text-left">
+            Dicas:<span class="font-semibold">{{ revealedTips.length }}/{{ currentTips.length }}</span>
+          </span>
+        </div>
+        <div class="flex flex-col justify-between h-full max-h-full overflow-y-auto">
+          <div class="grid grid-cols-1 gap-2 p-2 max-h-full overflow-y-auto">
+            <RevealedTip
+              v-for="tip in revealedTips"
+              :key="tip.text"
+              :text="tip.text"
+              :number="tip.number"
+            />
+          </div>
+          <Transition>
+            <div v-if="!isDisabledSendAnswer" class="flex gap-2">
+              <InputGroup>
+                <InputText
+                  class="w-full"
+                  placeholder="Digite seu palpite..."
+                  v-model="answer"
+                  @keydown.prevent.enter="handleSendAnswer"
+                />
+                <InputGroupAddon>
+                  <Button
+                    icon="pi pi-send"
+                    severity="secondary"
+                    :disabled="!answer.length"
+                    @click="handleSendAnswer"
+                  />
+                </InputGroupAddon>
+              </InputGroup>
+            </div>
+          </Transition>
+        </div>
+        <TipSelectionDialog
+          :isVisible="showTipSelectionDialog"
+          @selectTip="handleCardClick"
+        />
+        <ResponseDialog
+          :isVisible="showResponseDialog"
+          :isCorrect="isCorrectAnswer"
+          :response="submittedAnswer"
         />
       </div>
-      <Transition>
-        <div v-if="!isDisabledSendAnswer" class="flex flex-col gap-2">
-          <Textarea
-            class="w-full"
-            placeholder="Digite seu palpite..."
-            v-model="answer"
-            @keydown.prevent.enter="handleSendAnswer"
-          />
-          <Button label="Enviar resposta" @click="handleSendAnswer" />
-        </div>
-      </Transition>
-    </div>
-    <TipSelectionDialog
-      :isVisible="showTipSelectionDialog"
-      @selectTip="handleCardClick"
-    />
-    <ResponseDialog
-      :isVisible="showResponseDialog"
-      :isCorrect="isCorrectAnswer"
-      :response="submittedAnswer"
-    />
-  </div>
+    </template>
+  </Card>
 </template>
+
+<style scoped>
+  .Main:deep(.p-card-body),
+  .Main:deep(.p-card-content) {
+    height: 100%;
+    overflow-y: auto;
+  }
+</style>

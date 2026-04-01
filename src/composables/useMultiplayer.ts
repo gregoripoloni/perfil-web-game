@@ -150,6 +150,15 @@ export function useMultiplayerGame() {
     });
   }
 
+  function resetRoom() {
+    if (roomPlayersRef) {
+      set(roomPlayersRef, {});
+    }
+    if (roundStateRef) {
+      set(roundStateRef, { ...defaultRoundState, updatedAt: Date.now() });
+    }
+  }
+
   function leaveGame() {
     remove(myPlayerRef);
   }
@@ -203,5 +212,6 @@ export function useMultiplayerGame() {
     setNextActivePlayer,
     resetRound,
     addPointsToPlayer,
+    resetRoom,
   };
 }

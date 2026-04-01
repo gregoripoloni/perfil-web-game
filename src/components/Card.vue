@@ -11,7 +11,7 @@
   <Card
     class="transition-colors border-2"
     :class="{
-      'bg-primary-400! border-primary-800' : isDisabled,
+      'bg-primary-400! border-primary-800 pointer-events-none' : isDisabled,
       'border-surface-800 hover:border-primary-400 cursor-pointer': !isDisabled
     }"
   >

@@ -25,7 +25,18 @@ export const useGame = () => {
     }));
   });
 
-  const revealedTips = computed(() => currentTips.value.filter(tip => tip.isOpen));
+  const revealedTips = computed(() => {
+    const reversedOpenedIds = [...roundStateStore.state.openedTipsIds].reverse();
+    const tipsMap = currentTips.value.reduce((acc, tip) => {
+      acc[tip.id] = tip;
+      return acc;
+    }, {} as Record<typeof currentTips.value[number]["id"], typeof currentTips.value[number]>);
+
+    return reversedOpenedIds
+      .map(id => tipsMap[id])
+      .filter(tip => tip && tip.isOpen);
+  });
+
   const gamePhase = computed(() => roundStateStore.state.gamePhase);
 
   const activePlayer = computed(() => {

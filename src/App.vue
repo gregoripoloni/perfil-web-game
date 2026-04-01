@@ -9,12 +9,26 @@
   const gameStore = useGameStore();
   const playerStore = usePlayerStore();
 
-  const { joinGame, selectTip, submitAnswer, setNextActivePlayer, addPointsToPlayer, resetRound } = useMultiplayerGame();
+  const {
+    joinGame,
+    selectTip,
+    submitAnswer,
+    setNextActivePlayer,
+    addPointsToPlayer,
+    resetRound,
+    resetRoom,
+  } = useMultiplayerGame();
 </script>
 
 <template>
-  <div v-if="playerStore.player && gameStore.players.length > 0" class="grid grid-cols-1 h-full lg:grid-cols-4">
-    <Sidebar class="col-span-1" />
+  <div
+    v-if="playerStore.player && gameStore.players.length > 0"
+    class="flex flex-col h-full lg:grid lg:grid-cols-4 p-2"
+  >
+    <Sidebar
+      :reset-room
+      class="col-span-1"
+    />
     <Main
       :select-tip
       :submit-answer

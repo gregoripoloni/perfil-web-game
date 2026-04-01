@@ -1,12 +1,13 @@
 @import "tailwindcss";
 @import "tailwindcss-primeui";
+@import 'primeicons/primeicons.css';
 
 :root {
   font: 18px/145% 'SUSE Mono', system-ui, 'Segoe UI', Roboto, sans-serif;
   letter-spacing: 0.18px;
   text-transform: uppercase;
   color: var(--p-surface-300);
-  background: var(--p-surface-950);
+  background: var(--p-surface-900);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -75,6 +76,15 @@ p {
     border-width: 2px !important;
   }
 
+  .p-inputgroupaddon {
+    border-block-start-width: 2px !important;
+    border-block-end-width: 2px !important;
+  }
+
+  .p-inputgroupaddon:last-child {
+    border-inline-end-width: 2px !important;
+  }
+
   .p-button-label {
     font-weight: 600 !important;
     text-transform: uppercase !important;
@@ -82,5 +92,7 @@ p {
 
   .p-dialog {
     border-width: 2px !important;
+    background-color: var(--p-surface-950) !important;
+    border-color: var(--p-surface-900) !important;
   }
 }
