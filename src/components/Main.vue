@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { ref, watch } from 'vue';
-  import { Card, InputText, InputGroup, InputGroupAddon, Button } from 'primevue';
+  import { Card, InputText, InputGroup, InputGroupAddon, Button, Badge } from 'primevue';
   import RevealedTip from './RevealedTip.vue';
   import TipSelectionDialog from './TipSelectionDialog.vue';
   import ResponseDialog from './ResponseDialog.vue';
@@ -93,12 +93,14 @@
   <Card class="Main h-full overflow-y-auto bg-surface-950!">
     <template #content>
       <div class="flex flex-col gap-2 h-full overflow-y-auto">
-        <div class="flex flex-col shrink-0 gap-2">
-          <span class="text-sm text-left">
-            Categoria:<span class="font-semibold">{{ currentCard?.category }}</span>
+        <div class="flex justify-between gap-2">
+          <span class="flex items-center gap-1 text-sm text-left">
+            Categoria:
+            <Badge size="small">{{ currentCard?.category }}</Badge>
           </span>
-          <span class="text-sm text-left">
-            Dicas:<span class="font-semibold">{{ revealedTips.length }}/{{ currentTips.length }}</span>
+          <span class="flex items-center gap-1 text-sm text-left">
+            Dicas:
+            <Badge size="small">{{ revealedTips.length }}/{{ currentTips.length }}</Badge>
           </span>
         </div>
         <div class="flex flex-col justify-between h-full max-h-full overflow-y-auto">
@@ -146,8 +148,8 @@
 </template>
 
 <style scoped>
-  .Main:deep(.p-card-body),
-  .Main:deep(.p-card-content) {
+  .Main:deep(> .p-card-body),
+  .Main:deep(> .p-card-body > .p-card-content) {
     height: 100%;
     overflow-y: auto;
   }

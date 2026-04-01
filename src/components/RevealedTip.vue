@@ -14,7 +14,7 @@
         <span class="text-xl text-surface-600 font-black w-10 shrink-0">
           {{ number }}
         </span>
-        <span class="text-sm text-surface-0 font-semibold">
+        <span class="text-sm text-surface-0 font-semibold text-left">
           {{ text }}
         </span>
       </div>
