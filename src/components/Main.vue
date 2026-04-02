@@ -90,17 +90,17 @@
 </script>
 
 <template>
-  <Card class="Main h-full overflow-y-auto bg-surface-950!">
+  <Card class="Main h-full overflow-y-auto bg-surface-950! border-2 border-surface-800">
     <template #content>
       <div class="flex flex-col gap-2 h-full overflow-y-auto">
         <div class="flex justify-between gap-2">
           <span class="flex items-center gap-1 text-sm text-left">
             Categoria:
-            <Badge size="small">{{ currentCard?.category }}</Badge>
+            <Badge>{{ currentCard?.category }}</Badge>
           </span>
           <span class="flex items-center gap-1 text-sm text-left">
             Dicas:
-            <Badge size="small">{{ revealedTips.length }}/{{ currentTips.length }}</Badge>
+            <Badge>{{ revealedTips.length }}/{{ currentTips.length }}</Badge>
           </span>
         </div>
         <div class="flex flex-col justify-between h-full max-h-full overflow-y-auto">
