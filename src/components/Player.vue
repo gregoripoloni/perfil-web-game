@@ -15,8 +15,8 @@
   <div class="flex flex-col relative items-center justify-between p-2 rounded-xl border-2 border-surface-800 transition-colors lg:flex-row lg:gap-2">
     <div
       v-if="isActive"
-      class="absolute -left-[2px] -top-[2px] -right-[2px] -bottom-[2px] rounded-xl border-2"
-      :class="{ 'border-primary-400!': isActive && !isCurrentPlayer, 'border-sky-400!': isActive && isCurrentPlayer, 'animate-pulse': isActive }"
+      class="absolute -left-[2px] -top-[2px] -right-[2px] -bottom-[2px] rounded-xl border-2 animate-pulse"
+      :class="isCurrentPlayer ? 'border-sky-400!' : 'border-primary-400!'"
     />
     <div class="flex flex-col items-center gap-2 w-full overflow-x-hidden lg:flex-row">
       <div
