@@ -19,4 +19,9 @@ export const CARDS = [
   { id: 18, response: 'Polvo', category: 'Coisa' },
   { id: 19, response: 'Saudade', category: 'Coisa' },
   { id: 20, response: 'Internet', category: 'Coisa' },
+  { id: 21, response: 'Pelé', category: 'Pessoa' },
+  { id: 22, response: 'Marie Curie', category: 'Pessoa' },
+  { id: 23, response: 'Nelson Mandela', category: 'Pessoa' },
+  { id: 24, response: 'William Shakespeare', category: 'Pessoa' },
+  { id: 25, response: 'Amelia Earhart', category: 'Pessoa' },
 ]
