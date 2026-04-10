@@ -1,32 +1,32 @@
 import { computed } from 'vue';
-import { useRoundStateStore } from '../stores/roundStateStore';
+import { useRoundStore } from '../stores/roundStore';
 import { usePlayerStore } from '../stores/playerStore';
 import { useGameStore } from '../stores/gameStore';
 import { CARDS } from '../constants/cards';
 import { TIPS } from '../constants/tips';
 
 export const useGame = () => {
-  const roundStateStore = useRoundStateStore();
+  const roundStore = useRoundStore();
   const playerStore = usePlayerStore();
   const gameStore = useGameStore();
 
   const currentCard = computed(() => {
-    return CARDS.find(card => card.id === roundStateStore.state.cardId) || null;
+    return CARDS.find(card => card.id === roundStore.state.cardId) || null;
   });
 
   const currentTips = computed(() => {
-    if (!roundStateStore.state.cardId) {
+    if (!roundStore.state.cardId) {
       return [];
     }
 
-    return TIPS.filter(tip => tip.cardId === roundStateStore.state.cardId).map(tip => ({
+    return TIPS.filter(tip => tip.cardId === roundStore.state.cardId).map(tip => ({
       ...tip,
-      isOpen: roundStateStore.state.openedTipsIds.includes(tip.id),
+      isOpen: roundStore.state.openedTipsIds.includes(tip.id),
     }));
   });
 
   const revealedTips = computed(() => {
-    const reversedOpenedIds = [...roundStateStore.state.openedTipsIds].reverse();
+    const reversedOpenedIds = [...roundStore.state.openedTipsIds].reverse();
     const tipsMap = currentTips.value.reduce((acc, tip) => {
       acc[tip.id] = tip;
       return acc;
@@ -37,10 +37,10 @@ export const useGame = () => {
       .filter(tip => tip && tip.isOpen);
   });
 
-  const gamePhase = computed(() => roundStateStore.state.gamePhase);
+  const gamePhase = computed(() => roundStore.state.gamePhase);
 
   const activePlayer = computed(() => {
-    return gameStore.players.find(player => player.id === roundStateStore.state.activePlayerId) || null;
+    return gameStore.players.find(player => player.id === roundStore.state.activePlayerId) || null;
   });
 
   const isActivePlayer = computed(() => {
@@ -48,10 +48,10 @@ export const useGame = () => {
   });
 
   const isDisabledSendAnswer = computed(() => !isActivePlayer.value || gamePhase.value !== 'guessing');
-  const submittedAnswer = computed(() => roundStateStore.state.submittedAnswer);
-  const answeredBy = computed(() => roundStateStore.state.answeredBy);
-  const isCorrectAnswer = computed(() => roundStateStore.state.isAnswerCorrect ?? false);
-  const pointsAwarded = computed(() => roundStateStore.state.pointsAwarded);
+  const submittedAnswer = computed(() => roundStore.state.submittedAnswer);
+  const answeredBy = computed(() => roundStore.state.answeredBy);
+  const isCorrectAnswer = computed(() => roundStore.state.isAnswerCorrect ?? false);
+  const pointsAwarded = computed(() => roundStore.state.pointsAwarded);
 
   return {
     currentCard,

@@ -3,7 +3,7 @@ import type { DataSnapshot } from "firebase/database";
 import { db, ref, onValue, set, update, remove } from "../firebase";
 import { useGameStore } from "../stores/gameStore";
 import { usePlayerStore } from "../stores/playerStore";
-import { useRoundStateStore } from "../stores/roundStateStore";
+import { useRoundStore } from "../stores/roundStore";
 import { CARDS } from '../constants/cards';
 
 type GamePhase = "selectingTip" | "guessing" | "result";
@@ -45,7 +45,7 @@ const defaultRoundState: RoundState = {
 export function useMultiplayerGame() {
   const gameStore = useGameStore();
   const playerStore = usePlayerStore();
-  const roundStateStore = useRoundStateStore();
+  const roundStore = useRoundStore();
 
   const playerName = vueRef("");
   const players = vueRef<Record<string, MultiplayerPlayer>>({});
@@ -195,7 +195,7 @@ export function useMultiplayerGame() {
 
   watch(roundState, (newState) => {
     console.log(newState);
-    roundStateStore.setState(newState);
+    roundStore.setState(newState);
   });
 
   return {

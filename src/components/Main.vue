@@ -105,12 +105,14 @@
         </div>
         <div class="flex flex-col justify-between h-full max-h-full overflow-y-auto">
           <div class="grid grid-cols-1 gap-2 p-2 max-h-full overflow-y-auto">
-            <RevealedTip
-              v-for="tip in revealedTips"
-              :key="tip.text"
-              :text="tip.text"
-              :number="tip.number"
-            />
+            <TransitionGroup>
+              <RevealedTip
+                v-for="tip in revealedTips"
+                :key="tip.text"
+                :text="tip.text"
+                :number="tip.number"
+              />
+            </TransitionGroup>
           </div>
           <Transition>
             <div v-if="!isDisabledSendAnswer" class="flex gap-2">

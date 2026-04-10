@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { Button } from 'primevue';
   import Player from './Player.vue';
+  import { usePlayerStore } from '../stores/playerStore';
   import { useGameStore } from '../stores/gameStore';
   import { useGame } from '../composables/useGame';
 
@@ -11,6 +12,7 @@
   const { activePlayer } = useGame();
 
   const gameStore = useGameStore();
+  const playerStore = usePlayerStore();
 </script>
 
 <template>
@@ -22,6 +24,7 @@
           :name="player.name"
           :points="player.points"
           :isActive="player.id === activePlayer?.id"
+          :isCurrentPlayer="player.id === playerStore.player?.id"
           class="w-20 shrink-0 lg:w-full"
         />
         <Button
