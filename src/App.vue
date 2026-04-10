@@ -16,6 +16,8 @@
     setNextActivePlayer,
     addPointsToPlayer,
     resetRound,
+    resetPlayersPoints,
+    setWinner,
     resetRoom,
   } = useMultiplayerGame();
 </script>
@@ -35,6 +37,8 @@
       :set-next-active-player
       :add-points-to-player
       :reset-round
+      :reset-players-points
+      :set-winner
       class="col-span-3"
     />
   </div>

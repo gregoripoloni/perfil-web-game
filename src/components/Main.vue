@@ -4,8 +4,11 @@
   import RevealedTip from './RevealedTip.vue';
   import TipSelectionDialog from './TipSelectionDialog.vue';
   import ResponseDialog from './ResponseDialog.vue';
+  import WinnerDialog from './WinnerDialog.vue';
   import { useGame } from '../composables/useGame';
+  import { useGameStore } from '../stores/gameStore';
   import { usePlayerStore } from '../stores/playerStore';
+  import { POINTS_TO_WIN } from '../constants/rules';
 
   const props = defineProps<{
     selectTip: (id: number) => void;
@@ -13,9 +16,12 @@
     setNextActivePlayer: () => void;
     addPointsToPlayer: (playerId: string, points: number) => void;
     resetRound: () => void;
+    resetPlayersPoints: () => void;
+    setWinner: () => void;
   }>();
 
   const playerStore = usePlayerStore();
+  const gameStore = useGameStore();
 
   const {
     currentCard,
@@ -31,6 +37,7 @@
   const answer = ref('');
   const showTipSelectionDialog = ref(false);
   const showResponseDialog = ref(false);
+  const showWinnerDialog = ref(false);
 
   const handleCardClick = (id: number) => {
     if (!isActivePlayer.value || gamePhase.value !== 'selectingTip') {
@@ -60,6 +67,19 @@
 
     if (isCorrect) {
       props.addPointsToPlayer(playerStore.player.id, pointsAwarded);
+
+      const currentPlayerPoints = gameStore.players.find(player => player.id === playerStore.player?.id)?.points ?? 0;
+      const hasPlayerWon = currentPlayerPoints + pointsAwarded >= POINTS_TO_WIN;
+
+      if (hasPlayerWon) {
+        setTimeout(() => {
+          props.setWinner();
+          props.resetPlayersPoints();
+          setTimeout(props.resetRound, 3000);
+        }, 3000);
+        return;
+      }
+
       setTimeout(props.resetRound, 3000);
       return;
     }
@@ -72,6 +92,16 @@
     () => {
       if (gamePhase.value === 'selectingTip' && isActivePlayer.value) {
         showTipSelectionDialog.value = true;
+      }
+
+      if (gamePhase.value === 'winner') {
+        showWinnerDialog.value = true;
+
+        setTimeout(() => {
+          showWinnerDialog.value = false;
+        }, 3000);
+
+        return;
       }
 
       if (gamePhase.value !== 'result') {
@@ -144,6 +174,7 @@
           :isCorrect="isCorrectAnswer"
           :response="submittedAnswer"
         />
+        <WinnerDialog :isVisible="showWinnerDialog" />
       </div>
     </template>
   </Card>

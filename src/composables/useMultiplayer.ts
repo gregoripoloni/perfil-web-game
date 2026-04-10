@@ -150,6 +150,24 @@ export function useMultiplayerGame() {
     });
   }
 
+  function resetPlayersPoints() {
+    const updates: Record<string, any> = {};
+    Object.keys(players.value).forEach((playerId) => {
+      updates[`${playerId}/points`] = 0;
+      updates[`${playerId}/timestamp`] = Date.now();
+    });
+
+    if (Object.keys(updates).length > 0) {
+      update(roomPlayersRef, updates);
+    }
+  }
+
+  function setWinner() {
+    update(roundStateRef, {
+      gamePhase: 'winner',
+    });
+  }
+
   function resetRoom() {
     if (roomPlayersRef) {
       set(roomPlayersRef, {});
@@ -212,6 +230,8 @@ export function useMultiplayerGame() {
     setNextActivePlayer,
     resetRound,
     addPointsToPlayer,
+    resetPlayersPoints,
+    setWinner,
     resetRoom,
   };
 }

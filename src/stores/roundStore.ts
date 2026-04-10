@@ -5,7 +5,7 @@ export const useRoundStore = defineStore('roundState', () => {
   const state = ref({
     cardId: null as number|null,
     openedTipsIds: [] as number[],
-    gamePhase: 'selectingTip' as 'selectingTip' | 'guessing' | 'result',
+    gamePhase: 'selectingTip' as 'selectingTip' | 'guessing' | 'result' | 'winner',
     activePlayerId: null as string|null,
     selectedTipId: null as number|null,
     submittedAnswer: "",
