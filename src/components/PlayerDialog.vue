@@ -3,10 +3,9 @@
   import { Dialog } from 'primevue';
   import { InputText } from 'primevue';
   import { Button } from 'primevue';
+  import { useMultiplayer } from '../composables/useMultiplayer';
 
-  const props = defineProps<{
-    joinGame: (name: string) => void;
-  }>();
+  const { joinGame } = useMultiplayer();
 
   const visible = ref(true);
   const username = ref('');
@@ -17,7 +16,7 @@
     }
 
     const name = username.value.trim().toLowerCase();
-    props.joinGame(name);
+    joinGame(name);
 
     visible.value = false;
   };

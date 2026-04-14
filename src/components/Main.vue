@@ -6,22 +6,14 @@
   import ResponseDialog from './ResponseDialog.vue';
   import WinnerDialog from './WinnerDialog.vue';
   import { useGame } from '../composables/useGame';
-  import { useGameStore } from '../stores/gameStore';
+  import { useMultiplayer } from '../composables/useMultiplayer';
+  import { usePlayersStore } from '../stores/playersStore';
   import { usePlayerStore } from '../stores/playerStore';
+  import { GamePhase } from '../stores/roundStore';
   import { POINTS_TO_WIN } from '../constants/rules';
 
-  const props = defineProps<{
-    selectTip: (id: number) => void;
-    submitAnswer: (answer: string, answeredBy: string, isCorrect: boolean, pointsAwarded: number) => void;
-    setNextActivePlayer: () => void;
-    addPointsToPlayer: (playerId: string, points: number) => void;
-    resetRound: () => void;
-    resetPlayersPoints: () => void;
-    setWinner: () => void;
-  }>();
-
   const playerStore = usePlayerStore();
-  const gameStore = useGameStore();
+  const playersStore = usePlayersStore();
 
   const {
     currentCard,
@@ -34,17 +26,27 @@
     isCorrectAnswer
   } = useGame();
 
+  const {
+    selectTip,
+    submitAnswer,
+    setNextActivePlayer,
+    addPointsToPlayer,
+    resetRound,
+    resetPlayersPoints,
+    setWinner
+  } = useMultiplayer();
+
   const answer = ref('');
   const showTipSelectionDialog = ref(false);
   const showResponseDialog = ref(false);
   const showWinnerDialog = ref(false);
 
   const handleCardClick = (id: number) => {
-    if (!isActivePlayer.value || gamePhase.value !== 'selectingTip') {
+    if (!isActivePlayer.value || gamePhase.value !== GamePhase.SelectingTip) {
       return;
     }
 
-    props.selectTip(id);
+    selectTip(id);
     showTipSelectionDialog.value = false;
   };
 
@@ -63,38 +65,38 @@
     const isCorrect = normalizeAnswer(answer.value) === normalizeAnswer(currentCard.value?.response);
     const pointsAwarded = isCorrect ? currentTips.value.length - revealedTips.value.length : 0;
 
-    props.submitAnswer(answer.value, playerStore.player.name, isCorrect, pointsAwarded);
+    submitAnswer(answer.value, playerStore.player.name, isCorrect, pointsAwarded);
 
     if (isCorrect) {
-      props.addPointsToPlayer(playerStore.player.id, pointsAwarded);
+      addPointsToPlayer(playerStore.player.id, pointsAwarded);
 
-      const currentPlayerPoints = gameStore.players.find(player => player.id === playerStore.player?.id)?.points ?? 0;
+      const currentPlayerPoints = playersStore.players.find(player => player.id === playerStore.player?.id)?.points ?? 0;
       const hasPlayerWon = currentPlayerPoints + pointsAwarded >= POINTS_TO_WIN;
 
       if (hasPlayerWon) {
         setTimeout(() => {
-          props.setWinner();
-          props.resetPlayersPoints();
-          setTimeout(props.resetRound, 3000);
+          setWinner();
+          resetPlayersPoints();
+          setTimeout(resetRound, 3000);
         }, 3000);
         return;
       }
 
-      setTimeout(props.resetRound, 3000);
+      setTimeout(resetRound, 3000);
       return;
     }
 
-    setTimeout(props.setNextActivePlayer, 3000);
+    setTimeout(setNextActivePlayer, 3000);
   };
 
   watch(
     gamePhase,
     () => {
-      if (gamePhase.value === 'selectingTip' && isActivePlayer.value) {
+      if (gamePhase.value === GamePhase.SelectingTip && isActivePlayer.value) {
         showTipSelectionDialog.value = true;
       }
 
-      if (gamePhase.value === 'winner') {
+      if (gamePhase.value === GamePhase.Winner) {
         showWinnerDialog.value = true;
 
         setTimeout(() => {
@@ -104,7 +106,7 @@
         return;
       }
 
-      if (gamePhase.value !== 'result') {
+      if (gamePhase.value !== GamePhase.Result) {
         return;
       }
 

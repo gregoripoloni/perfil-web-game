@@ -2,45 +2,20 @@
   import Sidebar from './components/Sidebar.vue';
   import Main from './components/Main.vue';
   import PlayerDialog from './components/PlayerDialog.vue';
-  import { useGameStore } from './stores/gameStore';
+  import { usePlayersStore } from './stores/playersStore';
   import { usePlayerStore } from './stores/playerStore';
-  import { useMultiplayerGame } from './composables/useMultiplayer';
 
-  const gameStore = useGameStore();
+  const playersStore = usePlayersStore();
   const playerStore = usePlayerStore();
-
-  const {
-    joinGame,
-    selectTip,
-    submitAnswer,
-    setNextActivePlayer,
-    addPointsToPlayer,
-    resetRound,
-    resetPlayersPoints,
-    setWinner,
-    resetRoom,
-  } = useMultiplayerGame();
 </script>
 
 <template>
   <div
-    v-if="playerStore.player && gameStore.players.length > 0"
+    v-if="playerStore.player && playersStore.players.length > 0"
     class="flex flex-col h-full lg:grid lg:grid-cols-4 p-2"
   >
-    <Sidebar
-      :reset-room
-      class="col-span-1"
-    />
-    <Main
-      :select-tip
-      :submit-answer
-      :set-next-active-player
-      :add-points-to-player
-      :reset-round
-      :reset-players-points
-      :set-winner
-      class="col-span-3"
-    />
+    <Sidebar class="col-span-1" />
+    <Main class="col-span-3" />
   </div>
-  <PlayerDialog :join-game />
+  <PlayerDialog />
 </template>

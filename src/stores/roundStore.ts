@@ -1,19 +1,39 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
 
+export enum GamePhase {
+  SelectingTip = 'selectingTip',
+  Guessing = 'guessing',
+  Result = 'result',
+  Winner = 'winner',
+}
+
+export interface RoundState {
+  cardId: number | null;
+  openedTipsIds: number[];
+  gamePhase: GamePhase;
+  activePlayerId: string | null;
+  submittedAnswer: string;
+  answeredBy: string | null;
+  isAnswerCorrect: boolean | null;
+  pointsAwarded: number;
+  updatedAt: number;
+}
+
+export const DEFAULT_ROUND_STATE: RoundState = {
+  cardId: null,
+  openedTipsIds: [],
+  gamePhase: GamePhase.SelectingTip,
+  activePlayerId: null,
+  submittedAnswer: "",
+  answeredBy: null,
+  isAnswerCorrect: null,
+  pointsAwarded: 0,
+  updatedAt: 0,
+};
+
 export const useRoundStore = defineStore('roundState', () => {
-  const state = ref({
-    cardId: null as number|null,
-    openedTipsIds: [] as number[],
-    gamePhase: 'selectingTip' as 'selectingTip' | 'guessing' | 'result' | 'winner',
-    activePlayerId: null as string|null,
-    selectedTipId: null as number|null,
-    submittedAnswer: "",
-    answeredBy: null as string|null,
-    isAnswerCorrect: null as boolean|null,
-    pointsAwarded: 0,
-    updatedAt: 0,
-  });
+  const state = ref(DEFAULT_ROUND_STATE);
 
   const setState = (newState: Partial<typeof state.value>) => {
     state.value = { ...state.value, ...newState };

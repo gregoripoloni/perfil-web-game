@@ -1,14 +1,14 @@
 import { computed } from 'vue';
-import { useRoundStore } from '../stores/roundStore';
+import { useRoundStore, GamePhase } from '../stores/roundStore';
 import { usePlayerStore } from '../stores/playerStore';
-import { useGameStore } from '../stores/gameStore';
+import { usePlayersStore } from '../stores/playersStore';
 import { CARDS } from '../constants/cards';
 import { TIPS } from '../constants/tips';
 
 export const useGame = () => {
   const roundStore = useRoundStore();
   const playerStore = usePlayerStore();
-  const gameStore = useGameStore();
+  const playersStore = usePlayersStore();
 
   const currentCard = computed(() => {
     return CARDS.find(card => card.id === roundStore.state.cardId) || null;
@@ -40,14 +40,14 @@ export const useGame = () => {
   const gamePhase = computed(() => roundStore.state.gamePhase);
 
   const activePlayer = computed(() => {
-    return gameStore.players.find(player => player.id === roundStore.state.activePlayerId) || null;
+    return playersStore.players.find(player => player.id === roundStore.state.activePlayerId) || null;
   });
 
   const isActivePlayer = computed(() => {
     return activePlayer.value?.id === playerStore.player?.id;
   });
 
-  const isDisabledSendAnswer = computed(() => !isActivePlayer.value || gamePhase.value !== 'guessing');
+  const isDisabledSendAnswer = computed(() => !isActivePlayer.value || gamePhase.value !== GamePhase.Guessing);
   const submittedAnswer = computed(() => roundStore.state.submittedAnswer);
   const answeredBy = computed(() => roundStore.state.answeredBy);
   const isCorrectAnswer = computed(() => roundStore.state.isAnswerCorrect ?? false);

@@ -1,12 +1,10 @@
-import { ref as vueRef, onMounted, onUnmounted, watch } from "vue";
-import type { DataSnapshot } from "firebase/database";
-import { db, ref, onValue, set, update, remove } from "../firebase";
-import { useGameStore } from "../stores/gameStore";
-import { usePlayerStore } from "../stores/playerStore";
-import { useRoundStore } from "../stores/roundStore";
+import { onMounted, onUnmounted } from 'vue';
+import type { DataSnapshot } from 'firebase/database';
+import { db, ref as dbRef, onValue, set, update, remove } from '../firebase';
+import { usePlayersStore } from '../stores/playersStore';
+import { usePlayerStore } from '../stores/playerStore';
+import { useRoundStore, DEFAULT_ROUND_STATE, GamePhase } from '../stores/roundStore';
 import { CARDS } from '../constants/cards';
-
-type GamePhase = "selectingTip" | "guessing" | "result";
 
 interface MultiplayerPlayer {
   id: string;
@@ -15,53 +13,24 @@ interface MultiplayerPlayer {
   timestamp: number;
 }
 
-interface RoundState {
-  cardId: number | null;
-  openedTipsIds: number[];
-  gamePhase: GamePhase;
-  activePlayerId: string | null;
-  submittedAnswer: string;
-  answeredBy: string | null;
-  isAnswerCorrect: boolean | null;
-  pointsAwarded: number;
-  updatedAt: number;
-}
-
 const clientId = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`;
-const roomId = "room1";
+const roomId = 'room1';
 
-const defaultRoundState: RoundState = {
-  cardId: null,
-  openedTipsIds: [],
-  gamePhase: "selectingTip",
-  activePlayerId: null,
-  submittedAnswer: "",
-  answeredBy: null,
-  isAnswerCorrect: null,
-  pointsAwarded: 0,
-  updatedAt: 0,
-};
-
-export function useMultiplayerGame() {
-  const gameStore = useGameStore();
+export const useMultiplayer = () => {
+  const playersStore = usePlayersStore();
   const playerStore = usePlayerStore();
   const roundStore = useRoundStore();
 
-  const playerName = vueRef("");
-  const players = vueRef<Record<string, MultiplayerPlayer>>({});
-  const roundState = vueRef<RoundState>({ ...defaultRoundState });
+  const roomPlayersRef = dbRef(db, `rooms/${roomId}/players`);
+  const roundStateRef = dbRef(db, `rooms/${roomId}/roundState`);
+  const myPlayerRef = dbRef(db, `rooms/${roomId}/players/${clientId}`);
 
-  const roomPlayersRef = ref(db, `rooms/${roomId}/players`);
-  const roundStateRef = ref(db, `rooms/${roomId}/roundState`);
-  const myPlayerRef = ref(db, `rooms/${roomId}/players/${clientId}`);
-
-  function joinGame(name: string) {
+  const joinGame = (name: string) => {
     if (!name.trim()) return;
-    playerName.value = name.trim();
 
     const myPlayer: MultiplayerPlayer = {
       id: clientId,
-      name: playerName.value,
+      name: name.trim(),
       points: 0,
       timestamp: Date.now(),
     };
@@ -69,16 +38,16 @@ export function useMultiplayerGame() {
     set(myPlayerRef, myPlayer);
     playerStore.setPlayer(myPlayer.id, myPlayer.name);
 
-    if (!roundState.value.activePlayerId) {
+    if (!roundStore.state.activePlayerId) {
       setActivePlayer(clientId);
     }
 
-    if (!roundState.value.cardId) {
+    if (!roundStore.state.cardId) {
       setRandomCard();
     }
   }
 
-  function setRandomCard() {
+  const setRandomCard = () => {
     const cardId = CARDS[Math.floor(Math.random() * CARDS.length)].id;
 
     update(roundStateRef, {
@@ -87,26 +56,26 @@ export function useMultiplayerGame() {
     });
   }
 
-  function setActivePlayer(playerId: string) {
+  const setActivePlayer = (playerId: string) => {
     update(roundStateRef, {
       activePlayerId: playerId,
       updatedAt: Date.now(),
     });
   }
 
-  function selectTip(tipId: number) {
-    const openedTips = Array.isArray(roundState.value.openedTipsIds) ? roundState.value.openedTipsIds : [];
+  const selectTip = (tipId: number) => {
+    const openedTips = Array.isArray(roundStore.state.openedTipsIds) ? roundStore.state.openedTipsIds : [];
     openedTips.push(tipId);
     update(roundStateRef, {
-      gamePhase: "guessing",
+      gamePhase: GamePhase.Guessing,
       openedTipsIds: openedTips,
       updatedAt: Date.now(),
     });
   }
 
-  function submitAnswer(answer: string, answeredBy: string, isCorrect: boolean, pointsAwarded = 0) {
+  const submitAnswer = (answer: string, answeredBy: string, isCorrect: boolean, pointsAwarded = 0) => {
     update(roundStateRef, {
-      gamePhase: "result",
+      gamePhase: GamePhase.Result,
       submittedAnswer: answer.trim(),
       answeredBy,
       isAnswerCorrect: isCorrect,
@@ -115,46 +84,44 @@ export function useMultiplayerGame() {
     });
   }
 
-  function setNextActivePlayer() {
-    const activePlayerIndex = gameStore.players.findIndex(player => player.id === roundState.value.activePlayerId);
+  const setNextActivePlayer = () => {
+    const activePlayerIndex = playersStore.players.findIndex(player => player.id === roundStore.state.activePlayerId);
     update(roundStateRef, {
-      gamePhase: "selectingTip",
-      activePlayerId: activePlayerIndex === gameStore.players.length - 1 ? gameStore.players[0].id : gameStore.players[activePlayerIndex + 1].id,
+      gamePhase: GamePhase.SelectingTip,
+      activePlayerId: activePlayerIndex === playersStore.players.length - 1 ? playersStore.players[0].id : playersStore.players[activePlayerIndex + 1].id,
       updatedAt: Date.now(),
     });
   }
 
-  function resetRound() {
+  const resetRound = () => {
     const cardId = CARDS[Math.floor(Math.random() * CARDS.length)].id;
-    const activePlayerIndex = gameStore.players.findIndex(player => player.id === roundState.value.activePlayerId);
+    const activePlayerIndex = playersStore.players.findIndex(player => player.id === roundStore.state.activePlayerId);
     update(roundStateRef, {
       cardId,
-      gamePhase: "selectingTip",
+      gamePhase: GamePhase.SelectingTip,
       openedTipsIds: [],
-      submittedAnswer: "",
+      submittedAnswer: '',
       answeredBy: null,
       isAnswerCorrect: null,
       pointsAwarded: 0,
-      activePlayerId: activePlayerIndex === gameStore.players.length - 1 ? gameStore.players[0].id : gameStore.players[activePlayerIndex + 1].id,
+      activePlayerId: activePlayerIndex === playersStore.players.length - 1 ? playersStore.players[0].id : playersStore.players[activePlayerIndex + 1].id,
       updatedAt: Date.now(),
     });
   }
 
-  function addPointsToPlayer(playerId: string, points: number) {
-    const currentPoints = players.value[playerId]?.points ?? 0;
-    const targetPlayerRef = ref(db, `rooms/${roomId}/players/${playerId}`);
+  const addPointsToPlayer = (playerId: string, points: number) => {
+    const currentPoints = playersStore.players.find(player => player.id === playerId)?.points ?? 0;
+    const targetPlayerRef = dbRef(db, `rooms/${roomId}/players/${playerId}`);
 
     update(targetPlayerRef, {
-      points: currentPoints + points,
-      timestamp: Date.now(),
+      points: currentPoints + points
     });
   }
 
-  function resetPlayersPoints() {
+  const resetPlayersPoints = () => {
     const updates: Record<string, any> = {};
-    Object.keys(players.value).forEach((playerId) => {
-      updates[`${playerId}/points`] = 0;
-      updates[`${playerId}/timestamp`] = Date.now();
+    playersStore.players.forEach((player) => {
+      updates[`${player.id}/points`] = 0;
     });
 
     if (Object.keys(updates).length > 0) {
@@ -162,42 +129,28 @@ export function useMultiplayerGame() {
     }
   }
 
-  function setWinner() {
+  const setWinner = () => {
     update(roundStateRef, {
-      gamePhase: 'winner',
+      gamePhase: GamePhase.Winner,
     });
   }
 
-  function resetRoom() {
+  const resetRoom = () => {
     if (roomPlayersRef) {
       set(roomPlayersRef, {});
     }
     if (roundStateRef) {
-      set(roundStateRef, { ...defaultRoundState, updatedAt: Date.now() });
+      set(roundStateRef, { ...DEFAULT_ROUND_STATE, updatedAt: Date.now() });
     }
   }
 
-  function leaveGame() {
+  const leaveGame = () => {
     remove(myPlayerRef);
   }
 
   onMounted(() => {
     onValue(roomPlayersRef, (snapshot: DataSnapshot) => {
-      players.value = snapshot.val() || {};
-    });
-
-    onValue(roundStateRef, (snapshot: DataSnapshot) => {
-      roundState.value = snapshot.val() || { ...defaultRoundState };
-    });
-  });
-
-  onUnmounted(() => {
-    leaveGame();
-  });
-
-  watch(
-    players,
-    (playersMap) => {
+      const playersMap = (snapshot.val() || {}) as Record<string, MultiplayerPlayer>;
       const players = Object.values(playersMap)
         .sort((a, b) => a.timestamp - b.timestamp)
         .map(player => ({
@@ -206,25 +159,20 @@ export function useMultiplayerGame() {
           points: player.points ?? 0,
         }));
 
-      gameStore.players = players;
-    },
-    { immediate: true, deep: true }
-  );
+      playersStore.players = players;
+    });
 
-  watch(roundState, (newState) => {
-    console.log(newState);
-    roundStore.setState(newState);
+    onValue(roundStateRef, (snapshot: DataSnapshot) => {
+      roundStore.setState(snapshot.val() || { ...DEFAULT_ROUND_STATE });
+    });
+  });
+
+  onUnmounted(() => {
+    leaveGame();
   });
 
   return {
-    clientId,
-    playerName,
-    players,
-    roundState,
     joinGame,
-    leaveGame,
-    setRandomCard,
-    setActivePlayer,
     selectTip,
     submitAnswer,
     setNextActivePlayer,

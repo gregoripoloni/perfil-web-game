@@ -2,16 +2,14 @@
   import { Button } from 'primevue';
   import Player from './Player.vue';
   import { usePlayerStore } from '../stores/playerStore';
-  import { useGameStore } from '../stores/gameStore';
+  import { usePlayersStore } from '../stores/playersStore';
   import { useGame } from '../composables/useGame';
-
-  defineProps<{
-    resetRoom: () => void;
-  }>();
+  import { useMultiplayer } from '../composables/useMultiplayer';
 
   const { activePlayer } = useGame();
+  const { resetRoom } = useMultiplayer();
 
-  const gameStore = useGameStore();
+  const playersStore = usePlayersStore();
   const playerStore = usePlayerStore();
 </script>
 
@@ -19,7 +17,7 @@
   <div class="flex flex-col gap-4 px-5 py-3">
       <div class="flex flex-nowrap gap-2 py-2 overflow-x-auto lg:flex-col">
         <Player
-          v-for="player in gameStore.players.sort((a, b) => b.points - a.points)"
+          v-for="player in playersStore.players"
           :key="player.id"
           :name="player.name"
           :points="player.points"
