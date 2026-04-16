@@ -1,13 +1,10 @@
 <script setup lang="ts">
-  import { Button } from 'primevue';
   import Player from './Player.vue';
   import { usePlayerStore } from '../stores/playerStore';
   import { usePlayersStore } from '../stores/playersStore';
   import { useGame } from '../composables/useGame';
-  import { useMultiplayer } from '../composables/useMultiplayer';
 
   const { activePlayer } = useGame();
-  const { resetRoom } = useMultiplayer();
 
   const playersStore = usePlayersStore();
   const playerStore = usePlayerStore();
@@ -24,13 +21,6 @@
           :isActive="player.id === activePlayer?.id"
           :isCurrentPlayer="player.id === playerStore.player?.id"
           class="w-20 shrink-0 lg:w-full"
-        />
-        <Button
-          icon="pi pi-refresh"
-          severity="secondary"
-          outlined
-          class="shrink-0"
-          @click="resetRoom"
         />
       </div>
   </div>

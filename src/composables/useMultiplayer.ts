@@ -1,5 +1,6 @@
-import { onMounted, onUnmounted } from 'vue';
+import { computed, onMounted, onUnmounted } from 'vue';
 import type { DataSnapshot } from 'firebase/database';
+import { useRoute } from 'vue-router';
 import { db, ref as dbRef, onValue, set, update, remove } from '../firebase';
 import { usePlayersStore } from '../stores/playersStore';
 import { usePlayerStore } from '../stores/playerStore';
@@ -14,16 +15,18 @@ interface MultiplayerPlayer {
 }
 
 const clientId = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`;
-const roomId = 'room1';
 
 export const useMultiplayer = () => {
+  const route = useRoute();
+  const roomId = computed(() => route.params.id);
+
   const playersStore = usePlayersStore();
   const playerStore = usePlayerStore();
   const roundStore = useRoundStore();
 
-  const roomPlayersRef = dbRef(db, `rooms/${roomId}/players`);
-  const roundStateRef = dbRef(db, `rooms/${roomId}/roundState`);
-  const myPlayerRef = dbRef(db, `rooms/${roomId}/players/${clientId}`);
+  const roomPlayersRef = dbRef(db, `rooms/${roomId.value}/players`);
+  const roundStateRef = dbRef(db, `rooms/${roomId.value}/roundState`);
+  const myPlayerRef = dbRef(db, `rooms/${roomId.value}/players/${clientId}`);
 
   const joinGame = (name: string) => {
     if (!name.trim()) return;
@@ -111,7 +114,7 @@ export const useMultiplayer = () => {
 
   const addPointsToPlayer = (playerId: string, points: number) => {
     const currentPoints = playersStore.players.find(player => player.id === playerId)?.points ?? 0;
-    const targetPlayerRef = dbRef(db, `rooms/${roomId}/players/${playerId}`);
+    const targetPlayerRef = dbRef(db, `rooms/${roomId.value}/players/${playerId}`);
 
     update(targetPlayerRef, {
       points: currentPoints + points
@@ -133,15 +136,6 @@ export const useMultiplayer = () => {
     update(roundStateRef, {
       gamePhase: GamePhase.Winner,
     });
-  }
-
-  const resetRoom = () => {
-    if (roomPlayersRef) {
-      set(roomPlayersRef, {});
-    }
-    if (roundStateRef) {
-      set(roundStateRef, { ...DEFAULT_ROUND_STATE, updatedAt: Date.now() });
-    }
   }
 
   const leaveGame = () => {
@@ -180,6 +174,5 @@ export const useMultiplayer = () => {
     addPointsToPlayer,
     resetPlayersPoints,
     setWinner,
-    resetRoom,
   };
 }

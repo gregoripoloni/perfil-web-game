@@ -4,7 +4,7 @@ import GameView from '../views/GameView.vue';
 
 const routes = [
   { path: '/', component: StartView },
-  { path: '/game', component: GameView },
+  { path: '/game/:id', component: GameView },
 ];
 
 export const router = createRouter({
