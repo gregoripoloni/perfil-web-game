@@ -4,5 +4,9 @@ import { defineStore } from 'pinia';
 export const usePlayersStore = defineStore('game', () => {
   const players = ref<{ id: string; name: string; points: number }[]>([]);
 
-  return { players };
+  const $reset = () => {
+    players.value = [];
+  };
+
+  return { players, $reset };
 });

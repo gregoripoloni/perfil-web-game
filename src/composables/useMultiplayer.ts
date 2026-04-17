@@ -163,6 +163,9 @@ export const useMultiplayer = () => {
 
   onUnmounted(() => {
     leaveGame();
+    playerStore.$reset();
+    playersStore.$reset();
+    roundStore.$reset();
   });
 
   return {

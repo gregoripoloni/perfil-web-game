@@ -39,5 +39,9 @@ export const useRoundStore = defineStore('roundState', () => {
     state.value = { ...state.value, ...newState };
   };
 
-  return { state, setState };
+  const $reset = () => {
+    state.value = DEFAULT_ROUND_STATE;
+  };
+
+  return { state, setState, $reset };
 });

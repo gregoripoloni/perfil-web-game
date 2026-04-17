@@ -8,5 +8,9 @@ export const usePlayerStore = defineStore('player', () => {
     player.value = { id, name };
   };
 
-  return { player, setPlayer };
+  const $reset = () => {
+    player.value = undefined;
+  };
+
+  return { player, setPlayer, $reset };
 });
