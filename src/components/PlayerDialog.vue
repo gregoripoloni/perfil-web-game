@@ -23,9 +23,14 @@
 </script>
 
 <template>
-  <Dialog v-model:visible="visible" modal header="Informe seu nome" :closable="false" :style="{ width: '25rem', maxWidth: '90%' }">
+  <Dialog v-model:visible="visible" modal header="Nome" :closable="false" :style="{ width: '25rem', maxWidth: '90%' }">
     <div class="flex flex-col gap-4">
-      <InputText id="username" class="flex-auto" autocomplete="off" v-model="username" @keydown.prevent.enter="handleSave" />
+      <InputText
+        class="flex-auto"
+        v-model="username"
+        placeholder="João"
+        @keydown.prevent.enter="handleSave"
+      />
       <Button type="button" label="Jogar" @click="handleSave" />
     </div>
   </Dialog>
