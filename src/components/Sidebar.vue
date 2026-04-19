@@ -35,7 +35,7 @@
 </script>
 
 <template>
-  <div class="flex flex-col justify-between gap-4 px-5 py-3">
+  <div class="flex flex-col justify-between gap-2 px-5 py-3">
       <div class="flex flex-nowrap gap-2 py-2 overflow-x-auto lg:flex-col">
         <Player
           v-for="player in playersStore.players"

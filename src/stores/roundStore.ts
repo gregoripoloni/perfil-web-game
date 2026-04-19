@@ -2,6 +2,7 @@ import { ref } from 'vue';
 import { defineStore } from 'pinia';
 
 export enum GamePhase {
+  WaitingForPlayers = 'waitingForPlayers',
   SelectingTip = 'selectingTip',
   Guessing = 'guessing',
   Result = 'result',
@@ -23,7 +24,7 @@ export interface RoundState {
 export const DEFAULT_ROUND_STATE: RoundState = {
   cardId: null,
   openedTipsIds: [],
-  gamePhase: GamePhase.SelectingTip,
+  gamePhase: GamePhase.WaitingForPlayers,
   activePlayerId: null,
   submittedAnswer: "",
   answeredBy: null,

@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { ref, watch } from 'vue';
-  import { Card, InputText, InputGroup, InputGroupAddon, Button, Badge } from 'primevue';
+  import { InputText, InputGroup, InputGroupAddon, Button, Badge } from 'primevue';
   import RevealedTip from './RevealedTip.vue';
   import TipSelectionDialog from './TipSelectionDialog.vue';
   import ResponseDialog from './ResponseDialog.vue';
@@ -29,11 +29,11 @@
   const {
     selectTip,
     submitAnswer,
-    setNextActivePlayer,
     addPointsToPlayer,
+    setNextPlayer,
     resetRound,
-    resetPlayersPoints,
-    setWinner
+    setWinner,
+    resetGame,
   } = useMultiplayer();
 
   const answer = ref('');
@@ -68,16 +68,15 @@
     submitAnswer(answer.value, playerStore.player.name, isCorrect, pointsAwarded);
 
     if (isCorrect) {
-      addPointsToPlayer(playerStore.player.id, pointsAwarded);
-
       const currentPlayerPoints = playersStore.players.find(player => player.id === playerStore.player?.id)?.points ?? 0;
       const hasPlayerWon = currentPlayerPoints + pointsAwarded >= POINTS_TO_WIN;
+
+      addPointsToPlayer(playerStore.player.id, pointsAwarded);
 
       if (hasPlayerWon) {
         setTimeout(() => {
           setWinner();
-          resetPlayersPoints();
-          setTimeout(resetRound, 3000);
+          setTimeout(resetGame, 3000);
         }, 3000);
         return;
       }
@@ -86,7 +85,7 @@
       return;
     }
 
-    setTimeout(setNextActivePlayer, 3000);
+    setTimeout(setNextPlayer, 3000);
   };
 
   watch(
@@ -122,70 +121,58 @@
 </script>
 
 <template>
-  <Card class="Main h-full overflow-y-auto bg-surface-950! border-2 border-surface-800">
-    <template #content>
-      <div class="flex flex-col gap-2 h-full overflow-y-auto">
-        <div class="flex justify-between gap-2">
-          <span class="flex items-center gap-1 text-sm text-left">
-            Categoria:
-            <Badge>{{ currentCard?.category }}</Badge>
-          </span>
-          <span class="flex items-center gap-1 text-sm text-left">
-            Dicas:
-            <Badge>{{ revealedTips.length }}/{{ currentTips.length }}</Badge>
-          </span>
-        </div>
-        <div class="flex flex-col justify-between h-full max-h-full overflow-y-auto">
-          <div class="grid grid-cols-1 gap-2 p-2 max-h-full overflow-y-auto">
-            <TransitionGroup>
-              <RevealedTip
-                v-for="tip in revealedTips"
-                :key="tip.text"
-                :text="tip.text"
-                :number="tip.number"
-              />
-            </TransitionGroup>
-          </div>
-          <Transition>
-            <div v-if="!isDisabledSendAnswer" class="flex gap-2">
-              <InputGroup>
-                <InputText
-                  class="w-full"
-                  placeholder="Digite seu palpite..."
-                  v-model="answer"
-                  @keydown.prevent.enter="handleSendAnswer"
-                />
-                <InputGroupAddon>
-                  <Button
-                    icon="pi pi-send"
-                    severity="secondary"
-                    :disabled="!answer.length"
-                    @click="handleSendAnswer"
-                  />
-                </InputGroupAddon>
-              </InputGroup>
-            </div>
-          </Transition>
-        </div>
-        <TipSelectionDialog
-          :isVisible="showTipSelectionDialog"
-          @selectTip="handleCardClick"
-        />
-        <ResponseDialog
-          :isVisible="showResponseDialog"
-          :isCorrect="isCorrectAnswer"
-          :response="submittedAnswer"
-        />
-        <WinnerDialog :isVisible="showWinnerDialog" />
+  <div class="flex flex-col gap-2 h-full overflow-y-auto">
+    <div class="flex justify-between gap-2">
+      <span class="flex items-center gap-1 text-sm text-left">
+        Categoria:
+        <Badge>{{ currentCard?.category }}</Badge>
+      </span>
+      <span class="flex items-center gap-1 text-sm text-left">
+        Dicas:
+        <Badge>{{ revealedTips.length }}/{{ currentTips.length }}</Badge>
+      </span>
+    </div>
+    <div class="flex flex-col justify-between h-full max-h-full overflow-y-auto">
+      <div class="grid grid-cols-1 gap-2 p-2 max-h-full overflow-y-auto">
+        <TransitionGroup>
+          <RevealedTip
+            v-for="tip in revealedTips"
+            :key="tip.text"
+            :text="tip.text"
+            :number="tip.number"
+          />
+        </TransitionGroup>
       </div>
-    </template>
-  </Card>
+      <Transition>
+        <div v-if="!isDisabledSendAnswer" class="flex gap-2">
+          <InputGroup>
+            <InputText
+              class="w-full"
+              placeholder="Digite seu palpite..."
+              v-model="answer"
+              @keydown.prevent.enter="handleSendAnswer"
+            />
+            <InputGroupAddon>
+              <Button
+                icon="pi pi-send"
+                severity="secondary"
+                :disabled="!answer.length"
+                @click="handleSendAnswer"
+              />
+            </InputGroupAddon>
+          </InputGroup>
+        </div>
+      </Transition>
+    </div>
+    <TipSelectionDialog
+      :isVisible="showTipSelectionDialog"
+      @selectTip="handleCardClick"
+    />
+    <ResponseDialog
+      :isVisible="showResponseDialog"
+      :isCorrect="isCorrectAnswer"
+      :response="submittedAnswer"
+    />
+    <WinnerDialog :isVisible="showWinnerDialog" />
+  </div>
 </template>
-
-<style scoped>
-  .Main:deep(> .p-card-body),
-  .Main:deep(> .p-card-body > .p-card-content) {
-    height: 100%;
-    overflow-y: auto;
-  }
-</style>

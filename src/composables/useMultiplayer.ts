@@ -3,7 +3,7 @@ import { useRoute } from 'vue-router';
 import { db, ref as dbRef, set, update, remove } from '../firebase';
 import { usePlayersStore } from '../stores/playersStore';
 import { usePlayerStore } from '../stores/playerStore';
-import { useRoundStore, GamePhase } from '../stores/roundStore';
+import { useRoundStore, GamePhase, DEFAULT_ROUND_STATE } from '../stores/roundStore';
 import { CARDS } from '../constants/cards';
 
 export interface MultiplayerPlayer {
@@ -27,6 +27,15 @@ export const useMultiplayer = () => {
   const roundStateRef = dbRef(db, `rooms/${roomId.value}/roundState`);
   const myPlayerRef = dbRef(db, `rooms/${roomId.value}/players/${clientId}`);
 
+  const getRandomCardId = () => {
+    return CARDS[Math.floor(Math.random() * CARDS.length)].id;
+  };
+
+  const getNextPlayerId = () => {
+    const activePlayerIndex = playersStore.players.findIndex(player => player.id === roundStore.state.activePlayerId);
+    return activePlayerIndex === playersStore.players.length - 1 ? playersStore.players[0].id : playersStore.players[activePlayerIndex + 1].id;
+  };
+
   const joinGame = (name: string) => {
     if (!name.trim()) return;
 
@@ -41,29 +50,20 @@ export const useMultiplayer = () => {
     playerStore.setPlayer(myPlayer.id, myPlayer.name);
 
     if (!roundStore.state.activePlayerId) {
-      setActivePlayer(clientId);
+      update(roundStateRef, {
+        activePlayerId: clientId,
+        updatedAt: Date.now(),
+      });
     }
+  };
 
-    if (!roundStore.state.cardId) {
-      setRandomCard();
-    }
-  }
-
-  const setRandomCard = () => {
-    const cardId = CARDS[Math.floor(Math.random() * CARDS.length)].id;
-
+  const startGame = () => {
     update(roundStateRef, {
-      cardId,
+      cardId: getRandomCardId(),
+      gamePhase: GamePhase.SelectingTip,
       updatedAt: Date.now(),
     });
-  }
-
-  const setActivePlayer = (playerId: string) => {
-    update(roundStateRef, {
-      activePlayerId: playerId,
-      updatedAt: Date.now(),
-    });
-  }
+  };
 
   const selectTip = (tipId: number) => {
     const openedTips = Array.isArray(roundStore.state.openedTipsIds) ? roundStore.state.openedTipsIds : [];
@@ -73,7 +73,7 @@ export const useMultiplayer = () => {
       openedTipsIds: openedTips,
       updatedAt: Date.now(),
     });
-  }
+  };
 
   const submitAnswer = (answer: string, answeredBy: string, isCorrect: boolean, pointsAwarded = 0) => {
     update(roundStateRef, {
@@ -84,32 +84,7 @@ export const useMultiplayer = () => {
       pointsAwarded,
       updatedAt: Date.now(),
     });
-  }
-
-  const setNextActivePlayer = () => {
-    const activePlayerIndex = playersStore.players.findIndex(player => player.id === roundStore.state.activePlayerId);
-    update(roundStateRef, {
-      gamePhase: GamePhase.SelectingTip,
-      activePlayerId: activePlayerIndex === playersStore.players.length - 1 ? playersStore.players[0].id : playersStore.players[activePlayerIndex + 1].id,
-      updatedAt: Date.now(),
-    });
-  }
-
-  const resetRound = () => {
-    const cardId = CARDS[Math.floor(Math.random() * CARDS.length)].id;
-    const activePlayerIndex = playersStore.players.findIndex(player => player.id === roundStore.state.activePlayerId);
-    update(roundStateRef, {
-      cardId,
-      gamePhase: GamePhase.SelectingTip,
-      openedTipsIds: [],
-      submittedAnswer: '',
-      answeredBy: null,
-      isAnswerCorrect: null,
-      pointsAwarded: 0,
-      activePlayerId: activePlayerIndex === playersStore.players.length - 1 ? playersStore.players[0].id : playersStore.players[activePlayerIndex + 1].id,
-      updatedAt: Date.now(),
-    });
-  }
+  };
 
   const addPointsToPlayer = (playerId: string, points: number) => {
     const currentPoints = playersStore.players.find(player => player.id === playerId)?.points ?? 0;
@@ -118,9 +93,33 @@ export const useMultiplayer = () => {
     update(targetPlayerRef, {
       points: currentPoints + points
     });
-  }
+  };
 
-  const resetPlayersPoints = () => {
+  const setNextPlayer = () => {
+    update(roundStateRef, {
+      gamePhase: GamePhase.SelectingTip,
+      activePlayerId: getNextPlayerId(),
+      updatedAt: Date.now(),
+    });
+  };
+
+  const resetRound = () => {
+    update(roundStateRef, {
+      ...DEFAULT_ROUND_STATE,
+      cardId: getRandomCardId(),
+      gamePhase: GamePhase.SelectingTip,
+      activePlayerId: getNextPlayerId(),
+      updatedAt: Date.now(),
+    });
+  };
+
+  const setWinner = () => {
+    update(roundStateRef, {
+      gamePhase: GamePhase.Winner,
+    });
+  };
+
+  const resetGame = () => {
     const updates: Record<string, any> = {};
     playersStore.players.forEach((player) => {
       updates[`${player.id}/points`] = 0;
@@ -129,29 +128,30 @@ export const useMultiplayer = () => {
     if (Object.keys(updates).length > 0) {
       update(roomPlayersRef, updates);
     }
-  }
 
-  const setWinner = () => {
     update(roundStateRef, {
-      gamePhase: GamePhase.Winner,
+      ...DEFAULT_ROUND_STATE,
+      activePlayerId: getNextPlayerId(),
+      updatedAt: Date.now(),
     });
-  }
+  };
 
   const leaveGame = () => {
     remove(myPlayerRef);
-  }
+  };
 
   return {
     roomPlayersRef,
     roundStateRef,
     joinGame,
+    startGame,
     selectTip,
     submitAnswer,
-    setNextActivePlayer,
-    resetRound,
     addPointsToPlayer,
-    resetPlayersPoints,
+    setNextPlayer,
+    resetRound,
     setWinner,
+    resetGame,
     leaveGame,
   };
 }
