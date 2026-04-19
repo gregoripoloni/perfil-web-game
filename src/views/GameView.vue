@@ -1,12 +1,45 @@
 <script setup lang="ts">
+  import { onMounted, onUnmounted } from 'vue';
+  import { onValue, type DataSnapshot } from 'firebase/database';
   import Sidebar from '../components/Sidebar.vue';
   import Main from '../components/Main.vue';
   import PlayerDialog from '../components/PlayerDialog.vue';
+  import { useMultiplayer, type MultiplayerPlayer } from '../composables/useMultiplayer';
   import { usePlayersStore } from '../stores/playersStore';
   import { usePlayerStore } from '../stores/playerStore';
+  import { useRoundStore, DEFAULT_ROUND_STATE } from '../stores/roundStore';
+
+  const { roomPlayersRef, roundStateRef, leaveGame } = useMultiplayer();
 
   const playersStore = usePlayersStore();
   const playerStore = usePlayerStore();
+  const roundStore = useRoundStore();
+
+  onMounted(() => {
+    onValue(roomPlayersRef, (snapshot: DataSnapshot) => {
+      const playersMap = (snapshot.val() || {}) as Record<string, MultiplayerPlayer>;
+      const players = Object.values(playersMap)
+        .sort((a, b) => a.timestamp - b.timestamp)
+        .map(player => ({
+          id: player.id,
+          name: player.name,
+          points: player.points ?? 0,
+        }));
+
+      playersStore.players = players;
+    });
+
+    onValue(roundStateRef, (snapshot: DataSnapshot) => {
+      roundStore.setState(snapshot.val() || { ...DEFAULT_ROUND_STATE });
+    });
+  });
+
+  onUnmounted(async () => {
+    await leaveGame();
+    playerStore.$reset();
+    playersStore.$reset();
+    roundStore.$reset();
+  });
 </script>
 
 <template>

@@ -1,13 +1,12 @@
-import { computed, onMounted, onUnmounted } from 'vue';
-import type { DataSnapshot } from 'firebase/database';
+import { computed } from 'vue';
 import { useRoute } from 'vue-router';
-import { db, ref as dbRef, onValue, set, update, remove } from '../firebase';
+import { db, ref as dbRef, set, update, remove } from '../firebase';
 import { usePlayersStore } from '../stores/playersStore';
 import { usePlayerStore } from '../stores/playerStore';
-import { useRoundStore, DEFAULT_ROUND_STATE, GamePhase } from '../stores/roundStore';
+import { useRoundStore, GamePhase } from '../stores/roundStore';
 import { CARDS } from '../constants/cards';
 
-interface MultiplayerPlayer {
+export interface MultiplayerPlayer {
   id: string;
   name: string;
   points: number;
@@ -142,33 +141,9 @@ export const useMultiplayer = () => {
     remove(myPlayerRef);
   }
 
-  onMounted(() => {
-    onValue(roomPlayersRef, (snapshot: DataSnapshot) => {
-      const playersMap = (snapshot.val() || {}) as Record<string, MultiplayerPlayer>;
-      const players = Object.values(playersMap)
-        .sort((a, b) => a.timestamp - b.timestamp)
-        .map(player => ({
-          id: player.id,
-          name: player.name,
-          points: player.points ?? 0,
-        }));
-
-      playersStore.players = players;
-    });
-
-    onValue(roundStateRef, (snapshot: DataSnapshot) => {
-      roundStore.setState(snapshot.val() || { ...DEFAULT_ROUND_STATE });
-    });
-  });
-
-  onUnmounted(() => {
-    leaveGame();
-    playerStore.$reset();
-    playersStore.$reset();
-    roundStore.$reset();
-  });
-
   return {
+    roomPlayersRef,
+    roundStateRef,
     joinGame,
     selectTip,
     submitAnswer,
@@ -177,5 +152,6 @@ export const useMultiplayer = () => {
     addPointsToPlayer,
     resetPlayersPoints,
     setWinner,
+    leaveGame,
   };
 }
