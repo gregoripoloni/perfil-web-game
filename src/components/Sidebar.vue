@@ -1,6 +1,13 @@
 <script setup lang="ts">
-  import { Button, InputGroup, InputText, InputGroupAddon } from 'primevue';
+  import { ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
+  import {
+    Button,
+    InputGroup,
+    InputText,
+    InputGroupAddon,
+    Tooltip as vTooltip,
+  } from 'primevue';
   import Player from './Player.vue';
   import { usePlayerStore } from '../stores/playerStore';
   import { usePlayersStore } from '../stores/playersStore';
@@ -14,9 +21,15 @@
   const playersStore = usePlayersStore();
   const playerStore = usePlayerStore();
 
+  const isCodeCopied = ref(false);
+
   const handleCopy = () => {
     if (route.params.id) {
       navigator.clipboard.writeText(String(route.params.id));
+      isCodeCopied.value = true;
+      setTimeout(() => {
+        isCodeCopied.value = false;
+      }, 3000);
     }
   };
 </script>
@@ -40,6 +53,7 @@
           type="button"
           severity="secondary"
           class="shrink-0 -scale-100"
+          v-tooltip.top="'Sair do jogo'"
           @click="router.back()"
         />
         <InputGroup>
@@ -48,11 +62,24 @@
             disabled
             :value="route.params.id"
           />
-          <InputGroupAddon>
+          <InputGroupAddon
+            v-if="!isCodeCopied"
+            v-tooltip.top="'Copiar código'"
+          >
             <Button
               icon="pi pi-copy"
               severity="secondary"
               @click="handleCopy"
+            />
+          </InputGroupAddon>
+          <InputGroupAddon
+            v-else
+            v-tooltip.top="'Copiado!'"
+          >
+            <Button
+              icon="pi pi-check"
+              severity="secondary"
+              disabled
             />
           </InputGroupAddon>
         </InputGroup>
