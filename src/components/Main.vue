@@ -134,7 +134,7 @@
     </div>
     <div class="flex flex-col justify-between h-full max-h-full overflow-y-auto">
       <div class="grid grid-cols-1 gap-2 p-2 max-h-full overflow-y-auto">
-        <TransitionGroup>
+        <TransitionGroup name="list">
           <RevealedTip
             v-for="tip in revealedTips"
             :key="tip.text"
