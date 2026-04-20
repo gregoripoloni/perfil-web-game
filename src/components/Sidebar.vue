@@ -21,14 +21,15 @@
   const playersStore = usePlayersStore();
   const playerStore = usePlayerStore();
 
-  const isCodeCopied = ref(false);
+  const currentUrl = ref(window.location.href.replace('http://', '').replace('https://', ''));
+  const isUrlCopied = ref(false);
 
   const handleCopy = () => {
     if (route.params.id) {
-      navigator.clipboard.writeText(String(route.params.id));
-      isCodeCopied.value = true;
+      navigator.clipboard.writeText(currentUrl.value);
+      isUrlCopied.value = true;
       setTimeout(() => {
-        isCodeCopied.value = false;
+        isUrlCopied.value = false;
       }, 3000);
     }
   };
@@ -60,11 +61,11 @@
           <InputText
             class="w-full"
             disabled
-            :value="route.params.id"
+            :value="currentUrl"
           />
           <InputGroupAddon
-            v-if="!isCodeCopied"
-            v-tooltip.top="'Copiar código'"
+            v-if="!isUrlCopied"
+            v-tooltip.top="'Copiar URL'"
           >
             <Button
               icon="pi pi-copy"
