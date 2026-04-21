@@ -58,15 +58,17 @@
 <template>
   <div class="flex flex-col justify-between gap-2 px-5 py-3">
     <div class="flex flex-nowrap gap-2 py-2 overflow-x-auto lg:flex-col">
-      <Player
-        v-for="player in playersStore.players"
-        :key="player.id"
-        :name="player.name"
-        :points="player.points"
-        :isActive="player.id === activePlayer?.id"
-        :isCurrentPlayer="player.id === playerStore.player?.id"
-        class="w-20 shrink-0 lg:w-full"
-      />
+      <TransitionGroup name="list">
+        <Player
+          v-for="player in playersStore.players"
+          :key="player.id"
+          :name="player.name"
+          :points="player.points"
+          :isActive="player.id === activePlayer?.id"
+          :isCurrentPlayer="player.id === playerStore.player?.id"
+          class="w-20 shrink-0 lg:w-full"
+        />
+      </TransitionGroup>
     </div>
     <div class="flex gap-2">
       <Button

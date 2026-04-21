@@ -86,11 +86,11 @@ export const useMultiplayer = () => {
     });
   };
 
-  const addPointsToPlayer = (playerId: string, points: number) => {
+  const addPointsToPlayer = async (playerId: string, points: number) => {
     const currentPoints = playersStore.players.find(player => player.id === playerId)?.points ?? 0;
     const targetPlayerRef = dbRef(db, `rooms/${roomId.value}/players/${playerId}`);
 
-    update(targetPlayerRef, {
+    await update(targetPlayerRef, {
       points: currentPoints + points
     });
   };
@@ -136,14 +136,14 @@ export const useMultiplayer = () => {
     });
   };
 
-  const leaveGame = () => {
+  const leaveGame = async () => {
     if (roundStore.state.activePlayerId === playerStore.player?.id) {
-      update(roundStateRef, {
+      await update(roundStateRef, {
         activePlayerId: getNextPlayerId(),
         updatedAt: Date.now(),
       });
     }
-    remove(myPlayerRef);
+    await remove(myPlayerRef);
   };
 
   return {
