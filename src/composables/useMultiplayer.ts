@@ -137,6 +137,12 @@ export const useMultiplayer = () => {
   };
 
   const leaveGame = () => {
+    if (roundStore.state.activePlayerId === playerStore.player?.id) {
+      update(roundStateRef, {
+        activePlayerId: getNextPlayerId(),
+        updatedAt: Date.now(),
+      });
+    }
     remove(myPlayerRef);
   };
 

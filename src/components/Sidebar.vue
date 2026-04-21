@@ -7,6 +7,8 @@
     InputText,
     InputGroupAddon,
     Tooltip as vTooltip,
+    ConfirmDialog,
+    useConfirm,
   } from 'primevue';
   import Player from './Player.vue';
   import { usePlayerStore } from '../stores/playerStore';
@@ -16,22 +18,41 @@
   const route = useRoute();
   const router = useRouter();
 
+  const confirm = useConfirm();
+
   const { activePlayer } = useGame();
 
   const playersStore = usePlayersStore();
   const playerStore = usePlayerStore();
 
-  const currentUrl = ref(window.location.href.replace('http://', '').replace('https://', ''));
   const isUrlCopied = ref(false);
 
   const handleCopy = () => {
     if (route.params.id) {
-      navigator.clipboard.writeText(currentUrl.value);
+      navigator.clipboard.writeText(window.location.href.replace('http://', '').replace('https://', ''));
       isUrlCopied.value = true;
       setTimeout(() => {
         isUrlCopied.value = false;
       }, 3000);
     }
+  };
+
+  const handleLeaveGame = () => {
+    confirm.require({
+      message: 'Tem certeza que deseja sair do jogo?',
+      header: 'Atenção',
+      icon: 'pi pi-info-circle',
+      acceptProps: {
+        label: 'Sair'
+      },
+      rejectProps: {
+        label: 'Cancelar',
+        severity: 'secondary',
+      },
+      accept() {
+        router.push('/');
+      },
+    });
   };
 </script>
 
@@ -55,13 +76,13 @@
           severity="secondary"
           class="shrink-0 -scale-100"
           v-tooltip.top="'Sair do jogo'"
-          @click="router.back()"
+          @click="handleLeaveGame"
         />
         <InputGroup>
           <InputText
             class="w-full"
             disabled
-            :value="currentUrl"
+            :value="route.params.id"
           />
           <InputGroupAddon
             v-if="!isUrlCopied"
@@ -85,5 +106,6 @@
           </InputGroupAddon>
         </InputGroup>
       </div>
+      <ConfirmDialog />
   </div>
 </template>
