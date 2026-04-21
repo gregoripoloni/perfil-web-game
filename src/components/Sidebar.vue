@@ -7,7 +7,6 @@
     InputText,
     InputGroupAddon,
     Tooltip as vTooltip,
-    ConfirmDialog,
     useConfirm,
   } from 'primevue';
   import Player from './Player.vue';
@@ -58,54 +57,53 @@
 
 <template>
   <div class="flex flex-col justify-between gap-2 px-5 py-3">
-      <div class="flex flex-nowrap gap-2 py-2 overflow-x-auto lg:flex-col">
-        <Player
-          v-for="player in playersStore.players"
-          :key="player.id"
-          :name="player.name"
-          :points="player.points"
-          :isActive="player.id === activePlayer?.id"
-          :isCurrentPlayer="player.id === playerStore.player?.id"
-          class="w-20 shrink-0 lg:w-full"
+    <div class="flex flex-nowrap gap-2 py-2 overflow-x-auto lg:flex-col">
+      <Player
+        v-for="player in playersStore.players"
+        :key="player.id"
+        :name="player.name"
+        :points="player.points"
+        :isActive="player.id === activePlayer?.id"
+        :isCurrentPlayer="player.id === playerStore.player?.id"
+        class="w-20 shrink-0 lg:w-full"
+      />
+    </div>
+    <div class="flex gap-2">
+      <Button
+        icon="pi pi-sign-out"
+        type="button"
+        severity="secondary"
+        class="shrink-0 -scale-100"
+        v-tooltip.top="'Sair do jogo'"
+        @click="handleLeaveGame"
+      />
+      <InputGroup>
+        <InputText
+          class="w-full"
+          disabled
+          :value="route.params.id"
         />
-      </div>
-      <div class="flex gap-2">
-        <Button
-          icon="pi pi-sign-out"
-          type="button"
-          severity="secondary"
-          class="shrink-0 -scale-100"
-          v-tooltip.top="'Sair do jogo'"
-          @click="handleLeaveGame"
-        />
-        <InputGroup>
-          <InputText
-            class="w-full"
-            disabled
-            :value="route.params.id"
+        <InputGroupAddon
+          v-if="!isUrlCopied"
+          v-tooltip.top="'Copiar URL'"
+        >
+          <Button
+            icon="pi pi-copy"
+            severity="secondary"
+            @click="handleCopy"
           />
-          <InputGroupAddon
-            v-if="!isUrlCopied"
-            v-tooltip.top="'Copiar URL'"
-          >
-            <Button
-              icon="pi pi-copy"
-              severity="secondary"
-              @click="handleCopy"
-            />
-          </InputGroupAddon>
-          <InputGroupAddon
-            v-else
-            v-tooltip.top="'Copiado!'"
-          >
-            <Button
-              icon="pi pi-check"
-              severity="secondary"
-              disabled
-            />
-          </InputGroupAddon>
-        </InputGroup>
-      </div>
-      <ConfirmDialog />
+        </InputGroupAddon>
+        <InputGroupAddon
+          v-else
+          v-tooltip.top="'Copiado!'"
+        >
+          <Button
+            icon="pi pi-check"
+            severity="secondary"
+            disabled
+          />
+        </InputGroupAddon>
+      </InputGroup>
+    </div>
   </div>
 </template>

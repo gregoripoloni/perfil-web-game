@@ -1,7 +1,8 @@
 <script setup lang="ts">
   import { ref } from 'vue';
   import { useRouter } from 'vue-router';
-  import Card from '../components/Card.vue';
+  import { Card } from 'primevue';
+  import SelectCard from '../components/Card.vue';
   import RoomDialog from '../components/RoomDialog.vue';
 
   const router = useRouter();
@@ -21,10 +22,24 @@
 </script>
 
 <template>
-  <div class="flex flex-col h-full p-2 gap-2 justify-center">
-    <h1 class="text-6xl font-bold text-center mb-10 text-shadow-sm text-shadow-primary-400">Perfil Web Game</h1>
-    <Card text="Nova sala" @click="handleJoinRoom(generateRoomId())" />
-    <Card text="Entrar em uma sala" @click="isRoomDialogVisible = true;" />
-    <RoomDialog v-model:visible="isRoomDialogVisible" @join-room="handleJoinRoom" />
+  <div class="h-full p-2">
+    <Card class="Start h-full col-span-3 overflow-y-auto bg-surface-950! border-2 border-surface-800">
+      <template #content>
+        <div class="flex flex-col h-full p-2 gap-2 justify-center">
+          <h1 class="text-6xl font-bold text-center mb-10 text-shadow-sm text-shadow-primary-400">Perfil Web Game</h1>
+          <SelectCard text="Nova sala" @click="handleJoinRoom(generateRoomId())" />
+          <SelectCard text="Entrar em uma sala" @click="isRoomDialogVisible = true;" />
+          <RoomDialog v-model:visible="isRoomDialogVisible" @join-room="handleJoinRoom" />
+        </div>
+      </template>
+    </Card>
   </div>
 </template>
+
+<style scoped>
+  .Start:deep(> .p-card-body),
+  .Start:deep(> .p-card-body > .p-card-content) {
+    height: 100%;
+    overflow-y: auto;
+  }
+</style>

@@ -1,6 +1,14 @@
 <script setup lang="ts">
   import { ref, watch } from 'vue';
-  import { InputText, InputGroup, InputGroupAddon, Button, Badge } from 'primevue';
+  import {
+    InputText,
+    InputGroup,
+    InputGroupAddon,
+    Button,
+    Badge,
+    Tooltip as vTooltip,
+    useConfirm,
+  } from 'primevue';
   import RevealedTip from './RevealedTip.vue';
   import TipSelectionDialog from './TipSelectionDialog.vue';
   import ResponseDialog from './ResponseDialog.vue';
@@ -35,6 +43,8 @@
     setWinner,
     resetGame,
   } = useMultiplayer();
+
+  const confirm = useConfirm();
 
   const answer = ref('');
   const showTipSelectionDialog = ref(false);
@@ -86,6 +96,28 @@
     }
 
     setTimeout(setNextPlayer, 3000);
+  };
+
+  const handleSkipTurn = () => {
+    if (!isActivePlayer.value) {
+      return;
+    }
+
+    confirm.require({
+      message: 'Tem certeza que deseja passar a vez?',
+      header: 'Atenção',
+      icon: 'pi pi-info-circle',
+      acceptProps: {
+        label: 'Passar a vez'
+      },
+      rejectProps: {
+        label: 'Cancelar',
+        severity: 'secondary',
+      },
+      accept() {
+        setNextPlayer();
+      },
+    });
   };
 
   watch(
@@ -152,7 +184,7 @@
               v-model="answer"
               @keydown.prevent.enter="handleSendAnswer"
             />
-            <InputGroupAddon>
+            <InputGroupAddon v-tooltip.top="'Enviar palpite'">
               <Button
                 icon="pi pi-send"
                 severity="secondary"
@@ -161,6 +193,13 @@
               />
             </InputGroupAddon>
           </InputGroup>
+          <Button
+            icon="pi pi-angle-double-right"
+            severity="secondary"
+            class="shrink-0"
+            v-tooltip.top="'Passar a vez'"
+            @click="handleSkipTurn"
+          />
         </div>
       </Transition>
     </div>
