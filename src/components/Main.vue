@@ -9,19 +9,29 @@
   import { useGame } from '../composables/useGame';
   import { useMultiplayer } from '../composables/useMultiplayer';
   import { GamePhase } from '../stores/roundStore';
+  import { POINTS_TO_WIN } from '../constants/rules';
 
   const {
     currentCard,
     currentTips,
     revealedTips,
     gamePhase,
+    activePlayer,
     isActivePlayer,
     isDisabledSendAnswer,
     submittedAnswer,
-    isCorrectAnswer
+    isCorrectAnswer,
+    pointsAwarded,
   } = useGame();
 
-  const { selectTip } = useMultiplayer();
+  const {
+    selectTip,
+    setNextPlayer,
+    addPointsToPlayer,
+    resetRound,
+    setWinner,
+    resetGame
+  } = useMultiplayer();
 
   const answer = ref('');
   const showTipSelectionDialog = ref(false);
@@ -37,6 +47,31 @@
     showTipSelectionDialog.value = false;
   };
 
+  const onEndResultPhase = async (isCurrentPlayerActive: boolean) => {
+    showResponseDialog.value = false;
+
+    if (isCurrentPlayerActive && isCorrectAnswer.value) {
+      await addPointsToPlayer(activePlayer.value?.id ?? '', pointsAwarded.value);
+      const currentPlayerPoints = activePlayer.value?.points ?? 0;
+
+      if (currentPlayerPoints >= POINTS_TO_WIN) {
+        setWinner();
+      } else {
+        resetRound();
+      }
+    } else if (isCurrentPlayerActive) {
+      setNextPlayer();
+    }
+  };
+
+  const onEndWinnerPhase = (isCurrentPlayerActive: boolean) => {
+    showWinnerDialog.value = false;
+
+    if (isCurrentPlayerActive) {
+      resetGame();
+    }
+  };
+
   const gamePhaseWatchers: Partial<Record<GamePhase, () => void>> = {
     [GamePhase.SelectingTip]: () => {
       if (isActivePlayer.value) {
@@ -46,17 +81,13 @@
     [GamePhase.Result]: () => {
       answer.value = '';
       showResponseDialog.value = true;
-
-      setTimeout(() => {
-        showResponseDialog.value = false;
-      }, 3000);
+      const isCurrentPlayerActive = isActivePlayer.value;
+      setTimeout(() => onEndResultPhase(isCurrentPlayerActive), 3000);
     },
     [GamePhase.Winner]: () => {
       showWinnerDialog.value = true;
-
-      setTimeout(() => {
-        showWinnerDialog.value = false;
-      }, 3000);
+      const isCurrentPlayerActive = isActivePlayer.value;
+      setTimeout(() => onEndWinnerPhase(isCurrentPlayerActive), 5000);
     },
   };
 

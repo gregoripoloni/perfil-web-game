@@ -2,18 +2,15 @@
   import { ref } from 'vue';
   import { InputGroup, InputGroupAddon, InputText, Button, Tooltip as vTooltip, useConfirm } from 'primevue';
   import { usePlayerStore } from '../stores/playerStore';
-  import { usePlayersStore } from '../stores/playersStore';
   import { useGame } from '../composables/useGame';
   import { useMultiplayer } from '../composables/useMultiplayer';
-  import { POINTS_TO_WIN } from '../constants/rules';
 
   const confirm = useConfirm();
 
   const playerStore = usePlayerStore();
-  const playersStore = usePlayersStore();
 
   const { currentCard, isActivePlayer, currentTips, revealedTips } = useGame();
-  const { submitAnswer, setNextPlayer, resetRound, setWinner, resetGame, addPointsToPlayer } = useMultiplayer();
+  const { submitAnswer, setNextPlayer } = useMultiplayer();
 
   const answer = ref('');
 
@@ -33,24 +30,6 @@
     const pointsAwarded = isCorrect ? currentTips.value.length - revealedTips.value.length : 0;
 
     submitAnswer(answer.value, playerStore.player.name, isCorrect, pointsAwarded);
-
-    if (isCorrect) {
-      await addPointsToPlayer(playerStore.player.id, pointsAwarded);
-      const currentPlayerPoints = playersStore.players.find(player => player.id === playerStore.player?.id)?.points ?? 0;
-
-      if (currentPlayerPoints >= POINTS_TO_WIN) {
-        setTimeout(() => {
-          setWinner();
-          setTimeout(resetGame, 3000);
-        }, 3000);
-        return;
-      }
-
-      setTimeout(resetRound, 3000);
-      return;
-    }
-
-    setTimeout(setNextPlayer, 3000);
   };
 
   const handleSkipTurn = () => {
