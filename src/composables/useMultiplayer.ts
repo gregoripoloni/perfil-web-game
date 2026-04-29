@@ -1,6 +1,6 @@
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
-import { db, ref as dbRef, set, update, remove } from '../firebase';
+import { auth, db, ensureAnonymousUser, ref as dbRef, set, update, remove } from '../firebase';
 import { usePlayersStore } from '../stores/playersStore';
 import { usePlayerStore } from '../stores/playerStore';
 import { useRoundStore, GamePhase, DEFAULT_ROUND_STATE } from '../stores/roundStore';
@@ -13,8 +13,6 @@ export interface MultiplayerPlayer {
   timestamp: number;
 }
 
-const clientId = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`;
-
 export const useMultiplayer = () => {
   const route = useRoute();
   const roomId = computed(() => route.params.id);
@@ -25,7 +23,6 @@ export const useMultiplayer = () => {
 
   const roomPlayersRef = dbRef(db, `rooms/${roomId.value}/players`);
   const roundStateRef = dbRef(db, `rooms/${roomId.value}/roundState`);
-  const myPlayerRef = dbRef(db, `rooms/${roomId.value}/players/${clientId}`);
 
   const getRandomCardId = () => {
     return CARDS[Math.floor(Math.random() * CARDS.length)].id;
@@ -36,22 +33,25 @@ export const useMultiplayer = () => {
     return activePlayerIndex === playersStore.players.length - 1 ? playersStore.players[0].id : playersStore.players[activePlayerIndex + 1].id;
   };
 
-  const joinGame = (name: string) => {
+  const joinGame = async (name: string) => {
     if (!name.trim()) return;
 
+    const { uid } = await ensureAnonymousUser();
+    const myPlayerRef = dbRef(db, `rooms/${roomId.value}/players/${uid}`);
+
     const myPlayer: MultiplayerPlayer = {
-      id: clientId,
+      id: uid,
       name: name.trim(),
       points: 0,
       timestamp: Date.now(),
     };
 
-    set(myPlayerRef, myPlayer);
+    await set(myPlayerRef, myPlayer);
     playerStore.setPlayer(myPlayer.id, myPlayer.name);
 
     if (!roundStore.state.activePlayerId) {
-      update(roundStateRef, {
-        activePlayerId: clientId,
+      await update(roundStateRef, {
+        activePlayerId: uid,
         updatedAt: Date.now(),
       });
     }
@@ -137,6 +137,11 @@ export const useMultiplayer = () => {
   };
 
   const leaveGame = async () => {
+    const uid = auth.currentUser?.uid;
+    if (!uid) return;
+
+    const myPlayerRef = dbRef(db, `rooms/${roomId.value}/players/${uid}`);
+
     if (roundStore.state.activePlayerId === playerStore.player?.id) {
       await update(roundStateRef, {
         activePlayerId: getNextPlayerId(),

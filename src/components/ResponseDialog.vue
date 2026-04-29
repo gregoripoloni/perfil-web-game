@@ -12,7 +12,7 @@
 </script>
 
 <template>
-  <Dialog :visible="isVisible" modal :header="`Palpite de ${answeredBy}`" :closable="false" :style="{ width: '25rem', maxWidth: '90%' }">
+  <Dialog :visible="isVisible" modal :header="`Palpite de ${answeredBy}`" :closable="false" :style="{ width: '25rem' }">
     <div class="flex flex-col gap-8 pt-8">
       <h1 class="text-center text-4xl font-bold">{{ response }}</h1>
       <Message :severity="isCorrect ? 'success' : 'error'">

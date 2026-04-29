@@ -1,4 +1,5 @@
 import { initializeApp } from 'firebase/app';
+import { getAuth, signInAnonymously, type User } from 'firebase/auth';
 import { getDatabase, ref, onValue, set, update, remove } from 'firebase/database';
 
 const firebaseConfig = {
@@ -11,6 +12,15 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 const db = getDatabase(app);
 
-export { db, ref, onValue, set, update, remove };
+export async function ensureAnonymousUser(): Promise<User> {
+  if (auth.currentUser) {
+    return auth.currentUser;
+  }
+  const { user } = await signInAnonymously(auth);
+  return user;
+}
+
+export { app, auth, db, ref, onValue, set, update, remove };

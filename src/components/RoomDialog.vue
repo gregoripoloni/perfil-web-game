@@ -25,7 +25,7 @@
 </script>
 
 <template>
-  <Dialog v-model:visible="visible" modal header="Código da sala" :style="{ width: '25rem', maxWidth: '90%' }">
+  <Dialog v-model:visible="visible" modal header="Código da sala" :style="{ width: '25rem' }">
     <div class="flex flex-col gap-4">
       <InputText
         class="flex-auto"

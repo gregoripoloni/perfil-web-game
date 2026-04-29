@@ -11,7 +11,7 @@
 </script>
 
 <template>
-  <Dialog :visible="isVisible" modal header="Vencedor(a):" :closable="false" :style="{ width: '25rem', maxWidth: '90%' }">
+  <Dialog :visible="isVisible" modal header="Vencedor(a):" :closable="false" :style="{ width: '25rem' }">
     <div class="flex flex-col gap-8 pt-8">
       <h1 class="text-center text-4xl font-bold">{{ answeredBy }}</h1>
       <Message severity="success">

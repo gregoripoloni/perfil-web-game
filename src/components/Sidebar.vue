@@ -56,8 +56,8 @@
 </script>
 
 <template>
-  <div class="flex flex-col justify-between gap-2 px-5 py-3">
-    <div class="flex flex-nowrap gap-2 py-2 overflow-x-auto lg:flex-col">
+  <div class="flex flex-col-reverse justify-between gap-5 p-5 pb-3 lg:flex-col lg:pb-5">
+    <div class="flex flex-nowrap gap-2 pb-2 overflow-x-auto lg:flex-col">
       <TransitionGroup name="list">
         <Player
           v-for="player in playersStore.players"

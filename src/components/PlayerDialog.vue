@@ -10,20 +10,20 @@
   const visible = ref(true);
   const username = ref('');
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (username.value.trim() === '') {
       return;
     }
 
     const name = username.value.trim().toLowerCase();
-    joinGame(name);
+    await joinGame(name);
 
     visible.value = false;
   };
 </script>
 
 <template>
-  <Dialog v-model:visible="visible" modal header="Nome" :closable="false" :style="{ width: '25rem', maxWidth: '90%' }">
+  <Dialog v-model:visible="visible" modal header="Nome" :closable="false" :style="{ width: '25rem' }">
     <div class="flex flex-col gap-4">
       <InputText
         class="flex-auto"
