@@ -3,6 +3,8 @@
 </script>
 
 <template>
-  <RouterView />
+  <Transition>
+    <RouterView />
+  </Transition>
   <ConfirmDialog />
 </template>

@@ -45,18 +45,20 @@
 </script>
 
 <template>
-  <div
-    v-if="playerStore.player && playersStore.players.length > 0"
-    class="flex flex-col h-full lg:grid lg:grid-cols-4 p-2"
-  >
-    <Sidebar class="col-span-1" />
-    <Card class="Game h-full col-span-3 overflow-y-auto bg-surface-950! border-2 border-surface-800">
-      <template #content>
-        <WaitingPlayers v-if="roundStore.state.gamePhase === GamePhase.WaitingForPlayers" class="col-span-3" />
-        <Main v-else class="col-span-3" />
-      </template>
-    </Card>
-  </div>
+  <Transition>
+    <div
+      v-if="playerStore.player && playersStore.players.length > 0"
+      class="flex flex-col h-full lg:grid lg:grid-cols-4 p-2"
+    >
+      <Sidebar class="col-span-1" />
+      <Card class="Game h-full col-span-3 overflow-y-auto bg-surface-950! border-2 border-surface-800">
+        <template #content>
+          <WaitingPlayers v-if="roundStore.state.gamePhase === GamePhase.WaitingForPlayers" class="col-span-3" />
+          <Main v-else class="col-span-3" />
+        </template>
+      </Card>
+    </div>
+  </Transition>
   <PlayerDialog />
 </template>
 

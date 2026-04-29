@@ -9,8 +9,10 @@
 
   const visible = ref(true);
   const username = ref('');
+  const loading = ref(false);
 
   const handleSave = async () => {
+    loading.value = true;
     if (username.value.trim() === '') {
       return;
     }
@@ -18,6 +20,7 @@
     const name = username.value.trim().toLowerCase();
     await joinGame(name);
 
+    loading.value = false;
     visible.value = false;
   };
 </script>
@@ -31,7 +34,7 @@
         placeholder="João"
         @keydown.prevent.enter="handleSave"
       />
-      <Button type="button" label="Jogar" @click="handleSave" />
+      <Button type="button" label="Jogar" :loading="loading" @click="handleSave" />
     </div>
   </Dialog>
 </template>
