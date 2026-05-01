@@ -26,7 +26,7 @@ export const DEFAULT_ROUND_STATE: RoundState = {
   openedTipsIds: [],
   gamePhase: GamePhase.WaitingForPlayers,
   activePlayerId: null,
-  submittedAnswer: "",
+  submittedAnswer: '',
   answeredBy: null,
   isAnswerCorrect: null,
   pointsAwarded: 0,
@@ -34,15 +34,15 @@ export const DEFAULT_ROUND_STATE: RoundState = {
 };
 
 export const useRoundStore = defineStore('roundState', () => {
-  const state = ref(DEFAULT_ROUND_STATE);
+  const state = ref<RoundState>({ ...DEFAULT_ROUND_STATE });
 
-  const setState = (newState: Partial<typeof state.value>) => {
-    state.value = { ...state.value, ...newState };
+  const mergeState = (partial: Partial<RoundState>) => {
+    state.value = { ...state.value, ...partial };
   };
 
   const $reset = () => {
-    state.value = DEFAULT_ROUND_STATE;
+    state.value = { ...DEFAULT_ROUND_STATE };
   };
 
-  return { state, setState, $reset };
+  return { state, mergeState, $reset };
 });

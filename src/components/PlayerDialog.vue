@@ -1,25 +1,20 @@
 <script setup lang="ts">
   import { ref } from 'vue';
-  import { Dialog } from 'primevue';
-  import { InputText } from 'primevue';
-  import { Button } from 'primevue';
-  import { useMultiplayer } from '../composables/useMultiplayer';
+  import { Dialog, InputText, Button } from 'primevue';
+  import { useGameActions } from '../composables/useGameActions';
 
-  const { joinGame } = useMultiplayer();
+  const { joinGame } = useGameActions();
 
   const visible = ref(true);
   const username = ref('');
   const loading = ref(false);
 
   const handleSave = async () => {
-    loading.value = true;
-    if (username.value.trim() === '') {
-      return;
-    }
+    if (username.value.trim() === '') return;
 
+    loading.value = true;
     const name = username.value.trim().toLowerCase();
     await joinGame(name);
-
     loading.value = false;
     visible.value = false;
   };

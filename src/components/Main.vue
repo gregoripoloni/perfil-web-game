@@ -1,5 +1,4 @@
 <script setup lang="ts">
-  import { ref, watch } from 'vue';
   import { Badge } from 'primevue';
   import RevealedTip from './RevealedTip.vue';
   import AnswerInput from './AnswerInput.vue';
@@ -7,100 +6,31 @@
   import ResponseDialog from './ResponseDialog.vue';
   import WinnerDialog from './WinnerDialog.vue';
   import { useGame } from '../composables/useGame';
-  import { useMultiplayer } from '../composables/useMultiplayer';
+  import { useGameActions } from '../composables/useGameActions';
+  import { useGameFlow } from '../composables/useGameFlow';
   import { GamePhase } from '../stores/roundStore';
-  import { POINTS_TO_WIN } from '../constants/rules';
 
   const {
     currentCard,
     currentTips,
     revealedTips,
     gamePhase,
-    activePlayer,
     isActivePlayer,
     isDisabledSendAnswer,
     submittedAnswer,
     isCorrectAnswer,
-    pointsAwarded,
   } = useGame();
 
-  const {
-    selectTip,
-    setNextPlayer,
-    addPointsToPlayer,
-    resetRound,
-    setWinner,
-    resetGame
-  } = useMultiplayer();
+  const { selectTip } = useGameActions();
 
-  const answer = ref('');
-  const showTipSelectionDialog = ref(false);
-  const showResponseDialog = ref(false);
-  const showWinnerDialog = ref(false);
+  const { showTipSelectionDialog, showResponseDialog, showWinnerDialog } = useGameFlow();
 
   const handleCardClick = (id: number) => {
-    if (!isActivePlayer.value || gamePhase.value !== GamePhase.SelectingTip) {
-      return;
-    }
+    if (!isActivePlayer.value || gamePhase.value !== GamePhase.SelectingTip) return;
 
-    selectTip(id);
+    void selectTip(id);
     showTipSelectionDialog.value = false;
   };
-
-  const onEndResultPhase = async (isCurrentPlayerActive: boolean) => {
-    showResponseDialog.value = false;
-
-    if (isCurrentPlayerActive && isCorrectAnswer.value) {
-      await addPointsToPlayer(activePlayer.value?.id ?? '', pointsAwarded.value);
-      const currentPlayerPoints = activePlayer.value?.points ?? 0;
-
-      if (currentPlayerPoints >= POINTS_TO_WIN) {
-        setWinner();
-      } else {
-        resetRound();
-      }
-    } else if (isCurrentPlayerActive) {
-      setNextPlayer();
-    }
-  };
-
-  const onEndWinnerPhase = (isCurrentPlayerActive: boolean) => {
-    showWinnerDialog.value = false;
-
-    if (isCurrentPlayerActive) {
-      resetGame();
-    }
-  };
-
-  const gamePhaseWatchers: Partial<Record<GamePhase, () => void>> = {
-    [GamePhase.SelectingTip]: () => {
-      if (isActivePlayer.value) {
-        showTipSelectionDialog.value = true;
-      }
-    },
-    [GamePhase.Result]: () => {
-      answer.value = '';
-      showResponseDialog.value = true;
-      const isCurrentPlayerActive = isActivePlayer.value;
-      setTimeout(() => onEndResultPhase(isCurrentPlayerActive), 3000);
-    },
-    [GamePhase.Winner]: () => {
-      showWinnerDialog.value = true;
-      const isCurrentPlayerActive = isActivePlayer.value;
-      setTimeout(() => onEndWinnerPhase(isCurrentPlayerActive), 5000);
-    },
-  };
-
-  watch(
-    gamePhase,
-    () => {
-      const watcher = gamePhaseWatchers[gamePhase.value];
-      if (watcher) {
-        watcher();
-      }
-    },
-    { immediate: true }
-  );
 </script>
 
 <template>
@@ -131,14 +61,14 @@
       </Transition>
     </div>
     <TipSelectionDialog
-      :isVisible="showTipSelectionDialog"
+      v-model:visible="showTipSelectionDialog"
       @selectTip="handleCardClick"
     />
     <ResponseDialog
-      :isVisible="showResponseDialog"
+      v-model:visible="showResponseDialog"
       :isCorrect="isCorrectAnswer"
       :response="submittedAnswer"
     />
-    <WinnerDialog :isVisible="showWinnerDialog" />
+    <WinnerDialog v-model:visible="showWinnerDialog" />
   </div>
 </template>

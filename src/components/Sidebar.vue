@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { ref } from 'vue';
-  import { useRoute, useRouter } from 'vue-router';
+  import { useRouter } from 'vue-router';
   import {
     Button,
     InputGroup,
@@ -13,13 +13,13 @@
   import { usePlayerStore } from '../stores/playerStore';
   import { usePlayersStore } from '../stores/playersStore';
   import { useGame } from '../composables/useGame';
+  import { useRoomId } from '../composables/useRoomId';
 
-  const route = useRoute();
   const router = useRouter();
-
   const confirm = useConfirm();
 
   const { activePlayer } = useGame();
+  const { roomId } = useRoomId();
 
   const playersStore = usePlayersStore();
   const playerStore = usePlayerStore();
@@ -27,13 +27,13 @@
   const isUrlCopied = ref(false);
 
   const handleCopy = () => {
-    if (route.params.id) {
-      navigator.clipboard.writeText(window.location.href.replace('http://', '').replace('https://', ''));
-      isUrlCopied.value = true;
-      setTimeout(() => {
-        isUrlCopied.value = false;
-      }, 3000);
-    }
+    if (!roomId.value) return;
+
+    navigator.clipboard.writeText(window.location.href.replace(/^https?:\/\//, ''));
+    isUrlCopied.value = true;
+    setTimeout(() => {
+      isUrlCopied.value = false;
+    }, 3000);
   };
 
   const handleLeaveGame = () => {
@@ -42,7 +42,7 @@
       header: 'Atenção',
       icon: 'pi pi-info-circle',
       acceptProps: {
-        label: 'Sair'
+        label: 'Sair',
       },
       rejectProps: {
         label: 'Cancelar',
@@ -83,7 +83,7 @@
         <InputText
           class="w-full"
           disabled
-          :value="route.params.id"
+          :value="roomId"
         />
         <InputGroupAddon
           v-if="!isUrlCopied"
