@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { ref } from 'vue';
   import { Dialog, InputText, Button } from 'primevue';
-  import { useGameActions } from '../composables/useGameActions';
+  import { useGameActions } from '@/composables/useGameActions';
 
   const { joinGame } = useGameActions();
 

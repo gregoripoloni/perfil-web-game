@@ -1,9 +1,9 @@
 <script setup lang="ts">
   import { Button } from 'primevue';
-  import { useGame } from '../composables/useGame';
-  import { useGameActions } from '../composables/useGameActions';
+  import { useGameState } from '@/composables/useGameState';
+  import { useGameActions } from '@/composables/useGameActions';
 
-  const { isActivePlayer } = useGame();
+  const { isActivePlayer } = useGameState();
 
   const { startGame } = useGameActions();
 </script>

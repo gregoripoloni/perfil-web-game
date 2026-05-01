@@ -1,14 +1,14 @@
 <script setup lang="ts">
   import { Badge } from 'primevue';
-  import RevealedTip from './RevealedTip.vue';
-  import AnswerInput from './AnswerInput.vue';
-  import TipSelectionDialog from './TipSelectionDialog.vue';
-  import ResponseDialog from './ResponseDialog.vue';
-  import WinnerDialog from './WinnerDialog.vue';
-  import { useGame } from '../composables/useGame';
-  import { useGameActions } from '../composables/useGameActions';
-  import { useGameFlow } from '../composables/useGameFlow';
-  import { GamePhase } from '../stores/roundStore';
+  import RevealedTip from '@/components/game/RevealedTip.vue';
+  import AnswerInput from '@/components/game/AnswerInput.vue';
+  import TipSelectionDialog from '@/components/dialogs/TipSelectionDialog.vue';
+  import AnswerResultDialog from '@/components/dialogs/AnswerResultDialog.vue';
+  import WinnerDialog from '@/components/dialogs/WinnerDialog.vue';
+  import { useGameState } from '@/composables/useGameState';
+  import { useGameActions } from '@/composables/useGameActions';
+  import { useGameFlow } from '@/composables/useGameFlow';
+  import { GamePhase } from '@/types/round';
 
   const {
     currentCard,
@@ -19,7 +19,7 @@
     isDisabledSendAnswer,
     submittedAnswer,
     isCorrectAnswer,
-  } = useGame();
+  } = useGameState();
 
   const { selectTip } = useGameActions();
 
@@ -64,7 +64,7 @@
       v-model:visible="showTipSelectionDialog"
       @selectTip="handleCardClick"
     />
-    <ResponseDialog
+    <AnswerResultDialog
       v-model:visible="showResponseDialog"
       :isCorrect="isCorrectAnswer"
       :response="submittedAnswer"

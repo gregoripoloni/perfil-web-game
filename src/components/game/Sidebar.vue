@@ -9,16 +9,16 @@
     Tooltip as vTooltip,
     useConfirm,
   } from 'primevue';
-  import Player from './Player.vue';
-  import { usePlayerStore } from '../stores/playerStore';
-  import { usePlayersStore } from '../stores/playersStore';
-  import { useGame } from '../composables/useGame';
-  import { useRoomId } from '../composables/useRoomId';
+  import PlayerCard from './PlayerCard.vue';
+  import { usePlayerStore } from '@/stores/playerStore';
+  import { usePlayersStore } from '@/stores/playersStore';
+  import { useGameState } from '@/composables/useGameState';
+  import { useRoomId } from '@/composables/useRoomId';
 
   const router = useRouter();
   const confirm = useConfirm();
 
-  const { activePlayer } = useGame();
+  const { activePlayer } = useGameState();
   const { roomId } = useRoomId();
 
   const playersStore = usePlayersStore();
@@ -59,7 +59,7 @@
   <div class="flex flex-col-reverse justify-between gap-5 p-5 pb-3 lg:flex-col lg:pb-5">
     <div class="flex flex-nowrap gap-2 pb-2 overflow-x-auto lg:flex-col">
       <TransitionGroup name="list">
-        <Player
+        <PlayerCard
           v-for="player in playersStore.players"
           :key="player.id"
           :name="player.name"

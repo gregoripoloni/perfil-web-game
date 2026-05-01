@@ -1,8 +1,8 @@
 import { ref, watch, onScopeDispose } from 'vue';
-import { useGame } from './useGame';
-import { useGameActions } from './useGameActions';
-import { GamePhase } from '../stores/roundStore';
-import { POINTS_TO_WIN } from '../constants/rules';
+import { useGameState } from '@/composables/useGameState';
+import { useGameActions } from '@/composables/useGameActions';
+import { GamePhase } from '@/types/round';
+import { POINTS_TO_WIN } from '@/constants/rules';
 
 export const useGameFlow = () => {
   const {
@@ -11,7 +11,7 @@ export const useGameFlow = () => {
     activePlayer,
     isCorrectAnswer,
     pointsAwarded,
-  } = useGame();
+  } = useGameState();
 
   const { awardPoints, setWinner, resetRound, setNextPlayer, resetGame } = useGameActions();
 

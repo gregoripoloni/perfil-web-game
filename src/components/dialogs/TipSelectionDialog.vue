@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { Dialog } from 'primevue';
-  import Card from './Card.vue';
-  import { useGame } from '../composables/useGame';
+  import SelectableCard from '@/components/ui/SelectableCard.vue';
+  import { useGameState } from '@/composables/useGameState';
 
   defineModel<boolean>('visible');
 
@@ -9,13 +9,13 @@
     (e: 'selectTip', id: number): void;
   }>();
 
-  const { currentTips } = useGame();
+  const { currentTips } = useGameState();
 </script>
 
 <template>
   <Dialog :visible="visible" modal header="Selecione uma dica" :closable="false" :style="{ width: '50rem' }">
     <div class="grid grid-cols-2 gap-2 p-2 max-h-full overflow-y-auto lg:grid-cols-4">
-      <Card
+      <SelectableCard
         v-for="(tip, index) in currentTips"
         :key="tip.text"
         :text="`${index + 1}`"

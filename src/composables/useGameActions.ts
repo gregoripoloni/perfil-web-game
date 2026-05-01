@@ -1,10 +1,11 @@
-import { auth, ensureAnonymousUser } from '../firebase';
-import { roomRepository } from '../services/roomRepository';
-import { usePlayersStore } from '../stores/playersStore';
-import { usePlayerStore } from '../stores/playerStore';
-import { useRoundStore, GamePhase, DEFAULT_ROUND_STATE } from '../stores/roundStore';
-import { CARDS } from '../constants/cards';
-import { useRoomId } from './useRoomId';
+import { auth, ensureAnonymousUser } from '@/services/firebase';
+import { roomRepository } from '@/services/roomRepository';
+import { usePlayersStore } from '@/stores/playersStore';
+import { usePlayerStore } from '@/stores/playerStore';
+import { useRoundStore } from '@/stores/roundStore';
+import { CARDS } from '@/constants/cards';
+import { useRoomId } from '@/composables/useRoomId';
+import { GamePhase, DEFAULT_ROUND_STATE } from '@/types/round';
 
 const getRandomCardId = () => CARDS[Math.floor(Math.random() * CARDS.length)].id;
 

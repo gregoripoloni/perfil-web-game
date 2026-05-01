@@ -4,10 +4,10 @@ import PrimeVue from 'primevue/config';
 import { ConfirmationService } from 'primevue';
 import Aura from '@primeuix/themes/aura';
 import { definePreset, palette } from '@primeuix/themes';
-import { router } from './router/router';
+import { router } from '@/router';
 import './style.css';
 import App from './App.vue';
-import { ensureAnonymousUser } from './firebase';
+import { ensureAnonymousUser } from '@/services/firebase';
 
 const Theme = definePreset(Aura, {
   semantic: {

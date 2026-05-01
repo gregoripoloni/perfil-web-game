@@ -1,11 +1,12 @@
 import { computed } from 'vue';
-import { useRoundStore, GamePhase } from '../stores/roundStore';
-import { usePlayerStore } from '../stores/playerStore';
-import { usePlayersStore } from '../stores/playersStore';
-import { CARDS } from '../constants/cards';
-import { TIPS } from '../constants/tips';
+import { useRoundStore } from '@/stores/roundStore';
+import { usePlayerStore } from '@/stores/playerStore';
+import { usePlayersStore } from '@/stores/playersStore';
+import { CARDS } from '@/constants/cards';
+import { TIPS } from '@/constants/tips';
+import { GamePhase } from '@/types/round';
 
-export const useGame = () => {
+export const useGameState = () => {
   const roundStore = useRoundStore();
   const playerStore = usePlayerStore();
   const playersStore = usePlayersStore();

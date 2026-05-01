@@ -7,9 +7,9 @@ import {
   onValue,
   type Unsubscribe,
 } from 'firebase/database';
-import { app } from '../firebase';
-import type { MultiplayerPlayer } from '../types/multiplayer';
-import type { RoundState } from '../stores/roundStore';
+import { app } from '@/services/firebase';
+import type { RoomPlayer } from '@/types/player';
+import type { RoundState } from '@/types/round';
 
 const db = getDatabase(app);
 
@@ -20,11 +20,11 @@ const playerPath = (roomId: string, playerId: string) => `rooms/${roomId}/player
 export const roomRepository = {
   subscribeToPlayers(
     roomId: string,
-    callback: (players: MultiplayerPlayer[]) => void,
+    callback: (players: RoomPlayer[]) => void,
   ): Unsubscribe {
     const playersRef = ref(db, playersPath(roomId));
     return onValue(playersRef, snapshot => {
-      const map = (snapshot.val() ?? {}) as Record<string, MultiplayerPlayer>;
+      const map = (snapshot.val() ?? {}) as Record<string, RoomPlayer>;
       const players = Object.values(map).sort((a, b) => a.timestamp - b.timestamp);
       callback(players);
     });
@@ -40,7 +40,7 @@ export const roomRepository = {
     });
   },
 
-  async joinPlayer(roomId: string, player: MultiplayerPlayer): Promise<void> {
+  async joinPlayer(roomId: string, player: RoomPlayer): Promise<void> {
     await set(ref(db, playerPath(roomId, player.id)), player);
   },
 
