@@ -1,6 +1,6 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
-import type { Player } from '../types/multiplayer';
+import type { Player } from '@/types/player';
 
 export const usePlayerStore = defineStore('player', () => {
   const player = ref<Player>();

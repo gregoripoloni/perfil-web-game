@@ -2,9 +2,9 @@
   import { ref } from 'vue';
   import { useRouter } from 'vue-router';
   import { Card } from 'primevue';
-  import SelectCard from '../components/Card.vue';
-  import RoomDialog from '../components/RoomDialog.vue';
-  import { generateRoomId } from '../utils/roomId';
+  import SelectableCard from '@/components/ui/SelectableCard.vue';
+  import JoinRoomDialog from '@/components/dialogs/JoinRoomDialog.vue';
+  import { generateRoomId } from '@/utils/roomId';
 
   const router = useRouter();
 
@@ -28,10 +28,10 @@
             </h1>
           </div>
           <div class="flex flex-col gap-2">
-            <SelectCard text="Nova sala" @click="handleJoinRoom(generateRoomId())" />
-            <SelectCard text="Entrar em uma sala" @click="isRoomDialogVisible = true;" />
+            <SelectableCard text="Nova sala" @click="handleJoinRoom(generateRoomId())" />
+            <SelectableCard text="Entrar em uma sala" @click="isRoomDialogVisible = true;" />
           </div>
-          <RoomDialog v-model:visible="isRoomDialogVisible" @join-room="handleJoinRoom" />
+          <JoinRoomDialog v-model:visible="isRoomDialogVisible" @join-room="handleJoinRoom" />
         </div>
       </template>
     </Card>

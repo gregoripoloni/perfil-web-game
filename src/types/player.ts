@@ -5,7 +5,7 @@ export interface Player {
   name: string;
 }
 
-export interface MultiplayerPlayer extends Player {
+export interface RoomPlayer extends Player {
   points: number;
   timestamp: number;
 }

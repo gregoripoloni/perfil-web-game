@@ -1,14 +1,15 @@
 <script setup lang="ts">
   import { onUnmounted } from 'vue';
   import { Card } from 'primevue';
-  import Sidebar from '../components/Sidebar.vue';
-  import Main from '../components/Main.vue';
-  import WaitingPlayers from '../components/WaitingPlayers.vue';
-  import PlayerDialog from '../components/PlayerDialog.vue';
-  import { useRoomConnection } from '../composables/useRoomConnection';
-  import { usePlayersStore } from '../stores/playersStore';
-  import { usePlayerStore } from '../stores/playerStore';
-  import { useRoundStore, GamePhase } from '../stores/roundStore';
+  import Sidebar from '@/components/game/Sidebar.vue';
+  import RoundBoard from '@/components/game/RoundBoard.vue';
+  import WaitingRoom from '@/components/game/WaitingRoom.vue';
+  import NameEntryDialog from '@/components/dialogs/NameEntryDialog.vue';
+  import { useRoomConnection } from '@/composables/useRoomConnection';
+  import { usePlayersStore } from '@/stores/playersStore';
+  import { usePlayerStore } from '@/stores/playerStore';
+  import { useRoundStore } from '@/stores/roundStore';
+  import { GamePhase } from '@/types/round';
 
   const { disconnect } = useRoomConnection();
 
@@ -30,13 +31,13 @@
       <Sidebar class="col-span-1" />
       <Card class="Game h-full col-span-3 overflow-y-auto bg-surface-950! border-2 border-surface-800">
         <template #content>
-          <WaitingPlayers v-if="roundStore.state.gamePhase === GamePhase.WaitingForPlayers" class="col-span-3" />
-          <Main v-else class="col-span-3" />
+          <WaitingRoom v-if="roundStore.state.gamePhase === GamePhase.WaitingForPlayers" class="col-span-3" />
+          <RoundBoard v-else class="col-span-3" />
         </template>
       </Card>
     </div>
   </Transition>
-  <PlayerDialog />
+  <NameEntryDialog />
 </template>
 
 <style scoped>

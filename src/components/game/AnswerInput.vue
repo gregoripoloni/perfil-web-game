@@ -1,17 +1,17 @@
 <script setup lang="ts">
   import { ref } from 'vue';
   import { InputGroup, InputGroupAddon, InputText, Button, Tooltip as vTooltip, useConfirm } from 'primevue';
-  import { usePlayerStore } from '../stores/playerStore';
-  import { useGame } from '../composables/useGame';
-  import { useGameActions } from '../composables/useGameActions';
-  import { calculateAwardedPoints } from '../utils/scoring';
-  import { normalizeAnswer } from '../utils/text';
+  import { usePlayerStore } from '@/stores/playerStore';
+  import { useGameState } from '@/composables/useGameState';
+  import { useGameActions } from '@/composables/useGameActions';
+  import { calculateAwardedPoints } from '@/utils/scoring';
+  import { normalizeAnswer } from '@/utils/text';
 
   const confirm = useConfirm();
 
   const playerStore = usePlayerStore();
 
-  const { currentCard, isActivePlayer, currentTips, revealedTips } = useGame();
+  const { currentCard, isActivePlayer, currentTips, revealedTips } = useGameState();
   const { submitAnswer, setNextPlayer } = useGameActions();
 
   const answer = ref('');

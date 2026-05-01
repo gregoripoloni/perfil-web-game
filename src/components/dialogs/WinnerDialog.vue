@@ -1,11 +1,11 @@
 <script setup lang="ts">
   import { Dialog, Message } from 'primevue';
-  import { useGame } from '../composables/useGame';
-  import { POINTS_TO_WIN } from '../constants/rules';
+  import { useGameState } from '@/composables/useGameState';
+  import { POINTS_TO_WIN } from '@/constants/rules';
 
   defineModel<boolean>('visible');
 
-  const { answeredBy } = useGame();
+  const { answeredBy } = useGameState();
 </script>
 
 <template>

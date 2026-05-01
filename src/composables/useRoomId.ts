@@ -1,6 +1,6 @@
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
-import type { RoomId } from '../types/multiplayer';
+import type { RoomId } from '@/types/player';
 
 export const useRoomId = () => {
   const route = useRoute();

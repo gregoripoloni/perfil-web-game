@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { Dialog, Message } from 'primevue';
-  import { useGame } from '../composables/useGame';
+  import { useGameState } from '@/composables/useGameState';
 
   defineModel<boolean>('visible');
 
@@ -9,7 +9,7 @@
     isCorrect: boolean;
   }>();
 
-  const { answeredBy, pointsAwarded } = useGame();
+  const { answeredBy, pointsAwarded } = useGameState();
 </script>
 
 <template>

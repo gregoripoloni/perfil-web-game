@@ -1,11 +1,11 @@
 import { onScopeDispose } from 'vue';
-import { roomRepository } from '../services/roomRepository';
-import { usePlayersStore } from '../stores/playersStore';
-import { usePlayerStore } from '../stores/playerStore';
-import { useRoundStore, DEFAULT_ROUND_STATE } from '../stores/roundStore';
-import type { RoundState } from '../stores/roundStore';
-import { useRoomId } from './useRoomId';
-import { useGameActions } from './useGameActions';
+import { roomRepository } from '@/services/roomRepository';
+import { usePlayersStore } from '@/stores/playersStore';
+import { usePlayerStore } from '@/stores/playerStore';
+import { useRoundStore } from '@/stores/roundStore';
+import { DEFAULT_ROUND_STATE, type RoundState } from '@/types/round';
+import { useRoomId } from '@/composables/useRoomId';
+import { useGameActions } from '@/composables/useGameActions';
 
 export const useRoomConnection = () => {
   const { roomId } = useRoomId();

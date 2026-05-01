@@ -5,7 +5,7 @@
   import { InputText } from 'primevue';
   import { Button } from 'primevue';
 
-  const visible = defineModel<boolean>();
+  const visible = defineModel<boolean>('visible');
 
   const emit = defineEmits<{
     (e: 'joinRoom', roomId: string): void;

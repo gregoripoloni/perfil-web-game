@@ -1,11 +1,11 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
-import type { MultiplayerPlayer } from '../types/multiplayer';
+import type { RoomPlayer } from '@/types/player';
 
 export const usePlayersStore = defineStore('players', () => {
-  const players = ref<MultiplayerPlayer[]>([]);
+  const players = ref<RoomPlayer[]>([]);
 
-  const setPlayers = (incoming: MultiplayerPlayer[]) => {
+  const setPlayers = (incoming: RoomPlayer[]) => {
     players.value = incoming;
   };
 
