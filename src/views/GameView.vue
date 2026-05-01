@@ -1,46 +1,23 @@
 <script setup lang="ts">
-  import { onMounted, onUnmounted } from 'vue';
-  import { onValue, type DataSnapshot } from 'firebase/database';
+  import { onUnmounted } from 'vue';
   import { Card } from 'primevue';
   import Sidebar from '../components/Sidebar.vue';
   import Main from '../components/Main.vue';
   import WaitingPlayers from '../components/WaitingPlayers.vue';
   import PlayerDialog from '../components/PlayerDialog.vue';
-  import { useMultiplayer, type MultiplayerPlayer } from '../composables/useMultiplayer';
+  import { useRoomConnection } from '../composables/useRoomConnection';
   import { usePlayersStore } from '../stores/playersStore';
   import { usePlayerStore } from '../stores/playerStore';
-  import { useRoundStore, DEFAULT_ROUND_STATE, GamePhase } from '../stores/roundStore';
+  import { useRoundStore, GamePhase } from '../stores/roundStore';
 
-  const { roomPlayersRef, roundStateRef, leaveGame } = useMultiplayer();
+  const { disconnect } = useRoomConnection();
 
   const playersStore = usePlayersStore();
   const playerStore = usePlayerStore();
   const roundStore = useRoundStore();
 
-  onMounted(() => {
-    onValue(roomPlayersRef, (snapshot: DataSnapshot) => {
-      const playersMap = (snapshot.val() || {}) as Record<string, MultiplayerPlayer>;
-      const players = Object.values(playersMap)
-        .sort((a, b) => a.timestamp - b.timestamp)
-        .map(player => ({
-          id: player.id,
-          name: player.name,
-          points: player.points ?? 0,
-        }));
-
-      playersStore.players = players;
-    });
-
-    onValue(roundStateRef, (snapshot: DataSnapshot) => {
-      roundStore.setState(snapshot.val() || { ...DEFAULT_ROUND_STATE });
-    });
-  });
-
-  onUnmounted(async () => {
-    await leaveGame();
-    playerStore.$reset();
-    playersStore.$reset();
-    roundStore.$reset();
+  onUnmounted(() => {
+    void disconnect();
   });
 </script>
 

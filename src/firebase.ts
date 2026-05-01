@@ -1,6 +1,5 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInAnonymously, type User } from 'firebase/auth';
-import { getDatabase, ref, onValue, set, update, remove } from 'firebase/database';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_API_KEY,
@@ -11,9 +10,8 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_APP_ID,
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getDatabase(app);
+export const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
 
 export async function ensureAnonymousUser(): Promise<User> {
   if (auth.currentUser) {
@@ -22,5 +20,3 @@ export async function ensureAnonymousUser(): Promise<User> {
   const { user } = await signInAnonymously(auth);
   return user;
 }
-
-export { app, auth, db, ref, onValue, set, update, remove };

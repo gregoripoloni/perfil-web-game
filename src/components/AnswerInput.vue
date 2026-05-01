@@ -3,53 +3,46 @@
   import { InputGroup, InputGroupAddon, InputText, Button, Tooltip as vTooltip, useConfirm } from 'primevue';
   import { usePlayerStore } from '../stores/playerStore';
   import { useGame } from '../composables/useGame';
-  import { useMultiplayer } from '../composables/useMultiplayer';
+  import { useGameActions } from '../composables/useGameActions';
+  import { calculateAwardedPoints } from '../utils/scoring';
+  import { normalizeAnswer } from '../utils/text';
 
   const confirm = useConfirm();
 
   const playerStore = usePlayerStore();
 
   const { currentCard, isActivePlayer, currentTips, revealedTips } = useGame();
-  const { submitAnswer, setNextPlayer } = useMultiplayer();
+  const { submitAnswer, setNextPlayer } = useGameActions();
 
   const answer = ref('');
 
   const handleSendAnswer = async () => {
-    if (!isActivePlayer.value || !playerStore.player || !answer.value.length) {
-      return;
-    }
-
-    const normalizeAnswer = (value?: string) =>
-      (value ?? '')
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .trim()
-        .toLowerCase();
+    if (!isActivePlayer.value || !playerStore.player || !answer.value.length) return;
 
     const isCorrect = normalizeAnswer(answer.value) === normalizeAnswer(currentCard.value?.response);
-    const pointsAwarded = isCorrect ? currentTips.value.length - revealedTips.value.length : 0;
+    const pointsAwarded = isCorrect
+      ? calculateAwardedPoints(currentTips.value.length, revealedTips.value.length)
+      : 0;
 
-    submitAnswer(answer.value, playerStore.player.name, isCorrect, pointsAwarded);
+    await submitAnswer(answer.value, playerStore.player.name, isCorrect, pointsAwarded);
   };
 
   const handleSkipTurn = () => {
-    if (!isActivePlayer.value) {
-      return;
-    }
+    if (!isActivePlayer.value) return;
 
     confirm.require({
       message: 'Tem certeza que deseja passar a vez?',
       header: 'Atenção',
       icon: 'pi pi-info-circle',
       acceptProps: {
-        label: 'Passar a vez'
+        label: 'Passar a vez',
       },
       rejectProps: {
         label: 'Cancelar',
         severity: 'secondary',
       },
       accept() {
-        setNextPlayer();
+        void setNextPlayer();
       },
     });
   };

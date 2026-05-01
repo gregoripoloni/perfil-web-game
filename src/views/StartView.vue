@@ -4,20 +4,14 @@
   import { Card } from 'primevue';
   import SelectCard from '../components/Card.vue';
   import RoomDialog from '../components/RoomDialog.vue';
+  import { generateRoomId } from '../utils/roomId';
 
   const router = useRouter();
 
   const isRoomDialogVisible = ref(false);
 
-  const generateRoomId = () => {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    const getRandomBlock = () =>
-      Array.from({ length: 3 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
-    return `${getRandomBlock()}-${getRandomBlock()}`;
-  };
-
   const handleJoinRoom = (roomId: string) => {
-    router.push(`/game/${roomId}`)
+    router.push(`/game/${roomId}`);
   };
 </script>
 

@@ -3,9 +3,7 @@
   import Card from './Card.vue';
   import { useGame } from '../composables/useGame';
 
-  defineProps<{
-    isVisible: boolean;
-  }>();
+  defineModel<boolean>('visible');
 
   defineEmits<{
     (e: 'selectTip', id: number): void;
@@ -15,7 +13,7 @@
 </script>
 
 <template>
-  <Dialog :visible="isVisible" modal header="Selecione uma dica" :closable="false" :style="{ width: '50rem' }">
+  <Dialog :visible="visible" modal header="Selecione uma dica" :closable="false" :style="{ width: '50rem' }">
     <div class="grid grid-cols-2 gap-2 p-2 max-h-full overflow-y-auto lg:grid-cols-4">
       <Card
         v-for="(tip, index) in currentTips"

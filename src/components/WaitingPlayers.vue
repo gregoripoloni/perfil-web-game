@@ -1,11 +1,11 @@
 <script setup lang="ts">
   import { Button } from 'primevue';
   import { useGame } from '../composables/useGame';
-  import { useMultiplayer } from '../composables/useMultiplayer';
+  import { useGameActions } from '../composables/useGameActions';
 
   const { isActivePlayer } = useGame();
 
-  const { startGame } = useMultiplayer();
+  const { startGame } = useGameActions();
 </script>
 
 <template>

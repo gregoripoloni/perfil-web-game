@@ -11,13 +11,11 @@ export const useGame = () => {
   const playersStore = usePlayersStore();
 
   const currentCard = computed(() => {
-    return CARDS.find(card => card.id === roundStore.state.cardId) || null;
+    return CARDS.find(card => card.id === roundStore.state.cardId) ?? null;
   });
 
   const currentTips = computed(() => {
-    if (!roundStore.state.cardId) {
-      return [];
-    }
+    if (!roundStore.state.cardId) return [];
 
     return TIPS.filter(tip => tip.cardId === roundStore.state.cardId).map(tip => ({
       ...tip,
@@ -30,7 +28,7 @@ export const useGame = () => {
     const tipsMap = currentTips.value.reduce((acc, tip) => {
       acc[tip.id] = tip;
       return acc;
-    }, {} as Record<typeof currentTips.value[number]["id"], typeof currentTips.value[number]>);
+    }, {} as Record<typeof currentTips.value[number]['id'], typeof currentTips.value[number]>);
 
     return reversedOpenedIds
       .map(id => tipsMap[id])
@@ -40,14 +38,15 @@ export const useGame = () => {
   const gamePhase = computed(() => roundStore.state.gamePhase);
 
   const activePlayer = computed(() => {
-    return playersStore.players.find(player => player.id === roundStore.state.activePlayerId) || null;
+    return playersStore.players.find(p => p.id === roundStore.state.activePlayerId) ?? null;
   });
 
-  const isActivePlayer = computed(() => {
-    return activePlayer.value?.id === playerStore.player?.id;
-  });
+  const isActivePlayer = computed(() => activePlayer.value?.id === playerStore.player?.id);
 
-  const isDisabledSendAnswer = computed(() => !isActivePlayer.value || gamePhase.value !== GamePhase.Guessing);
+  const isDisabledSendAnswer = computed(
+    () => !isActivePlayer.value || gamePhase.value !== GamePhase.Guessing,
+  );
+
   const submittedAnswer = computed(() => roundStore.state.submittedAnswer);
   const answeredBy = computed(() => roundStore.state.answeredBy);
   const isCorrectAnswer = computed(() => roundStore.state.isAnswerCorrect ?? false);
@@ -64,6 +63,6 @@ export const useGame = () => {
     submittedAnswer,
     answeredBy,
     isCorrectAnswer,
-    pointsAwarded
+    pointsAwarded,
   };
-}
+};

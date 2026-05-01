@@ -1,12 +1,17 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
+import type { MultiplayerPlayer } from '../types/multiplayer';
 
-export const usePlayersStore = defineStore('game', () => {
-  const players = ref<{ id: string; name: string; points: number }[]>([]);
+export const usePlayersStore = defineStore('players', () => {
+  const players = ref<MultiplayerPlayer[]>([]);
+
+  const setPlayers = (incoming: MultiplayerPlayer[]) => {
+    players.value = incoming;
+  };
 
   const $reset = () => {
     players.value = [];
   };
 
-  return { players, $reset };
+  return { players, setPlayers, $reset };
 });
