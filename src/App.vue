@@ -4,7 +4,7 @@
 
 <template>
   <RouterView v-slot="{ Component }">
-    <Transition>
+    <Transition mode="out-in">
       <Component :is="Component" />
     </Transition>
   </RouterView>
