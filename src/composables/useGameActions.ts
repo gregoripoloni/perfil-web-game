@@ -8,7 +8,8 @@ import { useRoomId } from '@/composables/useRoomId';
 import { GamePhase } from '@/types/round';
 import type { RoomPlayerStored } from '@/types/player';
 
-const getRandomCardId = () => CARDS[Math.floor(Math.random() * CARDS.length)].id;
+const getRandomCardId = () =>
+  CARDS[Math.floor(Math.random() * CARDS.length)].id;
 
 export const useGameActions = () => {
   const { roomId } = useRoomId();
@@ -20,9 +21,13 @@ export const useGameActions = () => {
   const getNextPlayerId = (): string => {
     const players = playersStore.players;
     if (players.length === 0) return '';
-    const activeIndex = players.findIndex(p => p.id === gameStateStore.state.activePlayerId);
+    const activeIndex = players.findIndex(
+      (p) => p.id === gameStateStore.state.activePlayerId,
+    );
     if (activeIndex === -1) return players[0]?.id ?? '';
-    return activeIndex === players.length - 1 ? players[0].id : players[activeIndex + 1].id;
+    return activeIndex === players.length - 1
+      ? players[0].id
+      : players[activeIndex + 1].id;
   };
 
   const joinGame = async (name: string): Promise<void> => {
@@ -63,7 +68,10 @@ export const useGameActions = () => {
     });
   };
 
-  const awardPoints = async (playerId: string, points: number): Promise<void> => {
+  const awardPoints = async (
+    playerId: string,
+    points: number,
+  ): Promise<void> => {
     await roomRepository.incrementPlayerPoints(roomId.value, playerId, points);
   };
 
@@ -87,7 +95,7 @@ export const useGameActions = () => {
 
   const resetGame = async (): Promise<void> => {
     await roomRepository.resetGame(roomId.value, {
-      playerIds: playersStore.players.map(p => p.id),
+      playerIds: playersStore.players.map((p) => p.id),
       nextPlayerId: getNextPlayerId(),
     });
   };
@@ -99,7 +107,8 @@ export const useGameActions = () => {
     const currentRoomId = roomId.value;
     if (!currentRoomId) return;
 
-    const isLeavingActivePlayer = gameStateStore.state.activePlayerId === playerStore.player?.id;
+    const isLeavingActivePlayer =
+      gameStateStore.state.activePlayerId === playerStore.player?.id;
 
     if (!isLeavingActivePlayer) {
       await roomRepository.removePlayer(currentRoomId, uid);

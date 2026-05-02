@@ -12,7 +12,7 @@ import { ensureAnonymousUser } from '@/services/firebase';
 const Theme = definePreset(Aura, {
   semantic: {
     primary: palette('{fuchsia}'),
-  }
+  },
 });
 
 const pinia = createPinia();
@@ -25,8 +25,8 @@ app.use(PrimeVue, {
     preset: Theme,
     options: {
       darkModeSelector: '.dark',
-    }
-  }
+    },
+  },
 });
 app.use(ConfirmationService);
 

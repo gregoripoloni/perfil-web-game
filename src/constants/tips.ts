@@ -459,7 +459,7 @@ const CARD_TIPS: Record<number, string[]> = {
     'Considerado por muitos uma lenda do futebol nacional e mundial.',
     'Sua carreira juvenil chamou atenção de olheiros e diretoria profissional cedo.',
     'É lembrado tanto por gols fáceis quanto por jogadas acrobáticas.',
-    'Seu legado inclui estatísticas de gols que poucos alcançaram.'
+    'Seu legado inclui estatísticas de gols que poucos alcançaram.',
   ],
   22: [
     'Cientista que trabalhou em materiais radioativos no fim do século XIX e início do XX.',
@@ -481,7 +481,7 @@ const CARD_TIPS: Record<number, string[]> = {
     'Seu legado ajudou a consolidar métodos experimentais em radiologia.',
     'Documentários e biografias enfatizam sua persistência no meio científico.',
     'Sua trajetória é citada em discussões sobre mulheres nas ciências exatas.',
-    'É lembrada por ter ampliado o entendimento sobre elementos e radioatividade.'
+    'É lembrada por ter ampliado o entendimento sobre elementos e radioatividade.',
   ],
   23: [
     'Líder que lutou contra um sistema institucionalizado de segregação racial.',
@@ -503,7 +503,7 @@ const CARD_TIPS: Record<number, string[]> = {
     'Seu nome é referência em programas e campanhas por direitos humanos.',
     'Foi figura central no fim de um regime oficial de discriminação institucional.',
     'Discursos e frases suas são citados em contextos de justiça e igualdade.',
-    'É considerado um dos principais nomes da luta pelos direitos civis no século XX.'
+    'É considerado um dos principais nomes da luta pelos direitos civis no século XX.',
   ],
   24: [
     'Dramaturgo e poeta cuja obra floresceu entre o final do século XVI e início do XVII.',
@@ -525,7 +525,7 @@ const CARD_TIPS: Record<number, string[]> = {
     'É frequentemente referido apenas pelo sobrenome na crítica literária.',
     'Peças suas são encenadas em escolas e teatros pelo mundo todo.',
     'Sua língua original é o inglês Early Modern, estudado em cursos de literatura.',
-    'É considerado o principal dramaturgo da língua inglesa.'
+    'É considerado o principal dramaturgo da língua inglesa.',
   ],
   25: [
     'Pioneira na aviação cuja carreira se destacou nas décadas de 1920 e 1930.',
@@ -547,7 +547,7 @@ const CARD_TIPS: Record<number, string[]> = {
     'É frequentemente citada como ícone de coragem e espírito aventureiro feminino.',
     'A tentativa final ocorreu em 1937 e permanece envolta em mistério.',
     'Seu legado inclui incentivo à presença feminina em áreas técnicas e de navegação aérea.',
-    'É lembrada como uma das primeiras mulheres piloto com fama mundial.'
+    'É lembrada como uma das primeiras mulheres piloto com fama mundial.',
   ],
   26: [
     'Elevado sobre uma grande cidade brasileira, observado por milhões de visitantes.',
@@ -569,7 +569,7 @@ const CARD_TIPS: Record<number, string[]> = {
     'O monumento está sobre o morro do Corcovado.',
     'É uma estátua de grande porte que domina o horizonte da cidade costeira.',
     'Associado à cidade do Rio de Janeiro e ao país Brasil.',
-    'É o monumento cristão de braços abertos mais famoso do país.'
+    'É o monumento cristão de braços abertos mais famoso do país.',
   ],
   27: [
     'Capital europeia conhecida pela influência nas artes, moda e gastronomia.',
@@ -591,7 +591,7 @@ const CARD_TIPS: Record<number, string[]> = {
     'Seu nome é associado a romances, artes e à revolução cultural europeia.',
     'A Torre mencionada foi projetada inicialmente como estrutura temporária para uma exposição universal.',
     'É a capital da França e símbolo de charme e elegância europeia.',
-    'Começa com P e tem cinco letras no nome em português.'
+    'Começa com P e tem cinco letras no nome em português.',
   ],
   28: [
     'Sistema natural formado por estruturas calcárias que abrigam enorme biodiversidade marinha.',
@@ -613,7 +613,7 @@ const CARD_TIPS: Record<number, string[]> = {
     'Grande área marinha que atrai cientistas e viajantes preocupados com o ambiente.',
     'É o maior sistema de recifes de corais do mundo.',
     'Nome começa com G e inclui as palavras "Barreira" e "Coral" em português.',
-    'Conhecido como Grande Barreira de Coral.'
+    'Conhecido como Grande Barreira de Coral.',
   ],
   29: [
     'Ilha famosa por esculturas monolíticas com rostos alongados.',
@@ -635,7 +635,7 @@ const CARD_TIPS: Record<number, string[]> = {
     'As estátuas estão distribuídas em locais chamados ahus, plataformas cerimoniais.',
     'Fica isolada no Pacífico, entre a Polinésia e a costa da América do Sul.',
     'O nome em português inclui as palavras "Ilha" e uma referência à data cristã.',
-    'É mundialmente famosa pelos moai e pelo nome Ilha de Páscoa.'
+    'É mundialmente famosa pelos moai e pelo nome Ilha de Páscoa.',
   ],
   30: [
     'Metrópole norte-americana conhecida por arranha-céus e diversidade cultural.',
@@ -657,7 +657,7 @@ const CARD_TIPS: Record<number, string[]> = {
     'Sua área central inclui uma avenida famosa por desfiles e desfiles de moda.',
     'Alguns dos prédios mais altos do país compõem seu horizonte urbano moderno.',
     'É a cidade mais populosa dos Estados Unidos e um símbolo global de urbanidade.',
-    'Começa com N e termina com K no nome em português: Nova York.'
+    'Começa com N e termina com K no nome em português: Nova York.',
   ],
   31: [
     'Evento que provocou encontro duradouro entre povos de dois grandes continentes separados por oceano.',
@@ -679,7 +679,7 @@ const CARD_TIPS: Record<number, string[]> = {
     'Para alguns povos, é também o início de um período de profundas transformações e perdas.',
     'Exploradores de outras nações europeias seguiram a mesma rota nas décadas seguintes.',
     'É o ano associado ao primeiro contato europeu registrado nas Américas por essa expedição específica.',
-    'É lembrado como o ano da viagem de Cristóvão Colombo que chegou às Américas.'
+    'É lembrado como o ano da viagem de Cristóvão Colombo que chegou às Américas.',
   ],
   32: [
     'Ano que marcou o início de um conflito global que mobilizou grandes potências europeias.',
@@ -701,7 +701,7 @@ const CARD_TIPS: Record<number, string[]> = {
     'A guerra levou a inovações em medicina de guerra e logística militar.',
     'Centenas de milhares perderam a vida nos primeiros anos do conflito e milhões mais ao longo dele.',
     'Historiadores marcam esse ano como o começo da Primeira Guerra Mundial.',
-    'É o ano do assassinato em Sarajevo que desencadeou a Primeira Guerra Mundial.'
+    'É o ano do assassinato em Sarajevo que desencadeou a Primeira Guerra Mundial.',
   ],
   33: [
     'Ano que marcou o fim de um grande conflito global e o enterro de regimes totalitários na Europa e Ásia.',
@@ -723,7 +723,7 @@ const CARD_TIPS: Record<number, string[]> = {
     'Líderes aliados assinaram atos que formalizaram a rendição dos agressores.',
     'A década que se seguiu foi marcada por processo de julgamento e reconstrução internacional.',
     'Este é o ano amplamente reconhecido como o término da Segunda Guerra Mundial.',
-    'É o ano em que ocorreram as capitulações que encerraram o conflito global.'
+    'É o ano em que ocorreram as capitulações que encerraram o conflito global.',
   ],
   34: [
     'Ano marcado por eventos cruciais da luta por direitos civis em uma grande potência ocidental.',
@@ -745,7 +745,7 @@ const CARD_TIPS: Record<number, string[]> = {
     'A confluência entre política, música e ativismo foi intensa naquele período histórico.',
     'Livros de história tratam desse ano como ponto central das lutas sociais nos EUA.',
     'É o ano do assassinato do presidente John F. Kennedy e do discurso "I have a dream" de Martin Luther King.',
-    'Este ano é frequentemente lembrado por ambos os marcos: o discurso de MLK e o assassinato de JFK.'
+    'Este ano é frequentemente lembrado por ambos os marcos: o discurso de MLK e o assassinato de JFK.',
   ],
   35: [
     'Ano associado à virada do milênio e a grandes celebrações de passagem de século ao redor do mundo.',
@@ -756,7 +756,7 @@ const CARD_TIPS: Record<number, string[]> = {
     'Muitos governos e empresas investiram em contingência para evitar interrupções tecnológicas na virada.',
     'Programas e serviços online estavam em ascensão, mas preocupações sobre estabilidade cresciam.',
     'O ano representou simbolicamente o começo de uma nova década e o fim de outra milenar.',
-    'Alguns veículos de mídia publicaram retrospectivas do século que se encerrava.' ,
+    'Alguns veículos de mídia publicaram retrospectivas do século que se encerrava.',
     'A gestão de grandes eventos e turismo urbano foi alvo de destaque por causa das comemorações.',
     'Relatórios econômicos e análises discutiam a bolha das empresas digitais daquele período.',
     'A cidade-sede das Olimpíadas recebeu delegações e atletas de todo o mundo, com cerimônias marcantes.',
@@ -767,7 +767,7 @@ const CARD_TIPS: Record<number, string[]> = {
     'A preocupação conhecida como "bug do milênio" mobilizou equipes de TI pelo planeta.',
     'É o ano das celebrações do fim do segundo milênio e início do terceiro milênio no calendário gregoriano.',
     'Algumas empresas de internet sofreram correções de mercado nesse período histórico.',
-    'É o ano comemorado mundialmente como a virada para o ano 2000.'
+    'É o ano comemorado mundialmente como a virada para o ano 2000.',
   ],
   36: [
     'Instrumento concebido para medir e indicar passagem de intervalos. ',
@@ -789,7 +789,7 @@ const CARD_TIPS: Record<number, string[]> = {
     'Pequenas marcas e índices ajudam a ler o tempo com rapidez no mostrador.',
     'Fabricantes famosos valorizam acabamentos, materiais e calibres internos.',
     'Usado como acessório de moda e instrumento funcional ao mesmo tempo.',
-    'Serve para marcar horas, minutos e segundos no dia a dia.'
+    'Serve para marcar horas, minutos e segundos no dia a dia.',
   ],
   37: [
     'Aparelho projetado para capturar imagens estáticas ou em movimento.',
@@ -811,7 +811,7 @@ const CARD_TIPS: Record<number, string[]> = {
     'Em eventos, profissionais usam equipamentos mais robustos para garantir resultados.',
     'Apps de celular trouxeram democratização, mas equipamentos dedicados mantêm vantagens óticas.',
     'A captura de imagens depende de controlar luz e tempo de exposição.',
-    'É o aparelho que registra fotografias e vídeos.'
+    'É o aparelho que registra fotografias e vídeos.',
   ],
   38: [
     'Veículo movido por energia humana e eficiente para curtas e médias distâncias.',
@@ -827,13 +827,13 @@ const CARD_TIPS: Record<number, string[]> = {
     'História de uso envolve invenções e aperfeiçoamentos na transmissão e fabricação de quadros.',
     'É comum em programas de mobilidade urbana e ciclos de compartilhamento em cidades.',
     'Passeios ciclísticos e corridas famosas mobilizam grandes públicos em várias cidades.',
-    'Transporta-se em racks de carro e em alguns trens urbanos dobráveis.' ,
+    'Transporta-se em racks de carro e em alguns trens urbanos dobráveis.',
     'A forma mais básica tem selim, pedais e um par de rodas, sem motor próprio.',
     'Manutenção inclui lubrificação da corrente e ajuste de marchas e freios.',
     'Fabricantes criam modelos específicos para usos profissionais e recreativos.',
     'Usada desde o século XIX, tornou-se ícone de independência de deslocamento pessoal.',
     'É um meio de transporte sustentável e amplamente praticado no mundo.',
-    'Tem duas rodas, pedais e é movida pelo esforço do usuário.'
+    'Tem duas rodas, pedais e é movida pelo esforço do usuário.',
   ],
   39: [
     'Máquina eletrônica programável capaz de processar dados e executar instruções.',
@@ -854,7 +854,7 @@ const CARD_TIPS: Record<number, string[]> = {
     'Armazenamento em nuvem amplia capacidades além do hardware local.',
     'Termos como CPU, RAM, GPU e SSD definem características de desempenho.',
     'A computação moderna transformou comunicação, trabalho e entretenimento globalmente.',
-    'É a máquina eletrônica que processa dados e executa programas.'
+    'É a máquina eletrônica que processa dados e executa programas.',
   ],
   40: [
     'Bebida produzida a partir de grãos torrados que cresce em regiões tropicais e subtropicais.',
@@ -876,9 +876,9 @@ const CARD_TIPS: Record<number, string[]> = {
     'A palavra em português nomeia tanto a bebida quanto a planta em contextos distintos.',
     'A bebida é frequentemente associada a pausas, produtividade e convívio social.',
     'Muito apreciada em todo o mundo, tem variações de preparação regionais notáveis.',
-    'É a bebida resultante da infusão de sementes torradas de uma planta cultivada em climas tropicais.'
+    'É a bebida resultante da infusão de sementes torradas de uma planta cultivada em climas tropicais.',
   ],
-}
+};
 
 export const TIPS = Object.entries(CARD_TIPS).flatMap(([cardId, tips]) =>
   tips.map((text, index) => ({
@@ -887,4 +887,4 @@ export const TIPS = Object.entries(CARD_TIPS).flatMap(([cardId, tips]) =>
     text,
     number: index + 1,
   })),
-)
+);

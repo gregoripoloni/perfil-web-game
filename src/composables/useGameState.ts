@@ -14,16 +14,18 @@ export const useGameState = () => {
   const playersStore = usePlayersStore();
 
   const currentCard = computed(() => {
-    return CARDS.find(card => card.id === roundStore.state.cardId) ?? null;
+    return CARDS.find((card) => card.id === roundStore.state.cardId) ?? null;
   });
 
   const currentTips = computed(() => {
     if (!roundStore.state.cardId) return [];
 
-    return TIPS.filter(tip => tip.cardId === roundStore.state.cardId).map(tip => ({
-      ...tip,
-      isOpen: roundStore.state.openedTipIds[String(tip.id)] != null,
-    }));
+    return TIPS.filter((tip) => tip.cardId === roundStore.state.cardId).map(
+      (tip) => ({
+        ...tip,
+        isOpen: roundStore.state.openedTipIds[String(tip.id)] != null,
+      }),
+    );
   });
 
   const revealedTips = computed(() => {
@@ -41,17 +43,23 @@ export const useGameState = () => {
     );
 
     return tipIdsByOrderDesc
-      .map(id => tipsMap[id])
-      .filter(tip => tip && tip.isOpen);
+      .map((id) => tipsMap[id])
+      .filter((tip) => tip && tip.isOpen);
   });
 
   const gamePhase = computed(() => gameStateStore.state.phase);
 
   const activePlayer = computed(() => {
-    return playersStore.players.find(p => p.id === gameStateStore.state.activePlayerId) ?? null;
+    return (
+      playersStore.players.find(
+        (p) => p.id === gameStateStore.state.activePlayerId,
+      ) ?? null
+    );
   });
 
-  const isActivePlayer = computed(() => activePlayer.value?.id === playerStore.player?.id);
+  const isActivePlayer = computed(
+    () => activePlayer.value?.id === playerStore.player?.id,
+  );
 
   const isDisabledSendAnswer = computed(
     () => !isActivePlayer.value || gamePhase.value !== GamePhase.Guessing,
@@ -62,12 +70,16 @@ export const useGameState = () => {
   const answeredBy = computed(() => {
     const id = roundStore.state.answer?.playerId;
     if (!id) return '';
-    return playersStore.players.find(p => p.id === id)?.name ?? '';
+    return playersStore.players.find((p) => p.id === id)?.name ?? '';
   });
 
-  const isCorrectAnswer = computed(() => roundStore.state.answer?.isCorrect ?? false);
+  const isCorrectAnswer = computed(
+    () => roundStore.state.answer?.isCorrect ?? false,
+  );
 
-  const pointsAwarded = computed(() => roundStore.state.answer?.pointsAwarded ?? 0);
+  const pointsAwarded = computed(
+    () => roundStore.state.answer?.pointsAwarded ?? 0,
+  );
 
   return {
     currentCard,

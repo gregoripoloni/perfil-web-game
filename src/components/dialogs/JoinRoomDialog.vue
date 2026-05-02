@@ -1,31 +1,36 @@
 <script setup lang="ts">
-  import { ref } from 'vue';
-  import { vMaska } from 'maska/vue';
-  import { Dialog } from 'primevue';
-  import { InputText } from 'primevue';
-  import { Button } from 'primevue';
+import { ref } from 'vue';
+import { vMaska } from 'maska/vue';
+import { Dialog } from 'primevue';
+import { InputText } from 'primevue';
+import { Button } from 'primevue';
 
-  const visible = defineModel<boolean>('visible');
+const visible = defineModel<boolean>('visible');
 
-  const emit = defineEmits<{
-    (e: 'joinRoom', roomId: string): void;
-  }>();
+const emit = defineEmits<{
+  (e: 'joinRoom', roomId: string): void;
+}>();
 
-  const room = ref('');
+const room = ref('');
 
-  const handleJoin = () => {
-    if (room.value.trim() === '') {
-      return;
-    }
+const handleJoin = () => {
+  if (room.value.trim() === '') {
+    return;
+  }
 
-    emit('joinRoom', room.value.trim().toUpperCase());
+  emit('joinRoom', room.value.trim().toUpperCase());
 
-    visible.value = false;
-  };
+  visible.value = false;
+};
 </script>
 
 <template>
-  <Dialog v-model:visible="visible" modal header="Código da sala" :style="{ width: '25rem' }">
+  <Dialog
+    v-model:visible="visible"
+    modal
+    header="Código da sala"
+    :style="{ width: '25rem' }"
+  >
     <div class="flex flex-col gap-4">
       <InputText
         v-model="room"

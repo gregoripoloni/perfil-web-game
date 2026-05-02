@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ConfirmDialog } from 'primevue';
+import { ConfirmDialog } from 'primevue';
 </script>
 
 <template>

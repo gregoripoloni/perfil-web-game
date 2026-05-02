@@ -1,10 +1,10 @@
 <script setup lang="ts">
-  import { Card } from 'primevue';
+import { Card } from 'primevue';
 
-  defineProps<{
-    text: string;
-    number: number;
-  }>();
+defineProps<{
+  text: string;
+  number: number;
+}>();
 </script>
 
 <template>

@@ -1,23 +1,31 @@
 <script setup lang="ts">
-  import { Dialog, Message } from 'primevue';
-  import { useGameState } from '@/composables/useGameState';
-  import { useRoomMetaStore } from '@/stores/roomMetaStore';
+import { Dialog, Message } from 'primevue';
+import { useGameState } from '@/composables/useGameState';
+import { useRoomMetaStore } from '@/stores/roomMetaStore';
 
-  defineModel<boolean>('visible');
+defineModel<boolean>('visible');
 
-  const { answeredBy } = useGameState();
-  const roomMetaStore = useRoomMetaStore();
+const { answeredBy } = useGameState();
+const roomMetaStore = useRoomMetaStore();
 </script>
 
 <template>
-  <Dialog :visible="visible" modal header="Vencedor(a):" :closable="false" :style="{ width: '25rem' }">
+  <Dialog
+    :visible="visible"
+    modal
+    header="Vencedor(a):"
+    :closable="false"
+    :style="{ width: '25rem' }"
+  >
     <div class="flex flex-col gap-8 pt-8">
       <h1 class="text-center text-4xl font-bold">{{ answeredBy }}</h1>
       <Message severity="success">
         <span class="font-black">Parabéns!</span>
         <br />
         <span>
-          {{ answeredBy }} passou dos <span class="font-black">{{ roomMetaStore.state.pointsToWin }}</span> pontos e venceu o jogo!
+          {{ answeredBy }} passou dos
+          <span class="font-black">{{ roomMetaStore.state.pointsToWin }}</span>
+          pontos e venceu o jogo!
         </span>
       </Message>
     </div>

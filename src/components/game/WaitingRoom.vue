@@ -1,11 +1,11 @@
 <script setup lang="ts">
-  import { Button } from 'primevue';
-  import { useGameState } from '@/composables/useGameState';
-  import { useGameActions } from '@/composables/useGameActions';
+import { Button } from 'primevue';
+import { useGameState } from '@/composables/useGameState';
+import { useGameActions } from '@/composables/useGameActions';
 
-  const { isActivePlayer } = useGameState();
+const { isActivePlayer } = useGameState();
 
-  const { startGame } = useGameActions();
+const { startGame } = useGameActions();
 </script>
 
 <template>

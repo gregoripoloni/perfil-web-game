@@ -39,4 +39,4 @@ export const CARDS = [
   { id: 38, response: 'Bicicleta', category: 'Coisa' },
   { id: 39, response: 'Computador', category: 'Coisa' },
   { id: 40, response: 'Café', category: 'Coisa' },
-]
+];

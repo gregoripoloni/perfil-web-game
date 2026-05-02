@@ -13,7 +13,8 @@ export const useGameFlow = () => {
     pointsAwarded,
   } = useGameState();
 
-  const { awardPoints, setWinner, resetRound, setNextPlayer, resetGame } = useGameActions();
+  const { awardPoints, setWinner, resetRound, setNextPlayer, resetGame } =
+    useGameActions();
   const roomMetaStore = useRoomMetaStore();
 
   const showTipSelectionDialog = ref(false);
@@ -77,7 +78,7 @@ export const useGameFlow = () => {
 
   watch(
     gamePhase,
-    phase => {
+    (phase) => {
       phaseHandlers[phase]?.();
     },
     { immediate: true },

@@ -29,7 +29,8 @@ const metaPath = (roomId: string) => `${roomRoot(roomId)}/meta`;
 const statePath = (roomId: string) => `${roomRoot(roomId)}/state`;
 const roundPath = (roomId: string) => `${roomRoot(roomId)}/round`;
 const playersPath = (roomId: string) => `${roomRoot(roomId)}/players`;
-const playerPath = (roomId: string, playerId: string) => `${playersPath(roomId)}/${playerId}`;
+const playerPath = (roomId: string, playerId: string) =>
+  `${playersPath(roomId)}/${playerId}`;
 
 interface RoomPatch {
   state?: Partial<GameState>;
@@ -79,31 +80,46 @@ const readTurnId = async (roomId: string): Promise<number> => {
 };
 
 export const roomRepository = {
-  subscribeToMeta(roomId: string, callback: (meta: Partial<RoomMeta>) => void): Unsubscribe {
+  subscribeToMeta(
+    roomId: string,
+    callback: (meta: Partial<RoomMeta>) => void,
+  ): Unsubscribe {
     const r = ref(db, metaPath(roomId));
-    return onValue(r, snapshot => {
+    return onValue(r, (snapshot) => {
       callback((snapshot.val() ?? {}) as Partial<RoomMeta>);
     });
   },
 
-  subscribeToState(roomId: string, callback: (state: Partial<GameState>) => void): Unsubscribe {
+  subscribeToState(
+    roomId: string,
+    callback: (state: Partial<GameState>) => void,
+  ): Unsubscribe {
     const r = ref(db, statePath(roomId));
-    return onValue(r, snapshot => {
+    return onValue(r, (snapshot) => {
       callback((snapshot.val() ?? {}) as Partial<GameState>);
     });
   },
 
-  subscribeToRound(roomId: string, callback: (round: Partial<RoundState>) => void): Unsubscribe {
+  subscribeToRound(
+    roomId: string,
+    callback: (round: Partial<RoundState>) => void,
+  ): Unsubscribe {
     const r = ref(db, roundPath(roomId));
-    return onValue(r, snapshot => {
+    return onValue(r, (snapshot) => {
       callback((snapshot.val() ?? {}) as Partial<RoundState>);
     });
   },
 
-  subscribeToPlayers(roomId: string, callback: (players: RoomPlayer[]) => void): Unsubscribe {
+  subscribeToPlayers(
+    roomId: string,
+    callback: (players: RoomPlayer[]) => void,
+  ): Unsubscribe {
     const playersRef = ref(db, playersPath(roomId));
-    return onValue(playersRef, snapshot => {
-      const map = (snapshot.val() ?? {}) as Record<string, RoomPlayerStored & { timestamp?: number }>;
+    return onValue(playersRef, (snapshot) => {
+      const map = (snapshot.val() ?? {}) as Record<
+        string,
+        RoomPlayerStored & { timestamp?: number }
+      >;
       const players = Object.entries(map)
         .map(([id, row]) => ({
           id,
@@ -118,7 +134,7 @@ export const roomRepository = {
 
   async ensureRoomMeta(roomId: string): Promise<void> {
     const metaRef = ref(db, metaPath(roomId));
-    await runTransaction(metaRef, current => {
+    await runTransaction(metaRef, (current) => {
       if (current === null || current === undefined) {
         return {
           createdAt: serverTimestamp(),
@@ -129,7 +145,11 @@ export const roomRepository = {
     });
   },
 
-  async joinPlayer(roomId: string, playerId: string, data: RoomPlayerStored): Promise<void> {
+  async joinPlayer(
+    roomId: string,
+    playerId: string,
+    data: RoomPlayerStored,
+  ): Promise<void> {
     await roomRepository.ensureRoomMeta(roomId);
     await set(ref(db, playerPath(roomId, playerId)), data);
     const stateSnap = await get(ref(db, statePath(roomId)));
@@ -149,7 +169,11 @@ export const roomRepository = {
     await remove(ref(db, playerPath(roomId, playerId)));
   },
 
-  async incrementPlayerPoints(roomId: string, playerId: string, delta: number): Promise<void> {
+  async incrementPlayerPoints(
+    roomId: string,
+    playerId: string,
+    delta: number,
+  ): Promise<void> {
     await update(ref(db, playerPath(roomId, playerId)), {
       points: increment(delta),
     });
@@ -159,7 +183,7 @@ export const roomRepository = {
     if (playerIds.length === 0) return;
 
     const updates: Record<string, number> = {};
-    playerIds.forEach(id => {
+    playerIds.forEach((id) => {
       updates[`${id}/points`] = 0;
     });
     await update(ref(db, playersPath(roomId)), updates);

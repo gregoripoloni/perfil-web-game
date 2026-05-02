@@ -17,42 +17,66 @@ export const useRoomConnection = () => {
   const gameStateStore = useGameStateStore();
   const roomMetaStore = useRoomMetaStore();
 
-  const unsubMeta = roomRepository.subscribeToMeta(roomId.value, (partial: Partial<RoomMeta>) => {
-    const prev = roomMetaStore.state;
-    roomMetaStore.mergeState({
-      pointsToWin:
-        typeof partial.pointsToWin === 'number' ? partial.pointsToWin : prev.pointsToWin,
-      createdAt: typeof partial.createdAt === 'number' ? partial.createdAt : prev.createdAt,
-    });
-  });
+  const unsubMeta = roomRepository.subscribeToMeta(
+    roomId.value,
+    (partial: Partial<RoomMeta>) => {
+      const prev = roomMetaStore.state;
+      roomMetaStore.mergeState({
+        pointsToWin:
+          typeof partial.pointsToWin === 'number'
+            ? partial.pointsToWin
+            : prev.pointsToWin,
+        createdAt:
+          typeof partial.createdAt === 'number'
+            ? partial.createdAt
+            : prev.createdAt,
+      });
+    },
+  );
 
-  const unsubPlayers = roomRepository.subscribeToPlayers(roomId.value, players => {
-    playersStore.setPlayers(players);
-  });
+  const unsubPlayers = roomRepository.subscribeToPlayers(
+    roomId.value,
+    (players) => {
+      playersStore.setPlayers(players);
+    },
+  );
 
-  const unsubState = roomRepository.subscribeToState(roomId.value, (partial: Partial<GameState>) => {
-    const prev = gameStateStore.state;
-    gameStateStore.mergeState({
-      phase: partial.phase ?? prev.phase,
-      activePlayerId: 'activePlayerId' in partial ? partial.activePlayerId : prev.activePlayerId,
-      turnId: typeof partial.turnId === 'number' ? partial.turnId : prev.turnId,
-      updatedAt: typeof partial.updatedAt === 'number' ? partial.updatedAt : prev.updatedAt,
-    });
-  });
+  const unsubState = roomRepository.subscribeToState(
+    roomId.value,
+    (partial: Partial<GameState>) => {
+      const prev = gameStateStore.state;
+      gameStateStore.mergeState({
+        phase: partial.phase ?? prev.phase,
+        activePlayerId:
+          'activePlayerId' in partial
+            ? partial.activePlayerId
+            : prev.activePlayerId,
+        turnId:
+          typeof partial.turnId === 'number' ? partial.turnId : prev.turnId,
+        updatedAt:
+          typeof partial.updatedAt === 'number'
+            ? partial.updatedAt
+            : prev.updatedAt,
+      });
+    },
+  );
 
-  const unsubRound = roomRepository.subscribeToRound(roomId.value, (partial: Partial<RoundState>) => {
-    const prev = roundStore.state;
-    const openedTipIds =
-      partial.openedTipIds !== undefined && partial.openedTipIds !== null
-        ? { ...partial.openedTipIds }
-        : {};
+  const unsubRound = roomRepository.subscribeToRound(
+    roomId.value,
+    (partial: Partial<RoundState>) => {
+      const prev = roundStore.state;
+      const openedTipIds =
+        partial.openedTipIds !== undefined && partial.openedTipIds !== null
+          ? { ...partial.openedTipIds }
+          : {};
 
-    roundStore.mergeState({
-      cardId: partial.cardId !== undefined ? partial.cardId : prev.cardId,
-      openedTipIds,
-      answer: partial.answer !== undefined ? partial.answer : prev.answer,
-    });
-  });
+      roundStore.mergeState({
+        cardId: partial.cardId !== undefined ? partial.cardId : prev.cardId,
+        openedTipIds,
+        answer: partial.answer !== undefined ? partial.answer : prev.answer,
+      });
+    },
+  );
 
   const disconnect = () => {
     unsubMeta();
