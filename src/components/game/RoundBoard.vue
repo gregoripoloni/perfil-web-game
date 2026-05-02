@@ -62,11 +62,11 @@
     </div>
     <TipSelectionDialog
       v-model:visible="showTipSelectionDialog"
-      @selectTip="handleCardClick"
+      @select-tip="handleCardClick"
     />
     <AnswerResultDialog
       v-model:visible="showResponseDialog"
-      :isCorrect="isCorrectAnswer"
+      :is-correct="isCorrectAnswer"
       :response="submittedAnswer"
     />
     <WinnerDialog v-model:visible="showWinnerDialog" />

@@ -52,9 +52,9 @@
   <div class="flex gap-2">
     <InputGroup>
       <InputText
+        v-model="answer"
         class="w-full"
         placeholder="Digite seu palpite..."
-        v-model="answer"
         @keydown.prevent.enter="handleSendAnswer"
       />
       <InputGroupAddon v-tooltip.top="'Enviar palpite'">
@@ -67,10 +67,10 @@
       </InputGroupAddon>
     </InputGroup>
     <Button
+      v-tooltip.top="'Passar a vez'"
       icon="pi pi-angle-double-right"
       severity="secondary"
       class="shrink-0"
-      v-tooltip.top="'Passar a vez'"
       @click="handleSkipTurn"
     />
   </div>

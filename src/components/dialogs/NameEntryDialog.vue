@@ -24,8 +24,8 @@
   <Dialog v-model:visible="visible" modal header="Nome" :closable="false" :style="{ width: '25rem' }">
     <div class="flex flex-col gap-4">
       <InputText
-        class="flex-auto"
         v-model="username"
+        class="flex-auto"
         placeholder="João"
         @keydown.prevent.enter="handleSave"
       />

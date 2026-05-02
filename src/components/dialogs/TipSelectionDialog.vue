@@ -19,7 +19,7 @@
         v-for="(tip, index) in currentTips"
         :key="tip.text"
         :text="`${index + 1}`"
-        :isDisabled="tip.isOpen"
+        :is-disabled="tip.isOpen"
         class="col-span-1"
         @click="$emit('selectTip', tip.id)"
       />

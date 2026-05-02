@@ -17,14 +17,12 @@
   >
     <template #content>
       <div class="flex items-center justify-center h-16">
-        <Transition mode="out-in">
-          <span
-            class="text-xl font-black transition-colors"
-            :class="{ 'text-surface-950': isDisabled }"
-          >
-            {{ text }}
-          </span>
-        </Transition>
+        <span
+          class="text-xl font-black transition-colors"
+          :class="{ 'text-surface-950': isDisabled }"
+        >
+          {{ text }}
+        </span>
       </div>
     </template>
   </Card>

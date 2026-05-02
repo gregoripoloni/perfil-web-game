@@ -67,19 +67,19 @@
           :key="player.id"
           :name="player.name"
           :points="player.points"
-          :isActive="player.id === activePlayer?.id"
-          :isCurrentPlayer="player.id === playerStore.player?.id"
+          :is-active="player.id === activePlayer?.id"
+          :is-current-player="player.id === playerStore.player?.id"
           class="w-20 shrink-0 lg:w-full"
         />
       </TransitionGroup>
     </div>
     <div class="flex gap-2">
       <Button
+        v-tooltip.top="'Sair do jogo'"
         icon="pi pi-sign-out"
         type="button"
         severity="secondary"
         class="shrink-0 -scale-100"
-        v-tooltip.top="'Sair do jogo'"
         @click="handleLeaveGame"
       />
       <InputGroup>
