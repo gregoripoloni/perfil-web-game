@@ -23,7 +23,7 @@
 </script>
 
 <template>
-  <div>
+  <div class="h-full">
     <Transition>
       <div
         v-if="playerStore.player && playersStore.players.length > 0"
