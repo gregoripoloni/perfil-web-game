@@ -13,12 +13,14 @@
   import { usePlayerStore } from '@/stores/playerStore';
   import { usePlayersStore } from '@/stores/playersStore';
   import { useGameState } from '@/composables/useGameState';
+  import { useGameActions } from '@/composables/useGameActions';
   import { useRoomId } from '@/composables/useRoomId';
 
   const router = useRouter();
   const confirm = useConfirm();
 
   const { activePlayer } = useGameState();
+  const { leaveGame } = useGameActions();
   const { roomId } = useRoomId();
 
   const playersStore = usePlayersStore();
@@ -48,7 +50,8 @@
         label: 'Cancelar',
         severity: 'secondary',
       },
-      accept() {
+      async accept() {
+        await leaveGame();
         router.push('/');
       },
     });

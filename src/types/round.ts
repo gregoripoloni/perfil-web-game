@@ -1,3 +1,5 @@
+import { POINTS_TO_WIN } from '@/constants/rules';
+
 export enum GamePhase {
   WaitingForPlayers = 'waitingForPlayers',
   SelectingTip = 'selectingTip',
@@ -6,26 +8,45 @@ export enum GamePhase {
   Winner = 'winner',
 }
 
-export interface RoundState {
-  cardId: number | null;
-  openedTipsIds: number[];
-  gamePhase: GamePhase;
+export interface RoomMeta {
+  createdAt: number;
+  pointsToWin: number;
+}
+
+export interface GameState {
+  phase: GamePhase;
   activePlayerId: string | null;
-  submittedAnswer: string;
-  answeredBy: string | null;
-  isAnswerCorrect: boolean | null;
-  pointsAwarded: number;
+  turnId: number;
   updatedAt: number;
 }
 
+export interface AnswerResult {
+  text: string;
+  playerId: string;
+  isCorrect: boolean;
+  pointsAwarded: number;
+}
+
+export interface RoundState {
+  cardId: number | null;
+  openedTipIds: Record<string, number>;
+  answer: AnswerResult | null;
+}
+
+export const DEFAULT_ROOM_META: RoomMeta = {
+  createdAt: 0,
+  pointsToWin: POINTS_TO_WIN,
+};
+
+export const DEFAULT_GAME_STATE: GameState = {
+  phase: GamePhase.WaitingForPlayers,
+  activePlayerId: null,
+  turnId: 0,
+  updatedAt: 0,
+};
+
 export const DEFAULT_ROUND_STATE: RoundState = {
   cardId: null,
-  openedTipsIds: [],
-  gamePhase: GamePhase.WaitingForPlayers,
-  activePlayerId: null,
-  submittedAnswer: '',
-  answeredBy: null,
-  isAnswerCorrect: null,
-  pointsAwarded: 0,
-  updatedAt: 0,
+  openedTipIds: {},
+  answer: null,
 };

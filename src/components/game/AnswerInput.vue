@@ -24,7 +24,7 @@
       ? calculateAwardedPoints(currentTips.value.length, revealedTips.value.length)
       : 0;
 
-    await submitAnswer(answer.value, playerStore.player.name, isCorrect, pointsAwarded);
+    await submitAnswer(answer.value, playerStore.player.id, isCorrect, pointsAwarded);
   };
 
   const handleSkipTurn = () => {
