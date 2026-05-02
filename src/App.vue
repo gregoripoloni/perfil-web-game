@@ -3,8 +3,10 @@
 </script>
 
 <template>
-  <Transition>
-    <RouterView />
-  </Transition>
+  <RouterView v-slot="{ Component }">
+    <Transition>
+      <Component :is="Component" />
+    </Transition>
+  </RouterView>
   <ConfirmDialog />
 </template>

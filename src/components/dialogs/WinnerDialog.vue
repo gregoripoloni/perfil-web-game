@@ -1,11 +1,12 @@
 <script setup lang="ts">
   import { Dialog, Message } from 'primevue';
   import { useGameState } from '@/composables/useGameState';
-  import { POINTS_TO_WIN } from '@/constants/rules';
+  import { useRoomMetaStore } from '@/stores/roomMetaStore';
 
   defineModel<boolean>('visible');
 
   const { answeredBy } = useGameState();
+  const roomMetaStore = useRoomMetaStore();
 </script>
 
 <template>
@@ -16,7 +17,7 @@
         <span class="font-black">Parabéns!</span>
         <br />
         <span>
-          {{ answeredBy }} passou dos <span class="font-black">{{ POINTS_TO_WIN }}</span> pontos e venceu o jogo!
+          {{ answeredBy }} passou dos <span class="font-black">{{ roomMetaStore.state.pointsToWin }}</span> pontos e venceu o jogo!
         </span>
       </Message>
     </div>

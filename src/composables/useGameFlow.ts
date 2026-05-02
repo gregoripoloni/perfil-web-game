@@ -2,7 +2,7 @@ import { ref, watch, onScopeDispose } from 'vue';
 import { useGameState } from '@/composables/useGameState';
 import { useGameActions } from '@/composables/useGameActions';
 import { GamePhase } from '@/types/round';
-import { POINTS_TO_WIN } from '@/constants/rules';
+import { useRoomMetaStore } from '@/stores/roomMetaStore';
 
 export const useGameFlow = () => {
   const {
@@ -14,6 +14,7 @@ export const useGameFlow = () => {
   } = useGameState();
 
   const { awardPoints, setWinner, resetRound, setNextPlayer, resetGame } = useGameActions();
+  const roomMetaStore = useRoomMetaStore();
 
   const showTipSelectionDialog = ref(false);
   const showResponseDialog = ref(false);
@@ -38,7 +39,7 @@ export const useGameFlow = () => {
       await awardPoints(activePlayer.value?.id ?? '', pointsAwarded.value);
       const currentPoints = activePlayer.value?.points ?? 0;
 
-      if (currentPoints + pointsAwarded.value >= POINTS_TO_WIN) {
+      if (currentPoints >= roomMetaStore.state.pointsToWin) {
         await setWinner();
       } else {
         await resetRound();

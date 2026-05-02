@@ -3,58 +3,155 @@ import {
   ref,
   set,
   update,
-  remove,
   onValue,
+  get,
+  runTransaction,
+  serverTimestamp,
+  increment,
+  remove,
   type Unsubscribe,
 } from 'firebase/database';
 import { app } from '@/services/firebase';
-import type { RoomPlayer } from '@/types/player';
-import type { RoundState } from '@/types/round';
+import { POINTS_TO_WIN } from '@/constants/rules';
+import type { RoomPlayerStored, RoomPlayer } from '@/types/player';
+import type {
+  RoomMeta,
+  GameState,
+  RoundState,
+  AnswerResult,
+} from '@/types/round';
+import { GamePhase } from '@/types/round';
 
 const db = getDatabase(app);
 
-const playersPath = (roomId: string) => `rooms/${roomId}/players`;
-const roundStatePath = (roomId: string) => `rooms/${roomId}/roundState`;
-const playerPath = (roomId: string, playerId: string) => `rooms/${roomId}/players/${playerId}`;
+const roomRoot = (roomId: string) => `rooms/${roomId}`;
+const metaPath = (roomId: string) => `${roomRoot(roomId)}/meta`;
+const statePath = (roomId: string) => `${roomRoot(roomId)}/state`;
+const roundPath = (roomId: string) => `${roomRoot(roomId)}/round`;
+const playersPath = (roomId: string) => `${roomRoot(roomId)}/players`;
+const playerPath = (roomId: string, playerId: string) => `${playersPath(roomId)}/${playerId}`;
+
+interface RoomPatch {
+  state?: Partial<GameState>;
+  round?: {
+    cardId?: number | null;
+    openedTipIds?: Record<string, number> | null;
+    answer?: AnswerResult | null;
+  };
+  players?: Record<string, RoomPlayerStored | null>;
+}
+
+const patchRoom = async (roomId: string, patch: RoomPatch): Promise<void> => {
+  const updates: Record<string, unknown> = {};
+
+  if (patch.state) {
+    for (const [key, value] of Object.entries(patch.state)) {
+      if (value === undefined) continue;
+      updates[`state/${key}`] = value;
+    }
+    if (patch.state.updatedAt === undefined) {
+      updates['state/updatedAt'] = Date.now();
+    }
+  }
+
+  if (patch.round) {
+    for (const [key, value] of Object.entries(patch.round)) {
+      if (value === undefined) continue;
+      updates[`round/${key}`] = value;
+    }
+  }
+
+  if (patch.players) {
+    for (const [id, value] of Object.entries(patch.players)) {
+      if (value === undefined) continue;
+      updates[`players/${id}`] = value;
+    }
+  }
+
+  if (Object.keys(updates).length === 0) return;
+  await update(ref(db, roomRoot(roomId)), updates);
+};
+
+const readTurnId = async (roomId: string): Promise<number> => {
+  const snap = await get(ref(db, statePath(roomId)));
+  const value = snap.val() as Partial<GameState> | null;
+  return typeof value?.turnId === 'number' ? value.turnId : 0;
+};
 
 export const roomRepository = {
-  subscribeToPlayers(
-    roomId: string,
-    callback: (players: RoomPlayer[]) => void,
-  ): Unsubscribe {
-    const playersRef = ref(db, playersPath(roomId));
-    return onValue(playersRef, snapshot => {
-      const map = (snapshot.val() ?? {}) as Record<string, RoomPlayer>;
-      const players = Object.values(map).sort((a, b) => a.timestamp - b.timestamp);
-      callback(players);
+  subscribeToMeta(roomId: string, callback: (meta: Partial<RoomMeta>) => void): Unsubscribe {
+    const r = ref(db, metaPath(roomId));
+    return onValue(r, snapshot => {
+      callback((snapshot.val() ?? {}) as Partial<RoomMeta>);
     });
   },
 
-  subscribeToRoundState(
-    roomId: string,
-    callback: (state: Partial<RoundState>) => void,
-  ): Unsubscribe {
-    const roundRef = ref(db, roundStatePath(roomId));
-    return onValue(roundRef, snapshot => {
+  subscribeToState(roomId: string, callback: (state: Partial<GameState>) => void): Unsubscribe {
+    const r = ref(db, statePath(roomId));
+    return onValue(r, snapshot => {
+      callback((snapshot.val() ?? {}) as Partial<GameState>);
+    });
+  },
+
+  subscribeToRound(roomId: string, callback: (round: Partial<RoundState>) => void): Unsubscribe {
+    const r = ref(db, roundPath(roomId));
+    return onValue(r, snapshot => {
       callback((snapshot.val() ?? {}) as Partial<RoundState>);
     });
   },
 
-  async joinPlayer(roomId: string, player: RoomPlayer): Promise<void> {
-    await set(ref(db, playerPath(roomId, player.id)), player);
+  subscribeToPlayers(roomId: string, callback: (players: RoomPlayer[]) => void): Unsubscribe {
+    const playersRef = ref(db, playersPath(roomId));
+    return onValue(playersRef, snapshot => {
+      const map = (snapshot.val() ?? {}) as Record<string, RoomPlayerStored & { timestamp?: number }>;
+      const players = Object.entries(map)
+        .map(([id, row]) => ({
+          id,
+          name: row.name,
+          points: row.points ?? 0,
+          joinedAt: row.joinedAt ?? row.timestamp ?? 0,
+        }))
+        .sort((a, b) => a.joinedAt - b.joinedAt);
+      callback(players);
+    });
+  },
+
+  async ensureRoomMeta(roomId: string): Promise<void> {
+    const metaRef = ref(db, metaPath(roomId));
+    await runTransaction(metaRef, current => {
+      if (current === null || current === undefined) {
+        return {
+          createdAt: serverTimestamp(),
+          pointsToWin: POINTS_TO_WIN,
+        };
+      }
+      return current;
+    });
+  },
+
+  async joinPlayer(roomId: string, playerId: string, data: RoomPlayerStored): Promise<void> {
+    await roomRepository.ensureRoomMeta(roomId);
+    await set(ref(db, playerPath(roomId, playerId)), data);
+    const stateSnap = await get(ref(db, statePath(roomId)));
+    const s = stateSnap.val() as Partial<GameState> | null;
+    if (!s?.activePlayerId) {
+      await patchRoom(roomId, {
+        state: {
+          activePlayerId: playerId,
+          phase: GamePhase.WaitingForPlayers,
+          turnId: 0,
+        },
+      });
+    }
   },
 
   async removePlayer(roomId: string, playerId: string): Promise<void> {
     await remove(ref(db, playerPath(roomId, playerId)));
   },
 
-  async updateRoundState(roomId: string, partial: Record<string, unknown>): Promise<void> {
-    await update(ref(db, roundStatePath(roomId)), partial);
-  },
-
-  async addPointsToPlayer(roomId: string, playerId: string, delta: number, currentPoints: number): Promise<void> {
+  async incrementPlayerPoints(roomId: string, playerId: string, delta: number): Promise<void> {
     await update(ref(db, playerPath(roomId, playerId)), {
-      points: currentPoints + delta,
+      points: increment(delta),
     });
   },
 
@@ -66,5 +163,105 @@ export const roomRepository = {
       updates[`${id}/points`] = 0;
     });
     await update(ref(db, playersPath(roomId)), updates);
+  },
+
+  async startGame(roomId: string, params: { cardId: number }): Promise<void> {
+    await patchRoom(roomId, {
+      state: { phase: GamePhase.SelectingTip },
+      round: { cardId: params.cardId },
+    });
+  },
+
+  async submitAnswer(roomId: string, answer: AnswerResult): Promise<void> {
+    await patchRoom(roomId, {
+      state: { phase: GamePhase.Result },
+      round: { answer },
+    });
+  },
+
+  async setWinner(roomId: string): Promise<void> {
+    await patchRoom(roomId, {
+      state: { phase: GamePhase.Winner },
+    });
+  },
+
+  async revealTip(roomId: string, tipId: number): Promise<void> {
+    const openedRef = ref(db, `${roundPath(roomId)}/openedTipIds`);
+    const snap = await get(openedRef);
+    const current = (snap.val() ?? {}) as Record<string, number>;
+    const orders = Object.values(current);
+    const maxOrder = orders.length > 0 ? Math.max(...orders) : 0;
+    await update(ref(db, roomRoot(roomId)), {
+      [`round/openedTipIds/${tipId}`]: maxOrder + 1,
+      'state/phase': GamePhase.Guessing,
+      'state/updatedAt': Date.now(),
+    });
+  },
+
+  async advanceTurn(
+    roomId: string,
+    params: { nextPlayerId: string | null; phase: GamePhase },
+  ): Promise<void> {
+    const turnId = (await readTurnId(roomId)) + 1;
+    await patchRoom(roomId, {
+      state: {
+        phase: params.phase,
+        activePlayerId: params.nextPlayerId,
+        turnId,
+      },
+    });
+  },
+
+  async resetRound(
+    roomId: string,
+    params: { nextPlayerId: string | null; cardId: number },
+  ): Promise<void> {
+    const turnId = (await readTurnId(roomId)) + 1;
+    await patchRoom(roomId, {
+      state: {
+        phase: GamePhase.SelectingTip,
+        activePlayerId: params.nextPlayerId,
+        turnId,
+      },
+      round: {
+        cardId: params.cardId,
+        openedTipIds: null,
+        answer: null,
+      },
+    });
+  },
+
+  async resetGame(
+    roomId: string,
+    params: { playerIds: string[]; nextPlayerId: string | null },
+  ): Promise<void> {
+    await roomRepository.resetAllPoints(roomId, params.playerIds);
+    const turnId = (await readTurnId(roomId)) + 1;
+    await patchRoom(roomId, {
+      state: {
+        phase: GamePhase.WaitingForPlayers,
+        activePlayerId: params.nextPlayerId,
+        turnId,
+      },
+      round: {
+        cardId: null,
+        openedTipIds: null,
+        answer: null,
+      },
+    });
+  },
+
+  async leaveActivePlayer(
+    roomId: string,
+    params: { playerId: string; nextPlayerId: string | null },
+  ): Promise<void> {
+    const turnId = (await readTurnId(roomId)) + 1;
+    await patchRoom(roomId, {
+      players: { [params.playerId]: null },
+      state: {
+        activePlayerId: params.nextPlayerId,
+        turnId,
+      },
+    });
   },
 };
