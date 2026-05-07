@@ -1,7 +1,7 @@
 import { ref, watch, onScopeDispose } from 'vue';
 import { useGameState } from '@/composables/useGameState';
 import { useGameActions } from '@/composables/useGameActions';
-import { GamePhase } from '@/types/round';
+import { GamePhase, TipKind } from '@/types/round';
 import { useRoomMetaStore } from '@/stores/roomMetaStore';
 
 export const useGameFlow = () => {
@@ -11,14 +11,22 @@ export const useGameFlow = () => {
     activePlayer,
     isCorrectAnswer,
     pointsAwarded,
+    latestRevealedTip,
   } = useGameState();
 
-  const { awardPoints, setWinner, resetRound, setNextPlayer, resetGame } =
-    useGameActions();
+  const {
+    awardPoints,
+    setWinner,
+    resetRound,
+    setNextPlayer,
+    resetGame,
+    applyTipEffect,
+  } = useGameActions();
   const roomMetaStore = useRoomMetaStore();
 
   const showTipSelectionDialog = ref(false);
   const showResponseDialog = ref(false);
+  const showTipEffectDialog = ref(false);
   const showWinnerDialog = ref(false);
 
   let timers: ReturnType<typeof setTimeout>[] = [];
@@ -32,6 +40,18 @@ export const useGameFlow = () => {
     timers.forEach(clearTimeout);
     timers = [];
   });
+
+  const onEndTipEffectPhase = async (isCurrentPlayerActive: boolean) => {
+    showTipEffectDialog.value = false;
+
+    if (isCurrentPlayerActive) {
+      const tip = latestRevealedTip.value;
+      let delta = 0;
+      if (tip?.kind === TipKind.LosePoints) delta = -(tip.pointsDelta ?? 0);
+      else if (tip?.kind === TipKind.GainPoints) delta = tip.pointsDelta ?? 0;
+      await applyTipEffect(activePlayer.value?.id ?? '', delta);
+    }
+  };
 
   const onEndResultPhase = async (isCurrentPlayerActive: boolean) => {
     showResponseDialog.value = false;
@@ -64,6 +84,14 @@ export const useGameFlow = () => {
         showTipSelectionDialog.value = true;
       }
     },
+    [GamePhase.TipEffect]: () => {
+      showTipEffectDialog.value = true;
+      const isCurrentPlayerActive = isActivePlayer.value;
+      scheduleTimer(
+        () => void onEndTipEffectPhase(isCurrentPlayerActive),
+        3000,
+      );
+    },
     [GamePhase.Result]: () => {
       showResponseDialog.value = true;
       const isCurrentPlayerActive = isActivePlayer.value;
@@ -87,6 +115,7 @@ export const useGameFlow = () => {
   return {
     showTipSelectionDialog,
     showResponseDialog,
+    showTipEffectDialog,
     showWinnerDialog,
   };
 };

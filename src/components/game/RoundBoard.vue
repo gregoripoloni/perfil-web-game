@@ -4,6 +4,7 @@ import RevealedTip from '@/components/game/RevealedTip.vue';
 import AnswerInput from '@/components/game/AnswerInput.vue';
 import TipSelectionDialog from '@/components/dialogs/TipSelectionDialog.vue';
 import AnswerResultDialog from '@/components/dialogs/AnswerResultDialog.vue';
+import TipEffectDialog from '@/components/dialogs/TipEffectDialog.vue';
 import WinnerDialog from '@/components/dialogs/WinnerDialog.vue';
 import { useGameState } from '@/composables/useGameState';
 import { useGameActions } from '@/composables/useGameActions';
@@ -23,7 +24,7 @@ const {
 
 const { selectTip } = useGameActions();
 
-const { showTipSelectionDialog, showResponseDialog, showWinnerDialog } =
+const { showTipSelectionDialog, showResponseDialog, showTipEffectDialog, showWinnerDialog } =
   useGameFlow();
 
 const handleCardClick = (id: number) => {
@@ -57,6 +58,7 @@ const handleCardClick = (id: number) => {
             :key="tip.text"
             :text="tip.text"
             :number="tip.number"
+            :kind="tip.kind"
           />
         </TransitionGroup>
       </div>
@@ -73,6 +75,7 @@ const handleCardClick = (id: number) => {
       :is-correct="isCorrectAnswer"
       :response="submittedAnswer"
     />
+    <TipEffectDialog v-model:visible="showTipEffectDialog" />
     <WinnerDialog v-model:visible="showWinnerDialog" />
   </div>
 </template>

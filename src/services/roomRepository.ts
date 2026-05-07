@@ -222,6 +222,42 @@ export const roomRepository = {
     });
   },
 
+  async revealTrickTip(roomId: string, tipId: number): Promise<void> {
+    const openedRef = ref(db, `${roundPath(roomId)}/openedTipIds`);
+    const snap = await get(openedRef);
+    const current = (snap.val() ?? {}) as Record<string, number>;
+    const orders = Object.values(current);
+    const maxOrder = orders.length > 0 ? Math.max(...orders) : 0;
+    await update(ref(db, roomRoot(roomId)), {
+      [`round/openedTipIds/${tipId}`]: maxOrder + 1,
+      'state/phase': GamePhase.TipEffect,
+      'state/updatedAt': Date.now(),
+    });
+  },
+
+  async applyTipEffect(
+    roomId: string,
+    params: { playerId: string; pointsDelta: number; nextPlayerId: string | null },
+  ): Promise<void> {
+    if (params.pointsDelta !== 0) {
+      const playerRef = ref(db, playerPath(roomId, params.playerId));
+      const snap = await get(playerRef);
+      const data = snap.val() as { points?: number } | null;
+      const current = typeof data?.points === 'number' ? data.points : 0;
+      const newPoints = Math.max(0, current + params.pointsDelta);
+      await update(playerRef, { points: newPoints });
+    }
+
+    const turnId = (await readTurnId(roomId)) + 1;
+    await patchRoom(roomId, {
+      state: {
+        phase: GamePhase.SelectingTip,
+        activePlayerId: params.nextPlayerId,
+        turnId,
+      },
+    });
+  },
+
   async advanceTurn(
     roomId: string,
     params: { nextPlayerId: string | null; phase: GamePhase },

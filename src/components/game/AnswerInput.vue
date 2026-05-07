@@ -69,6 +69,13 @@ const handleSkipTurn = () => {
 
 <template>
   <div class="flex gap-2">
+    <Button
+      v-tooltip.top="'Passar a vez'"
+      icon="pi pi-forward"
+      severity="secondary"
+      class="shrink-0"
+      @click="handleSkipTurn"
+    />
     <InputGroup>
       <InputText
         v-model="answer"
@@ -85,12 +92,5 @@ const handleSkipTurn = () => {
         />
       </InputGroupAddon>
     </InputGroup>
-    <Button
-      v-tooltip.top="'Passar a vez'"
-      icon="pi pi-angle-double-right"
-      severity="secondary"
-      class="shrink-0"
-      @click="handleSkipTurn"
-    />
   </div>
 </template>

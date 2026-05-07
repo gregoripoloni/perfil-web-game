@@ -4,8 +4,9 @@ import { usePlayersStore } from '@/stores/playersStore';
 import { usePlayerStore } from '@/stores/playerStore';
 import { useGameStateStore } from '@/stores/gameStateStore';
 import { CARDS } from '@/constants/cards';
+import { TIPS } from '@/constants/tips';
 import { useRoomId } from '@/composables/useRoomId';
-import { GamePhase } from '@/types/round';
+import { GamePhase, TipKind } from '@/types/round';
 import type { RoomPlayerStored } from '@/types/player';
 
 const getRandomCardId = () =>
@@ -51,7 +52,23 @@ export const useGameActions = () => {
   };
 
   const selectTip = async (tipId: number): Promise<void> => {
+    const tip = TIPS.find((t) => t.id === tipId);
+    if (tip && tip.kind !== TipKind.Hint) {
+      await roomRepository.revealTrickTip(roomId.value, tipId);
+      return;
+    }
     await roomRepository.revealTip(roomId.value, tipId);
+  };
+
+  const applyTipEffect = async (
+    playerId: string,
+    pointsDelta: number,
+  ): Promise<void> => {
+    await roomRepository.applyTipEffect(roomId.value, {
+      playerId,
+      pointsDelta,
+      nextPlayerId: getNextPlayerId(),
+    });
   };
 
   const submitAnswer = async (
@@ -125,6 +142,7 @@ export const useGameActions = () => {
     joinGame,
     startGame,
     selectTip,
+    applyTipEffect,
     submitAnswer,
     awardPoints,
     setNextPlayer,

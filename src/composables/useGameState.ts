@@ -47,6 +47,8 @@ export const useGameState = () => {
       .filter((tip) => tip && tip.isOpen);
   });
 
+  const latestRevealedTip = computed(() => revealedTips.value[0] ?? null);
+
   const gamePhase = computed(() => gameStateStore.state.phase);
 
   const activePlayer = computed(() => {
@@ -85,6 +87,7 @@ export const useGameState = () => {
     currentCard,
     currentTips,
     revealedTips,
+    latestRevealedTip,
     gamePhase,
     activePlayer,
     isActivePlayer,

@@ -5,7 +5,24 @@ export enum GamePhase {
   SelectingTip = 'selectingTip',
   Guessing = 'guessing',
   Result = 'result',
+  TipEffect = 'tipEffect',
   Winner = 'winner',
+}
+
+export enum TipKind {
+  Hint = 'hint',
+  SkipTurn = 'skipTurn',
+  LosePoints = 'losePoints',
+  GainPoints = 'gainPoints',
+}
+
+export interface Tip {
+  id: number;
+  cardId: number;
+  text: string;
+  number: number;
+  kind: TipKind;
+  pointsDelta?: number;
 }
 
 export interface RoomMeta {

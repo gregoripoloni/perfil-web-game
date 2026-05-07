@@ -880,11 +880,60 @@ const CARD_TIPS: Record<number, string[]> = {
   ],
 };
 
-export const TIPS = Object.entries(CARD_TIPS).flatMap(([cardId, tips]) =>
-  tips.map((text, index) => ({
+import { TipKind } from '@/types/round';
+import type { Tip } from '@/types/round';
+
+const seededRandom = (seed: number) => {
+  let s = seed || 1;
+  return () => {
+    s = (s * 9301 + 49297) % 233280;
+    return s / 233280;
+  };
+};
+
+const TRICK_KINDS = [TipKind.SkipTurn, TipKind.LosePoints, TipKind.GainPoints];
+
+const buildTrickText = (kind: TipKind, delta: number): string => {
+  if (kind === TipKind.SkipTurn) return 'Voce perdeu sua vez!';
+  if (kind === TipKind.LosePoints)
+    return `Voce perdeu ${delta} ${delta === 1 ? 'ponto' : 'pontos'}!`;
+  return `Voce ganhou ${delta} ${delta === 1 ? 'ponto' : 'pontos'}!`;
+};
+
+const assignTrickTips = (tips: Omit<Tip, 'kind' | 'pointsDelta'>[], cardId: number): Tip[] => {
+  const rng = seededRandom(cardId * 7919);
+  const n = tips.length;
+
+  const pickedIndices: number[] = [];
+  while (pickedIndices.length < 3) {
+    const idx = Math.floor(rng() * n);
+    if (!pickedIndices.includes(idx)) pickedIndices.push(idx);
+  }
+
+  const shuffledKinds = [...TRICK_KINDS].sort(() => rng() - 0.5);
+
+  return tips.map((tip, i) => {
+    const trickIndex = pickedIndices.indexOf(i);
+    if (trickIndex === -1) return { ...tip, kind: TipKind.Hint };
+
+    const kind = shuffledKinds[trickIndex];
+    const pointsDelta =
+      kind !== TipKind.SkipTurn ? Math.floor(rng() * 3) + 1 : undefined;
+    return {
+      ...tip,
+      kind,
+      pointsDelta,
+      text: buildTrickText(kind, pointsDelta ?? 0),
+    };
+  });
+};
+
+export const TIPS: Tip[] = Object.entries(CARD_TIPS).flatMap(([cardId, tips]) => {
+  const baseTips = tips.map((text, index) => ({
     id: (Number(cardId) - 1) * 20 + index + 1,
     cardId: Number(cardId),
     text,
     number: index + 1,
-  })),
-);
+  }));
+  return assignTrickTips(baseTips, Number(cardId));
+});
