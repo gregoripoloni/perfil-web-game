@@ -22,14 +22,18 @@ const handleJoinRoom = (roomId: string) => {
     >
       <template #content>
         <div class="flex flex-col h-full p-2 gap-2 justify-between">
-          <div class="flex items-center justify-center h-full">
+          <div class="flex flex-col gap-8 items-center justify-center h-full">
             <h1
               class="text-6xl font-bold text-center text-shadow-sm text-shadow-primary-400"
             >
-              Perfil
-              <br />
-              <span class="text-4xl">Versão Web</span>
+              Guess What?
             </h1>
+            <p class="text-sm text-center">Versão 0.0.1</p>
+            <p class="text-sm text-center px-40">
+              Guess What? é um jogo de adivinhação de palavras que você pode
+              jogar com seus amigos. Para jogar, basta entrar em uma sala
+              existente ou criar uma nova sala.
+            </p>
           </div>
           <div class="flex flex-col gap-2">
             <SelectableCard
