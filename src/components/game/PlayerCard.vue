@@ -18,14 +18,14 @@ const letter = computed(() => props.name.charAt(0));
     <div
       v-if="isActive"
       class="absolute -left-0.5 -top-0.5 -right-0.5 -bottom-0.5 rounded-xl border-2 animate-pulse"
-      :class="isCurrentPlayer ? 'border-sky-400!' : 'border-primary-400!'"
+      :class="isCurrentPlayer ? 'border-cyan-400!' : 'border-primary-400!'"
     />
     <div
       class="flex flex-col items-center gap-2 w-full overflow-x-hidden lg:flex-row"
     >
       <div
         class="flex items-center justify-center w-8 h-8 shrink-0 rounded-full bg-surface-400"
-        :class="isCurrentPlayer ? 'bg-sky-400!' : ''"
+        :class="isCurrentPlayer ? 'bg-cyan-400!' : ''"
       >
         <span class="text-xl font-semibold text-surface-950">
           {{ letter }}
@@ -33,14 +33,14 @@ const letter = computed(() => props.name.charAt(0));
       </div>
       <span
         class="text-sm text-left max-w-full overflow-x-hidden text-nowrap text-ellipsis"
-        :class="isCurrentPlayer ? 'text-sky-400' : ''"
+        :class="isCurrentPlayer ? 'text-cyan-400' : ''"
       >
         {{ name }}
       </span>
     </div>
     <span
       class="text-lg font-semibold"
-      :class="isCurrentPlayer ? 'text-sky-400' : ''"
+      :class="isCurrentPlayer ? 'text-cyan-400' : ''"
     >
       {{ points }}
     </span>

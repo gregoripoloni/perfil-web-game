@@ -1,13 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputText,
-  Button,
-  Tooltip as vTooltip,
-  useConfirm,
-} from 'primevue';
+import { InputText, Button, Tooltip as vTooltip, useConfirm } from 'primevue';
 import { usePlayerStore } from '@/stores/playerStore';
 import { useGameState } from '@/composables/useGameState';
 import { useGameActions } from '@/composables/useGameActions';
@@ -55,9 +48,11 @@ const handleSkipTurn = () => {
     icon: 'pi pi-info-circle',
     acceptProps: {
       label: 'Passar a vez',
+      severity: 'danger',
     },
     rejectProps: {
       label: 'Cancelar',
+      variant: 'text',
       severity: 'secondary',
     },
     accept() {
@@ -72,25 +67,25 @@ const handleSkipTurn = () => {
     <Button
       v-tooltip.top="'Passar a vez'"
       icon="pi pi-forward"
+      variant="text"
       severity="secondary"
       class="shrink-0"
       @click="handleSkipTurn"
     />
-    <InputGroup>
-      <InputText
-        v-model="answer"
-        class="w-full"
-        placeholder="Digite seu palpite..."
-        @keydown.prevent.enter="handleSendAnswer"
-      />
-      <InputGroupAddon v-tooltip.top="'Enviar palpite'">
-        <Button
-          icon="pi pi-send"
-          severity="secondary"
-          :disabled="!answer.length"
-          @click="handleSendAnswer"
-        />
-      </InputGroupAddon>
-    </InputGroup>
+    <InputText
+      v-model="answer"
+      class="w-full"
+      placeholder="Digite seu palpite..."
+      @keydown.prevent.enter="handleSendAnswer"
+    />
+    <Button
+      v-tooltip.top="'Enviar palpite'"
+      icon="pi pi-send"
+      variant="text"
+      :severity="answer.length ? 'primary' : 'secondary'"
+      :disabled="!answer.length"
+      class="shrink-0"
+      @click="handleSendAnswer"
+    />
   </div>
 </template>

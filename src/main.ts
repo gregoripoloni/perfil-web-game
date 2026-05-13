@@ -11,7 +11,7 @@ import { ensureAnonymousUser } from '@/services/firebase';
 
 const Theme = definePreset(Aura, {
   semantic: {
-    primary: palette('{fuchsia}'),
+    primary: palette('{violet}'),
   },
 });
 

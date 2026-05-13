@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { Card } from 'primevue';
-import SelectableCard from '@/components/ui/SelectableCard.vue';
+import { Card, Button } from 'primevue';
 import JoinRoomDialog from '@/components/dialogs/JoinRoomDialog.vue';
 import { generateRoomId } from '@/utils/roomId';
 
@@ -26,23 +25,19 @@ const handleJoinRoom = (roomId: string) => {
             <h1
               class="text-6xl font-bold text-center text-shadow-sm text-shadow-primary-400"
             >
-              Guess What?
+              Perfil Web
             </h1>
             <p class="text-sm text-center">Versão 0.0.1</p>
-            <p class="text-sm text-center px-40">
-              Guess What? é um jogo de adivinhação de palavras que você pode
-              jogar com seus amigos. Para jogar, basta entrar em uma sala
-              existente ou criar uma nova sala.
+            <p class="text-sm text-center lg:px-40">
+              Perfil Web é um jogo de adivinhação de palavras que você pode
+              jogar com seus amigos.
             </p>
           </div>
-          <div class="flex flex-col gap-2">
-            <SelectableCard
-              text="Nova sala"
+          <div class="flex justify-center">
+            <Button
+              icon="pi pi-play"
+              label="Jogar"
               @click="handleJoinRoom(generateRoomId())"
-            />
-            <SelectableCard
-              text="Entrar em uma sala"
-              @click="isRoomDialogVisible = true"
             />
           </div>
           <JoinRoomDialog

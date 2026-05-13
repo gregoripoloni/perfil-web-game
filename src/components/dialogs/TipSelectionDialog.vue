@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Dialog } from 'primevue';
-import SelectableCard from '@/components/ui/SelectableCard.vue';
+import SelectableCard from '@/components/game/SelectableCard.vue';
 import { useGameState } from '@/composables/useGameState';
 
 defineModel<boolean>('visible');

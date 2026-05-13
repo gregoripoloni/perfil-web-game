@@ -1,14 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import {
-  Button,
-  InputGroup,
-  InputText,
-  InputGroupAddon,
-  Tooltip as vTooltip,
-  useConfirm,
-} from 'primevue';
+import { Button, Menu, Tooltip as vTooltip, useConfirm } from 'primevue';
 import PlayerCard from './PlayerCard.vue';
 import { usePlayerStore } from '@/stores/playerStore';
 import { usePlayersStore } from '@/stores/playersStore';
@@ -26,18 +19,12 @@ const { roomId } = useRoomId();
 const playersStore = usePlayersStore();
 const playerStore = usePlayerStore();
 
-const isUrlCopied = ref(false);
-
 const handleCopy = () => {
   if (!roomId.value) return;
 
   navigator.clipboard.writeText(
     window.location.href.replace(/^https?:\/\//, ''),
   );
-  isUrlCopied.value = true;
-  setTimeout(() => {
-    isUrlCopied.value = false;
-  }, 3000);
 };
 
 const handleLeaveGame = () => {
@@ -47,9 +34,11 @@ const handleLeaveGame = () => {
     icon: 'pi pi-info-circle',
     acceptProps: {
       label: 'Sair',
+      severity: 'danger',
     },
     rejectProps: {
       label: 'Cancelar',
+      variant: 'text',
       severity: 'secondary',
     },
     async accept() {
@@ -58,13 +47,34 @@ const handleLeaveGame = () => {
     },
   });
 };
+
+const menu = ref();
+const items = ref([
+  {
+    label: 'Opções',
+    items: [
+      {
+        label: 'Copiar URL',
+        icon: 'pi pi-link',
+        command: handleCopy,
+      },
+      {
+        label: 'Sair',
+        icon: 'pi pi-sign-out',
+        command: handleLeaveGame,
+      },
+    ],
+  },
+]);
+
+const toggle = (event: Event) => {
+  menu.value.toggle(event);
+};
 </script>
 
 <template>
-  <div
-    class="flex flex-col-reverse justify-between gap-5 p-5 pb-3 lg:flex-col lg:pb-5"
-  >
-    <div class="flex flex-nowrap gap-2 pb-2 overflow-x-auto lg:flex-col">
+  <div class="flex justify-between gap-5 p-5 pb-3 lg:flex-col lg:pb-5">
+    <div class="flex flex-nowrap w-full gap-2 pb-2 overflow-x-auto lg:flex-col">
       <TransitionGroup name="list">
         <PlayerCard
           v-for="player in playersStore.players"
@@ -77,24 +87,19 @@ const handleLeaveGame = () => {
         />
       </TransitionGroup>
     </div>
-    <div class="flex gap-2">
+    <div class="flex items-start gap-2">
       <Button
-        v-tooltip.top="'Sair do jogo'"
-        icon="pi pi-sign-out"
+        v-tooltip.top="'Opções'"
+        icon="pi pi-cog"
         type="button"
+        variant="text"
         severity="secondary"
-        class="shrink-0 -scale-100"
-        @click="handleLeaveGame"
+        class="shrink-0"
+        aria-haspopup="true"
+        aria-controls="overlay_menu"
+        @click="toggle"
       />
-      <InputGroup>
-        <InputText class="w-full" disabled :value="roomId" />
-        <InputGroupAddon v-if="!isUrlCopied" v-tooltip.top="'Copiar URL'">
-          <Button icon="pi pi-copy" severity="secondary" @click="handleCopy" />
-        </InputGroupAddon>
-        <InputGroupAddon v-else v-tooltip.top="'Copiado!'">
-          <Button icon="pi pi-check" severity="secondary" disabled />
-        </InputGroupAddon>
-      </InputGroup>
+      <Menu id="overlay_menu" ref="menu" :model="items" :popup="true" />
     </div>
   </div>
 </template>

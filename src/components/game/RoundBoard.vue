@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Badge } from 'primevue';
 import RevealedTip from '@/components/game/RevealedTip.vue';
 import AnswerInput from '@/components/game/AnswerInput.vue';
 import TipSelectionDialog from '@/components/dialogs/TipSelectionDialog.vue';
@@ -24,8 +23,12 @@ const {
 
 const { selectTip } = useGameActions();
 
-const { showTipSelectionDialog, showResponseDialog, showTipEffectDialog, showWinnerDialog } =
-  useGameFlow();
+const {
+  showTipSelectionDialog,
+  showResponseDialog,
+  showTipEffectDialog,
+  showWinnerDialog,
+} = useGameFlow();
 
 const handleCardClick = (id: number) => {
   if (!isActivePlayer.value || gamePhase.value !== GamePhase.SelectingTip)
@@ -38,18 +41,20 @@ const handleCardClick = (id: number) => {
 
 <template>
   <div class="flex flex-col gap-2 h-full overflow-y-auto">
-    <div class="flex justify-between gap-2">
-      <span class="flex items-center gap-1 text-sm text-left">
-        Categoria:
-        <Badge>{{ currentCard?.category }}</Badge>
+    <div class="flex justify-end gap-8">
+      <span class="flex flex-col gap-1 text-sm text-left">
+        Categoria
+        <span class="font-semibold text-2xl">{{ currentCard?.category }}</span>
       </span>
-      <span class="flex items-center gap-1 text-sm text-left">
-        Dicas:
-        <Badge>{{ revealedTips.length }}/{{ currentTips.length }}</Badge>
+      <span class="flex flex-col gap-1 text-sm text-left">
+        Dicas
+        <span class="font-semibold text-2xl"
+          >{{ revealedTips.length }}/{{ currentTips.length }}</span
+        >
       </span>
     </div>
     <div
-      class="flex flex-col justify-between h-full max-h-full overflow-y-auto"
+      class="flex flex-col justify-between gap-2 h-full max-h-full overflow-y-auto"
     >
       <div class="grid grid-cols-1 gap-2 p-2 max-h-full overflow-y-auto">
         <TransitionGroup name="list">
