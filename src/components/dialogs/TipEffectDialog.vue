@@ -1,21 +1,21 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { Dialog, Message } from 'primevue';
+import MessageDialog from '@/components/ui/MessageDialog.vue';
 import { useGameState } from '@/composables/useGameState';
 import { TipKind } from '@/types/round';
 
-defineModel<boolean>('visible');
+const dialogVisible = defineModel<boolean>('visible');
 
 const { activePlayer, latestRevealedTip } = useGameState();
 
-const severity = computed(() => {
+const tone = computed<'success' | 'error' | 'warn'>(() => {
   const kind = latestRevealedTip.value?.kind;
   if (kind === TipKind.GainPoints) return 'success';
   if (kind === TipKind.LosePoints) return 'error';
   return 'warn';
 });
 
-const messageText = computed(() => {
+const summaryText = computed(() => {
   const kind = latestRevealedTip.value?.kind;
   if (kind === TipKind.GainPoints) return 'Pontos ganhos!';
   if (kind === TipKind.LosePoints) return 'Pontos perdidos!';
@@ -24,20 +24,14 @@ const messageText = computed(() => {
 </script>
 
 <template>
-  <Dialog
-    :visible="visible"
-    modal
+  <MessageDialog
+    v-model:visible="dialogVisible"
+    :tone="tone"
     :header="`Vez de ${activePlayer?.name ?? ''}`"
-    :closable="false"
-    :style="{ width: '25rem' }"
+    :main-text="latestRevealedTip?.text ?? ''"
   >
-    <div class="flex flex-col gap-8 pt-8">
-      <h1 class="text-center text-4xl font-bold">
-        {{ latestRevealedTip?.text }}
-      </h1>
-      <Message :severity="severity">
-        <span class="font-black">{{ messageText }}</span>
-      </Message>
-    </div>
-  </Dialog>
+    <template #additional>
+      <span class="font-black">{{ summaryText }}</span>
+    </template>
+  </MessageDialog>
 </template>

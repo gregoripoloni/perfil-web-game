@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { Dialog, Message } from 'primevue';
+import MessageDialog from '@/components/ui/MessageDialog.vue';
 import { useGameState } from '@/composables/useGameState';
 
-defineModel<boolean>('visible');
+const dialogVisible = defineModel<boolean>('visible');
 
 defineProps<{
   response: string;
@@ -13,26 +13,29 @@ const { answeredBy, pointsAwarded } = useGameState();
 </script>
 
 <template>
-  <Dialog
-    :visible="visible"
-    modal
-    :header="`Palpite de ${answeredBy}`"
-    :closable="false"
-    :style="{ width: '25rem' }"
+  <MessageDialog
+    v-model:visible="dialogVisible"
+    :tone="isCorrect ? 'success' : 'error'"
+    :main-text="response"
   >
-    <div class="flex flex-col gap-8 pt-8">
-      <h1 class="text-center text-4xl font-bold">{{ response }}</h1>
-      <Message :severity="isCorrect ? 'success' : 'error'">
+    <template #header>
+      Palpite de <span class="font-black">{{ answeredBy }}</span></template
+    >
+    <template #additional>
+      <template v-if="isCorrect">
         A resposta está
-        <span class="font-black">{{
-          isCorrect ? 'correta' : 'incorreta'
-        }}</span>
-        <br v-if="isCorrect" />
-        <span v-if="isCorrect">
+        <span class="font-black">correta</span>
+        <br />
+        <span>
           {{ answeredBy }} ganha
-          <span class="font-black">{{ pointsAwarded }}</span> pontos
+          <span class="font-black">{{ pointsAwarded }}</span>
+          pontos
         </span>
-      </Message>
-    </div>
-  </Dialog>
+      </template>
+      <template v-else>
+        A resposta está
+        <span class="font-black">incorreta</span>
+      </template>
+    </template>
+  </MessageDialog>
 </template>
