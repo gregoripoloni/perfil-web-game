@@ -1,11 +1,17 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { Dialog, InputText, Button } from 'primevue';
 import { useGameActions } from '@/composables/useGameActions';
+import { usePlayerStore } from '@/stores/playerStore';
+import { usePlayersStore } from '@/stores/playersStore';
 
 const { joinGame } = useGameActions();
+const playerStore = usePlayerStore();
+const playersStore = usePlayersStore();
 
-const visible = ref(true);
+const visible = computed(
+  () => playersStore.loaded && !playerStore.player,
+);
 const username = ref('');
 const loading = ref(false);
 
@@ -16,13 +22,12 @@ const handleSave = async () => {
   const name = username.value.trim().toLowerCase();
   await joinGame(name);
   loading.value = false;
-  visible.value = false;
 };
 </script>
 
 <template>
   <Dialog
-    v-model:visible="visible"
+    :visible="visible"
     modal
     header="Nome"
     :closable="false"

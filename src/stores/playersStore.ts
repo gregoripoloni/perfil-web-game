@@ -4,14 +4,20 @@ import type { RoomPlayer } from '@/types/player';
 
 export const usePlayersStore = defineStore('players', () => {
   const players = ref<RoomPlayer[]>([]);
+  const loaded = ref(false);
 
   const setPlayers = (incoming: RoomPlayer[]) => {
     players.value = incoming;
   };
 
-  const $reset = () => {
-    players.value = [];
+  const setLoaded = (value: boolean) => {
+    loaded.value = value;
   };
 
-  return { players, setPlayers, $reset };
+  const $reset = () => {
+    players.value = [];
+    loaded.value = false;
+  };
+
+  return { players, loaded, setPlayers, setLoaded, $reset };
 });

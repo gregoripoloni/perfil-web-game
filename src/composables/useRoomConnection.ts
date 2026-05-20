@@ -1,10 +1,12 @@
 import { onScopeDispose } from 'vue';
+import { ensureAnonymousUser } from '@/services/firebase';
 import { roomRepository } from '@/services/roomRepository';
 import { usePlayersStore } from '@/stores/playersStore';
 import { usePlayerStore } from '@/stores/playerStore';
 import { useRoundStore } from '@/stores/roundStore';
 import { useGameStateStore } from '@/stores/gameStateStore';
 import { useRoomMetaStore } from '@/stores/roomMetaStore';
+import type { RoomPlayer } from '@/types/player';
 import type { GameState, RoundState, RoomMeta } from '@/types/round';
 import { useRoomId } from '@/composables/useRoomId';
 
@@ -34,10 +36,27 @@ export const useRoomConnection = () => {
     },
   );
 
+  const restorePlayerIfInRoom = async (players: RoomPlayer[]) => {
+    if (playerStore.player) return;
+
+    const { uid } = await ensureAnonymousUser();
+    const existing = players.find((p) => p.id === uid);
+    if (existing) {
+      playerStore.setPlayer(uid, existing.name);
+    }
+  };
+
   const unsubPlayers = roomRepository.subscribeToPlayers(
     roomId.value,
     (players) => {
       playersStore.setPlayers(players);
+
+      if (playersStore.loaded) return;
+
+      void (async () => {
+        await restorePlayerIfInRoom(players);
+        playersStore.setLoaded(true);
+      })();
     },
   );
 
