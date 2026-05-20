@@ -4,7 +4,7 @@ import { Card } from 'primevue';
 import Sidebar from '@/components/game/Sidebar.vue';
 import RoundBoard from '@/components/game/RoundBoard.vue';
 import WaitingRoom from '@/components/game/WaitingRoom.vue';
-import NameEntryDialog from '@/components/dialogs/NameEntryDialog.vue';
+import NameEntry from '@/components/dialogs/NameEntry.vue';
 import { useRoomConnection } from '@/composables/useRoomConnection';
 import { usePlayersStore } from '@/stores/playersStore';
 import { usePlayerStore } from '@/stores/playerStore';
@@ -43,7 +43,7 @@ onUnmounted(() => {
         </Card>
       </div>
     </Transition>
-    <NameEntryDialog />
+    <NameEntry />
   </div>
 </template>
 

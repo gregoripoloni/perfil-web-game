@@ -24,10 +24,10 @@ export const useGameFlow = () => {
   } = useGameActions();
   const roomMetaStore = useRoomMetaStore();
 
-  const showTipSelectionDialog = ref(false);
-  const showResponseDialog = ref(false);
-  const showTipEffectDialog = ref(false);
-  const showWinnerDialog = ref(false);
+  const showTipSelection = ref(false);
+  const showAnswerResult = ref(false);
+  const showTipEffect = ref(false);
+  const showWinner = ref(false);
 
   let timers: ReturnType<typeof setTimeout>[] = [];
 
@@ -42,7 +42,7 @@ export const useGameFlow = () => {
   });
 
   const onEndTipEffectPhase = async (isCurrentPlayerActive: boolean) => {
-    showTipEffectDialog.value = false;
+    showTipEffect.value = false;
 
     if (isCurrentPlayerActive) {
       const tip = latestRevealedTip.value;
@@ -54,7 +54,7 @@ export const useGameFlow = () => {
   };
 
   const onEndResultPhase = async (isCurrentPlayerActive: boolean) => {
-    showResponseDialog.value = false;
+    showAnswerResult.value = false;
 
     if (isCurrentPlayerActive && isCorrectAnswer.value) {
       await awardPoints(activePlayer.value?.id ?? '', pointsAwarded.value);
@@ -71,7 +71,7 @@ export const useGameFlow = () => {
   };
 
   const onEndWinnerPhase = async (isCurrentPlayerActive: boolean) => {
-    showWinnerDialog.value = false;
+    showWinner.value = false;
 
     if (isCurrentPlayerActive) {
       await resetGame();
@@ -81,11 +81,11 @@ export const useGameFlow = () => {
   const phaseHandlers: Partial<Record<GamePhase, () => void>> = {
     [GamePhase.SelectingTip]: () => {
       if (isActivePlayer.value) {
-        showTipSelectionDialog.value = true;
+        showTipSelection.value = true;
       }
     },
     [GamePhase.TipEffect]: () => {
-      showTipEffectDialog.value = true;
+      showTipEffect.value = true;
       const isCurrentPlayerActive = isActivePlayer.value;
       scheduleTimer(
         () => void onEndTipEffectPhase(isCurrentPlayerActive),
@@ -93,12 +93,12 @@ export const useGameFlow = () => {
       );
     },
     [GamePhase.Result]: () => {
-      showResponseDialog.value = true;
+      showAnswerResult.value = true;
       const isCurrentPlayerActive = isActivePlayer.value;
       scheduleTimer(() => void onEndResultPhase(isCurrentPlayerActive), 3000);
     },
     [GamePhase.Winner]: () => {
-      showWinnerDialog.value = true;
+      showWinner.value = true;
       const isCurrentPlayerActive = isActivePlayer.value;
       scheduleTimer(() => void onEndWinnerPhase(isCurrentPlayerActive), 5000);
     },
@@ -113,9 +113,9 @@ export const useGameFlow = () => {
   );
 
   return {
-    showTipSelectionDialog,
-    showResponseDialog,
-    showTipEffectDialog,
-    showWinnerDialog,
+    showTipSelection,
+    showAnswerResult,
+    showTipEffect,
+    showWinner,
   };
 };

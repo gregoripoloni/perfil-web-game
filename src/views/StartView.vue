@@ -1,13 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { Card, Button } from 'primevue';
-import JoinRoomDialog from '@/components/dialogs/JoinRoomDialog.vue';
 import { generateRoomId } from '@/utils/roomId';
 
 const router = useRouter();
-
-const isRoomDialogVisible = ref(false);
 
 const handleJoinRoom = (roomId: string) => {
   router.push(`/game/${roomId}`);
@@ -40,10 +36,6 @@ const handleJoinRoom = (roomId: string) => {
               @click="handleJoinRoom(generateRoomId())"
             />
           </div>
-          <JoinRoomDialog
-            v-model:visible="isRoomDialogVisible"
-            @join-room="handleJoinRoom"
-          />
         </div>
       </template>
     </Card>

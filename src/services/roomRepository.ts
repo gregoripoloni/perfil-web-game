@@ -237,7 +237,11 @@ export const roomRepository = {
 
   async applyTipEffect(
     roomId: string,
-    params: { playerId: string; pointsDelta: number; nextPlayerId: string | null },
+    params: {
+      playerId: string;
+      pointsDelta: number;
+      nextPlayerId: string | null;
+    },
   ): Promise<void> {
     if (params.pointsDelta !== 0) {
       const playerRef = ref(db, playerPath(roomId, params.playerId));

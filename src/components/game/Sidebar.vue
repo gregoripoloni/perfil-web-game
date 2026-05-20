@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { Button, Menu, Tooltip as vTooltip, useConfirm } from 'primevue';
+import { Button, Menu, useConfirm } from 'primevue';
 import PlayerCard from './PlayerCard.vue';
 import { usePlayerStore } from '@/stores/playerStore';
 import { usePlayersStore } from '@/stores/playersStore';
@@ -31,7 +31,7 @@ const handleLeaveGame = () => {
   confirm.require({
     message: 'Tem certeza que deseja sair do jogo?',
     header: 'Atenção',
-    icon: 'pi pi-info-circle',
+    icon: 'pi pi-exclamation-triangle',
     acceptProps: {
       label: 'Sair',
       severity: 'danger',
@@ -89,7 +89,6 @@ const toggle = (event: Event) => {
     </div>
     <div class="flex items-start gap-2">
       <Button
-        v-tooltip.top="'Opções'"
         icon="pi pi-cog"
         type="button"
         variant="text"

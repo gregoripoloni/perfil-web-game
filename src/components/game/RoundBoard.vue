@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import RevealedTip from '@/components/game/RevealedTip.vue';
 import AnswerInput from '@/components/game/AnswerInput.vue';
-import TipSelectionDialog from '@/components/dialogs/TipSelectionDialog.vue';
-import AnswerResultDialog from '@/components/dialogs/AnswerResultDialog.vue';
-import TipEffectDialog from '@/components/dialogs/TipEffectDialog.vue';
-import WinnerDialog from '@/components/dialogs/WinnerDialog.vue';
+import TipSelection from '@/components/dialogs/TipSelection.vue';
+import AnswerResult from '@/components/messages/AnswerResult.vue';
+import TipEffect from '@/components/messages/TipEffect.vue';
+import Winner from '@/components/messages/Winner.vue';
 import { useGameState } from '@/composables/useGameState';
 import { useGameActions } from '@/composables/useGameActions';
 import { useGameFlow } from '@/composables/useGameFlow';
@@ -23,19 +23,15 @@ const {
 
 const { selectTip } = useGameActions();
 
-const {
-  showTipSelectionDialog,
-  showResponseDialog,
-  showTipEffectDialog,
-  showWinnerDialog,
-} = useGameFlow();
+const { showTipSelection, showAnswerResult, showTipEffect, showWinner } =
+  useGameFlow();
 
 const handleCardClick = (id: number) => {
   if (!isActivePlayer.value || gamePhase.value !== GamePhase.SelectingTip)
     return;
 
   void selectTip(id);
-  showTipSelectionDialog.value = false;
+  showTipSelection.value = false;
 };
 </script>
 
@@ -56,31 +52,36 @@ const handleCardClick = (id: number) => {
     <div
       class="flex flex-col justify-between gap-2 h-full max-h-full overflow-y-auto"
     >
-      <div class="grid grid-cols-1 gap-2 p-2 max-h-full overflow-y-auto">
-        <TransitionGroup name="list">
-          <RevealedTip
-            v-for="tip in revealedTips"
-            :key="tip.text"
-            :text="tip.text"
-            :number="tip.number"
-            :kind="tip.kind"
-          />
-        </TransitionGroup>
-      </div>
+      <Transition mode="out-in">
+        <AnswerResult
+          v-if="showAnswerResult"
+          :is-correct="isCorrectAnswer"
+          :response="submittedAnswer"
+        />
+        <TipEffect v-else-if="showTipEffect" />
+        <Winner v-else-if="showWinner" />
+        <div
+          v-else
+          class="grid grid-cols-1 gap-2 p-2 max-h-full overflow-y-auto"
+        >
+          <TransitionGroup name="list">
+            <RevealedTip
+              v-for="tip in revealedTips"
+              :key="tip.text"
+              :text="tip.text"
+              :number="tip.number"
+              :kind="tip.kind"
+            />
+          </TransitionGroup>
+        </div>
+      </Transition>
       <Transition>
         <AnswerInput v-if="!isDisabledSendAnswer" />
       </Transition>
     </div>
-    <TipSelectionDialog
-      v-model:visible="showTipSelectionDialog"
+    <TipSelection
+      v-model:visible="showTipSelection"
       @select-tip="handleCardClick"
     />
-    <AnswerResultDialog
-      v-model:visible="showResponseDialog"
-      :is-correct="isCorrectAnswer"
-      :response="submittedAnswer"
-    />
-    <TipEffectDialog v-model:visible="showTipEffectDialog" />
-    <WinnerDialog v-model:visible="showWinnerDialog" />
   </div>
 </template>

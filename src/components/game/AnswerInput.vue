@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { InputText, Button, Tooltip as vTooltip, useConfirm } from 'primevue';
+import { InputText, Button, useConfirm } from 'primevue';
 import { usePlayerStore } from '@/stores/playerStore';
 import { useGameState } from '@/composables/useGameState';
 import { useGameActions } from '@/composables/useGameActions';
@@ -43,11 +43,11 @@ const handleSkipTurn = () => {
   if (!isActivePlayer.value) return;
 
   confirm.require({
-    message: 'Tem certeza que deseja passar a vez?',
+    message: 'Tem certeza que deseja pular a sua vez?',
     header: 'Atenção',
-    icon: 'pi pi-info-circle',
+    icon: 'pi pi-exclamation-triangle',
     acceptProps: {
-      label: 'Passar a vez',
+      label: 'Sim, pular minha vez',
       severity: 'danger',
     },
     rejectProps: {
@@ -65,7 +65,6 @@ const handleSkipTurn = () => {
 <template>
   <div class="flex gap-2">
     <Button
-      v-tooltip.top="'Passar a vez'"
       icon="pi pi-forward"
       variant="text"
       severity="secondary"
@@ -79,9 +78,7 @@ const handleSkipTurn = () => {
       @keydown.prevent.enter="handleSendAnswer"
     />
     <Button
-      v-tooltip.top="'Enviar palpite'"
       icon="pi pi-send"
-      variant="text"
       :severity="answer.length ? 'primary' : 'secondary'"
       :disabled="!answer.length"
       class="shrink-0"

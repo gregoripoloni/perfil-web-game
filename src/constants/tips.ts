@@ -894,13 +894,16 @@ const seededRandom = (seed: number) => {
 const TRICK_KINDS = [TipKind.SkipTurn, TipKind.LosePoints, TipKind.GainPoints];
 
 const buildTrickText = (kind: TipKind, delta: number): string => {
-  if (kind === TipKind.SkipTurn) return 'Voce perdeu sua vez!';
+  if (kind === TipKind.SkipTurn) return 'Perca sua vez.';
   if (kind === TipKind.LosePoints)
-    return `Voce perdeu ${delta} ${delta === 1 ? 'ponto' : 'pontos'}!`;
-  return `Voce ganhou ${delta} ${delta === 1 ? 'ponto' : 'pontos'}!`;
+    return `Perca ${delta} ${delta === 1 ? 'ponto' : 'pontos'}.`;
+  return `Ganhe ${delta} ${delta === 1 ? 'ponto' : 'pontos'}.`;
 };
 
-const assignTrickTips = (tips: Omit<Tip, 'kind' | 'pointsDelta'>[], cardId: number): Tip[] => {
+const assignTrickTips = (
+  tips: Omit<Tip, 'kind' | 'pointsDelta'>[],
+  cardId: number,
+): Tip[] => {
   const rng = seededRandom(cardId * 7919);
   const n = tips.length;
 
@@ -928,12 +931,14 @@ const assignTrickTips = (tips: Omit<Tip, 'kind' | 'pointsDelta'>[], cardId: numb
   });
 };
 
-export const TIPS: Tip[] = Object.entries(CARD_TIPS).flatMap(([cardId, tips]) => {
-  const baseTips = tips.map((text, index) => ({
-    id: (Number(cardId) - 1) * 20 + index + 1,
-    cardId: Number(cardId),
-    text,
-    number: index + 1,
-  }));
-  return assignTrickTips(baseTips, Number(cardId));
-});
+export const TIPS: Tip[] = Object.entries(CARD_TIPS).flatMap(
+  ([cardId, tips]) => {
+    const baseTips = tips.map((text, index) => ({
+      id: (Number(cardId) - 1) * 20 + index + 1,
+      cardId: Number(cardId),
+      text,
+      number: index + 1,
+    }));
+    return assignTrickTips(baseTips, Number(cardId));
+  },
+);
