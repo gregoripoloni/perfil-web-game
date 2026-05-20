@@ -73,8 +73,12 @@ const toggle = (event: Event) => {
 </script>
 
 <template>
-  <div class="flex justify-between gap-5 p-5 pb-3 lg:flex-col lg:pb-5">
-    <div class="flex flex-nowrap w-full gap-2 pb-2 overflow-x-auto lg:flex-col">
+  <div
+    class="flex justify-between gap-2 p-5 pt-0 pb-3 lg:flex-col lg:pb-5 lg:pt-5 lg:pl-0"
+  >
+    <div
+      class="flex flex-nowrap w-full gap-2 pt-5 pb-2 overflow-y-visible overflow-x-auto lg:flex-col lg:pb-0 lg:pt-0 lg:pl-5"
+    >
       <TransitionGroup name="list">
         <PlayerCard
           v-for="player in playersStore.players"
@@ -87,7 +91,7 @@ const toggle = (event: Event) => {
         />
       </TransitionGroup>
     </div>
-    <div class="flex items-start gap-2">
+    <div class="flex items-start gap-2 pt-5 lg:pt-0 lg:pl-5">
       <Button
         icon="pi pi-cog"
         type="button"

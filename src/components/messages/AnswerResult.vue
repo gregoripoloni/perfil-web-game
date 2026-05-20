@@ -23,7 +23,7 @@ setTimeout(() => {
     <PlayerText :name="answeredBy" />
     <Card class="rounded-tl-none! border-2 border-surface-800">
       <template #content>
-        <h1 class="text-4xl font-bold text-surface-0">
+        <h1 class="text-4xl font-bold text-left text-surface-0">
           {{ response }}
         </h1>
       </template>
@@ -45,7 +45,7 @@ setTimeout(() => {
         }"
       />
       <Transition>
-        <p v-if="!isLoading" class="text-2xl text-left">
+        <p v-if="!isLoading" class="text-2xl text-left font-semibold">
           {{ isCorrect ? 'Correto' : 'Errado' }}
           <br />
           {{ isCorrect ? `+${pointsAwarded} pontos` : '' }}

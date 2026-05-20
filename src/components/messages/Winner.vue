@@ -15,7 +15,9 @@ const { answeredBy } = useGameState();
       <template #content>
         <div class="flex items-center gap-4">
           <span class="pi pi-trophy text-primary-400 text-4xl!" />
-          <h1 class="text-4xl font-bold text-primary-0">Venceu o jogo!</h1>
+          <h1 class="text-4xl font-bold text-left text-primary-0">
+            Venceu o jogo!
+          </h1>
         </div>
       </template>
     </Card>
