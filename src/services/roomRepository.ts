@@ -235,31 +235,19 @@ export const roomRepository = {
     });
   },
 
-  async applyTipEffect(
+  async applyPointsDelta(
     roomId: string,
-    params: {
-      playerId: string;
-      pointsDelta: number;
-      nextPlayerId: string | null;
-    },
+    playerId: string,
+    pointsDelta: number,
   ): Promise<void> {
-    if (params.pointsDelta !== 0) {
-      const playerRef = ref(db, playerPath(roomId, params.playerId));
-      const snap = await get(playerRef);
-      const data = snap.val() as { points?: number } | null;
-      const current = typeof data?.points === 'number' ? data.points : 0;
-      const newPoints = Math.max(0, current + params.pointsDelta);
-      await update(playerRef, { points: newPoints });
-    }
+    if (pointsDelta === 0) return;
 
-    const turnId = (await readTurnId(roomId)) + 1;
-    await patchRoom(roomId, {
-      state: {
-        phase: GamePhase.SelectingTip,
-        activePlayerId: params.nextPlayerId,
-        turnId,
-      },
-    });
+    const playerRef = ref(db, playerPath(roomId, playerId));
+    const snap = await get(playerRef);
+    const data = snap.val() as { points?: number } | null;
+    const current = typeof data?.points === 'number' ? data.points : 0;
+    const newPoints = Math.max(0, current + pointsDelta);
+    await update(playerRef, { points: newPoints });
   },
 
   async advanceTurn(
