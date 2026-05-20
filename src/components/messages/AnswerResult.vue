@@ -19,9 +19,7 @@ setTimeout(() => {
 </script>
 
 <template>
-  <div
-    class="flex flex-col items-start m-auto gap-2 rounded-2xl h-full px-6 py-10"
-  >
+  <div class="flex flex-col items-start gap-2 rounded-2xl h-full px-6 py-10">
     <PlayerText :name="answeredBy" />
     <Card class="rounded-tl-none! border-2 border-surface-800">
       <template #content>
@@ -41,7 +39,7 @@ setTimeout(() => {
       <span
         class="pi text-2xl!"
         :class="{
-          'pi-spinner animate-spin': isLoading,
+          'pi-spinner pi-spin': isLoading,
           'pi-times': !isLoading && !isCorrect,
           'pi-check': !isLoading && isCorrect,
         }"

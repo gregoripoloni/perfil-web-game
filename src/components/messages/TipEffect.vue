@@ -7,9 +7,7 @@ const { activePlayer, latestRevealedTip } = useGameState();
 </script>
 
 <template>
-  <div
-    class="flex flex-col items-start m-auto gap-2 rounded-2xl h-full px-6 py-10"
-  >
+  <div class="flex flex-col items-start gap-2 rounded-2xl h-full px-6 py-10">
     <PlayerText :name="activePlayer?.name ?? ''" />
     <RevealedTip
       :text="latestRevealedTip?.text ?? ''"

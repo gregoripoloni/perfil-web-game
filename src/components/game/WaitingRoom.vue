@@ -11,6 +11,11 @@ const { startGame } = useGameActions();
 <template>
   <div class="flex flex-col justify-center items-center gap-4 h-full">
     <h1 class="text-xl font-semibold">Aguardando jogadores...</h1>
-    <Button v-if="isActivePlayer" label="Começar Jogo" @click="startGame" />
+    <Button
+      v-if="isActivePlayer"
+      icon="pi pi-play"
+      label="Começar Jogo"
+      @click="startGame"
+    />
   </div>
 </template>
