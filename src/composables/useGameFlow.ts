@@ -42,8 +42,6 @@ export const useGameFlow = () => {
   });
 
   const onEndTipEffectPhase = async (isCurrentPlayerActive: boolean) => {
-    showTipEffect.value = false;
-
     if (isCurrentPlayerActive) {
       const tip = latestRevealedTip.value;
       let delta = 0;
@@ -51,11 +49,11 @@ export const useGameFlow = () => {
       else if (tip?.kind === TipKind.GainPoints) delta = tip.pointsDelta ?? 0;
       await applyTipEffect(activePlayer.value?.id ?? '', delta);
     }
+
+    showTipEffect.value = false;
   };
 
   const onEndResultPhase = async (isCurrentPlayerActive: boolean) => {
-    showAnswerResult.value = false;
-
     if (isCurrentPlayerActive && isCorrectAnswer.value) {
       await awardPoints(activePlayer.value?.id ?? '', pointsAwarded.value);
       const currentPoints = activePlayer.value?.points ?? 0;
@@ -68,14 +66,16 @@ export const useGameFlow = () => {
     } else if (isCurrentPlayerActive) {
       await setNextPlayer();
     }
+
+    showAnswerResult.value = false;
   };
 
   const onEndWinnerPhase = async (isCurrentPlayerActive: boolean) => {
-    showWinner.value = false;
-
     if (isCurrentPlayerActive) {
       await resetGame();
     }
+
+    showWinner.value = false;
   };
 
   const phaseHandlers: Partial<Record<GamePhase, () => void>> = {
