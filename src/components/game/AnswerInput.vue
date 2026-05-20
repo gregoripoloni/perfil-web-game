@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { InputText, Button, useConfirm } from 'primevue';
+import { ref, useTemplateRef } from 'vue';
+import { Button, useConfirm } from 'primevue';
 import { usePlayerStore } from '@/stores/playerStore';
 import { useGameState } from '@/composables/useGameState';
 import { useGameActions } from '@/composables/useGameActions';
@@ -15,7 +15,9 @@ const { currentCard, isActivePlayer, currentTips, revealedTips } =
   useGameState();
 const { submitAnswer, setNextPlayer } = useGameActions();
 
+const inputRef = useTemplateRef<HTMLInputElement>('input');
 const answer = ref('');
+const isFocused = ref(false);
 
 const handleSendAnswer = async () => {
   if (!isActivePlayer.value || !playerStore.player || !answer.value.length)
@@ -63,26 +65,36 @@ const handleSkipTurn = () => {
 </script>
 
 <template>
-  <div class="flex gap-2">
-    <Button
-      icon="pi pi-forward"
-      variant="text"
-      severity="secondary"
-      class="shrink-0"
-      @click="handleSkipTurn"
-    />
-    <InputText
+  <div
+    class="flex flex-col gap-2 p-2 rounded-xl cursor-text bg-surface-950 border-2 border-surface-800 transition-colors"
+    :class="{ 'border-primary-400!': isFocused }"
+    @click="inputRef?.focus()"
+  >
+    <input
+      ref="input"
       v-model="answer"
-      class="w-full"
+      type="text"
+      class="w-full p-2 uppercase font-medium outline-none text-surface-0"
       placeholder="Digite seu palpite..."
+      @focus="isFocused = true"
+      @blur="isFocused = false"
       @keydown.prevent.enter="handleSendAnswer"
     />
-    <Button
-      icon="pi pi-send"
-      :severity="answer.length ? 'primary' : 'secondary'"
-      :disabled="!answer.length"
-      class="shrink-0"
-      @click="handleSendAnswer"
-    />
+    <div class="flex justify-between gap-2">
+      <Button
+        icon="pi pi-forward"
+        variant="text"
+        severity="secondary"
+        class="shrink-0"
+        @click.stop="handleSkipTurn"
+      />
+      <Button
+        icon="pi pi-send"
+        :severity="answer.length ? 'primary' : 'secondary'"
+        :disabled="!answer.length"
+        class="shrink-0"
+        @click.stop="handleSendAnswer"
+      />
+    </div>
   </div>
 </template>

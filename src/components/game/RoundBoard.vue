@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import RevealedTip from '@/components/game/RevealedTip.vue';
 import AnswerInput from '@/components/game/AnswerInput.vue';
 import TipSelection from '@/components/dialogs/TipSelection.vue';
@@ -33,24 +34,34 @@ const handleCardClick = (id: number) => {
   void selectTip(id);
   showTipSelection.value = false;
 };
+
+const categoryIcon = computed(() => {
+  const map = {
+    Pessoa: 'pi-user',
+    Lugar: 'pi-map-marker',
+    Ano: 'pi-calendar',
+    Coisa: 'pi-mobile',
+  };
+  return map[currentCard.value?.category as keyof typeof map];
+});
 </script>
 
 <template>
   <div class="flex flex-col gap-2 h-full overflow-y-auto">
-    <div class="flex justify-end gap-8">
-      <span class="flex flex-col gap-1 text-sm text-left">
-        Categoria
+    <div class="flex gap-8">
+      <span class="flex items-center gap-2 text-sm text-left">
+        <span class="pi text-xl! text-primary-400" :class="categoryIcon" />
         <span class="font-semibold text-2xl">{{ currentCard?.category }}</span>
       </span>
-      <span class="flex flex-col gap-1 text-sm text-left">
-        Dicas
+      <span class="flex items-center gap-2 text-sm text-left">
+        <span class="pi pi-lightbulb text-xl! text-primary-400" />
         <span class="font-semibold text-2xl"
           >{{ revealedTips.length }}/{{ currentTips.length }}</span
         >
       </span>
     </div>
     <div
-      class="flex flex-col justify-between gap-2 h-full max-h-full overflow-y-auto"
+      class="flex flex-col justify-between h-full max-h-full overflow-y-auto"
     >
       <Transition mode="out-in">
         <AnswerResult

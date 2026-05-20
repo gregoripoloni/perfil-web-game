@@ -102,6 +102,10 @@ p {
     border-inline-end-width: 2px !important;
   }
 
+  .p-button {
+    border-radius: 8px !important;
+  }
+
   .p-button-label {
     font-weight: 600 !important;
     text-transform: uppercase !important;
