@@ -7,7 +7,6 @@ export const hasRemainingTips = (
   if (cardId == null) return false;
 
   return TIPS.some(
-    (tip) =>
-      tip.cardId === cardId && openedTipIds[String(tip.id)] == null,
+    (tip) => tip.cardId === cardId && openedTipIds[String(tip.id)] == null,
   );
 };

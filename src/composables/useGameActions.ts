@@ -85,11 +85,7 @@ export const useGameActions = () => {
     playerId: string,
     pointsDelta: number,
   ): Promise<void> => {
-    await roomRepository.applyPointsDelta(
-      roomId.value,
-      playerId,
-      pointsDelta,
-    );
+    await roomRepository.applyPointsDelta(roomId.value, playerId, pointsDelta);
     await advanceTurnOrResetRound();
   };
 

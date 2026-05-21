@@ -9,9 +9,7 @@ const { joinGame } = useGameActions();
 const playerStore = usePlayerStore();
 const playersStore = usePlayersStore();
 
-const visible = computed(
-  () => playersStore.loaded && !playerStore.player,
-);
+const visible = computed(() => playersStore.loaded && !playerStore.player);
 const username = ref('');
 const loading = ref(false);
 
