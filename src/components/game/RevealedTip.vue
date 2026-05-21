@@ -10,9 +10,9 @@ const props = defineProps<{
 }>();
 
 const icon = computed(() => {
-  if (props.kind === TipKind.GainPoints) return 'pi pi-arrow-up text-green-400';
+  if (props.kind === TipKind.GainPoints) return 'pi pi-arrow-up text-lime-400';
   if (props.kind === TipKind.LosePoints) return 'pi pi-arrow-down text-red-400';
-  if (props.kind === TipKind.SkipTurn) return 'pi pi-forward text-yellow-400';
+  if (props.kind === TipKind.SkipTurn) return 'pi pi-forward text-amber-400';
   return 'pi pi-lightbulb text-primary-400';
 });
 </script>
