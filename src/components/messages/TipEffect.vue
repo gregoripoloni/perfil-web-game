@@ -13,6 +13,7 @@ const { activePlayer, latestRevealedTip } = useGameState();
       :text="latestRevealedTip?.text ?? ''"
       :number="latestRevealedTip?.number ?? 0"
       :kind="latestRevealedTip?.kind"
+      class="w-full"
     />
   </div>
 </template>

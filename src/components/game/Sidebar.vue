@@ -31,10 +31,9 @@ const handleLeaveGame = () => {
   confirm.require({
     message: 'Tem certeza que deseja sair do jogo?',
     header: 'Atenção',
-    icon: 'pi pi-exclamation-triangle',
     acceptProps: {
       label: 'Sair',
-      severity: 'danger',
+      severity: 'contrast',
     },
     rejectProps: {
       label: 'Cancelar',
@@ -51,19 +50,14 @@ const handleLeaveGame = () => {
 const menu = ref();
 const items = ref([
   {
-    label: 'Opções',
-    items: [
-      {
-        label: 'Copiar URL',
-        icon: 'pi pi-link',
-        command: handleCopy,
-      },
-      {
-        label: 'Sair',
-        icon: 'pi pi-sign-out',
-        command: handleLeaveGame,
-      },
-    ],
+    label: 'Copiar URL',
+    icon: 'pi pi-link',
+    command: handleCopy,
+  },
+  {
+    label: 'Sair',
+    icon: 'pi pi-sign-out',
+    command: handleLeaveGame,
   },
 ]);
 

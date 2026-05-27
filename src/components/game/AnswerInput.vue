@@ -47,10 +47,9 @@ const handleSkipTurn = () => {
   confirm.require({
     message: 'Tem certeza que deseja pular a sua vez?',
     header: 'Atenção',
-    icon: 'pi pi-exclamation-triangle',
     acceptProps: {
-      label: 'Sim, pular minha vez',
-      severity: 'danger',
+      label: 'Pular',
+      severity: 'contrast',
     },
     rejectProps: {
       label: 'Cancelar',
@@ -66,7 +65,7 @@ const handleSkipTurn = () => {
 
 <template>
   <div
-    class="flex flex-col gap-2 p-2 rounded-xl cursor-text bg-surface-950 border-2 border-surface-800 transition-colors"
+    class="flex flex-col gap-2 p-2 rounded-xl cursor-text bg-surface-950 border-2 border-surface-800 transition-colors hover:border-surface-700"
     :class="{ 'border-primary-400!': isFocused }"
     @click="inputRef?.focus()"
   >

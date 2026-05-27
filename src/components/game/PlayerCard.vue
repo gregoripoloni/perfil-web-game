@@ -33,7 +33,7 @@ const letter = computed(() => props.name.charAt(0));
         </span>
       </div>
       <span
-        class="text-sm text-left max-w-full overflow-x-hidden text-nowrap text-ellipsis"
+        class="text-sm text-left font-medium max-w-full overflow-x-hidden text-nowrap text-ellipsis"
         :class="{ 'text-primary-400': isCurrentPlayer }"
       >
         {{ name }}
