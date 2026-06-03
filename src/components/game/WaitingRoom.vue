@@ -4,7 +4,7 @@ import { Button, InputText } from 'primevue';
 import { useGameState } from '@/composables/useGameState';
 import { useGameActions } from '@/composables/useGameActions';
 
-const { isActivePlayer } = useGameState();
+const { isRoomCreator } = useGameState();
 const { startGame } = useGameActions();
 
 const loading = ref(false);
@@ -33,7 +33,7 @@ const handleStartGame = async () => {
       <Button icon="pi pi-copy" severity="secondary" @click="handleCopy" />
     </div>
     <Button
-      v-if="isActivePlayer"
+      v-if="isRoomCreator"
       icon="pi pi-play"
       label="Começar Jogo"
       class="mt-4"

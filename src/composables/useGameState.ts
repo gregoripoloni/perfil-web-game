@@ -3,6 +3,7 @@ import { useRoundStore } from '@/stores/roundStore';
 import { useGameStateStore } from '@/stores/gameStateStore';
 import { usePlayerStore } from '@/stores/playerStore';
 import { usePlayersStore } from '@/stores/playersStore';
+import { useRoomMetaStore } from '@/stores/roomMetaStore';
 import { CARDS } from '@/constants/cards';
 import { TIPS } from '@/constants/tips';
 import { GamePhase } from '@/types/round';
@@ -12,6 +13,7 @@ export const useGameState = () => {
   const gameStateStore = useGameStateStore();
   const playerStore = usePlayerStore();
   const playersStore = usePlayersStore();
+  const roomMetaStore = useRoomMetaStore();
 
   const currentCard = computed(() => {
     return CARDS.find((card) => card.id === roundStore.state.cardId) ?? null;
@@ -63,6 +65,12 @@ export const useGameState = () => {
     () => activePlayer.value?.id === playerStore.player?.id,
   );
 
+  const isRoomCreator = computed(
+    () =>
+      playerStore.player?.id != null &&
+      playerStore.player.id === roomMetaStore.state.createdByUserId,
+  );
+
   const isDisabledSendAnswer = computed(
     () => !isActivePlayer.value || gamePhase.value !== GamePhase.Guessing,
   );
@@ -91,6 +99,7 @@ export const useGameState = () => {
     gamePhase,
     activePlayer,
     isActivePlayer,
+    isRoomCreator,
     isDisabledSendAnswer,
     submittedAnswer,
     answeredBy,
