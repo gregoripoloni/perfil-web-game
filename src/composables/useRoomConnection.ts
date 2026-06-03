@@ -32,6 +32,10 @@ export const useRoomConnection = () => {
           typeof partial.createdAt === 'number'
             ? partial.createdAt
             : prev.createdAt,
+        createdByUserId:
+          typeof partial.createdByUserId === 'string'
+            ? partial.createdByUserId
+            : prev.createdByUserId,
       });
     },
   );

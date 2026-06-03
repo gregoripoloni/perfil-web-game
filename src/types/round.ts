@@ -28,6 +28,7 @@ export interface Tip {
 export interface RoomMeta {
   createdAt: number;
   pointsToWin: number;
+  createdByUserId: string | null;
 }
 
 export interface GameState {
@@ -53,6 +54,7 @@ export interface RoundState {
 export const DEFAULT_ROOM_META: RoomMeta = {
   createdAt: 0,
   pointsToWin: POINTS_TO_WIN,
+  createdByUserId: null,
 };
 
 export const DEFAULT_GAME_STATE: GameState = {

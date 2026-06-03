@@ -132,13 +132,17 @@ export const roomRepository = {
     });
   },
 
-  async ensureRoomMeta(roomId: string): Promise<void> {
+  async ensureRoomMeta(
+    roomId: string,
+    createdByUserId: string,
+  ): Promise<void> {
     const metaRef = ref(db, metaPath(roomId));
     await runTransaction(metaRef, (current) => {
       if (current === null || current === undefined) {
         return {
           createdAt: serverTimestamp(),
           pointsToWin: POINTS_TO_WIN,
+          createdByUserId,
         };
       }
       return current;
@@ -150,7 +154,7 @@ export const roomRepository = {
     playerId: string,
     data: RoomPlayerStored,
   ): Promise<void> {
-    await roomRepository.ensureRoomMeta(roomId);
+    await roomRepository.ensureRoomMeta(roomId, playerId);
     await set(ref(db, playerPath(roomId, playerId)), data);
     const stateSnap = await get(ref(db, statePath(roomId)));
     const s = stateSnap.val() as Partial<GameState> | null;
