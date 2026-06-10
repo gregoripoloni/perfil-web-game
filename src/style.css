@@ -2,6 +2,29 @@
 @import 'tailwindcss-primeui';
 @import 'primeicons/primeicons.css';
 
+@theme {
+  --animate-shake: shake 0.6s ease-in-out infinite;
+
+  @keyframes shake {
+    0%,
+    100% {
+      transform: translateX(0) rotate(0deg);
+    }
+    20% {
+      transform: translateX(-6px) rotate(-4deg);
+    }
+    40% {
+      transform: translateX(6px) rotate(4deg);
+    }
+    60% {
+      transform: translateX(-4px) rotate(-2deg);
+    }
+    80% {
+      transform: translateX(4px) rotate(2deg);
+    }
+  }
+}
+
 :root {
   font:
     16px/145% 'SUSE Mono',

@@ -1,4 +1,4 @@
-import { onScopeDispose } from 'vue';
+import { onScopeDispose, ref } from 'vue';
 import { ensureAnonymousUser } from '@/services/firebase';
 import { roomRepository } from '@/services/roomRepository';
 import { usePlayersStore } from '@/stores/playersStore';
@@ -12,6 +12,7 @@ import { useRoomId } from '@/composables/useRoomId';
 
 export const useRoomConnection = () => {
   const { roomId } = useRoomId();
+  const loading = ref(true);
 
   const playersStore = usePlayersStore();
   const playerStore = usePlayerStore();
@@ -55,11 +56,15 @@ export const useRoomConnection = () => {
     (players) => {
       playersStore.setPlayers(players);
 
-      if (playersStore.loaded) return;
+      if (playersStore.loaded) {
+        loading.value = false;
+        return;
+      }
 
       void (async () => {
         await restorePlayerIfInRoom(players);
         playersStore.setLoaded(true);
+        loading.value = false;
       })();
     },
   );
@@ -120,5 +125,5 @@ export const useRoomConnection = () => {
     unsubRound();
   });
 
-  return { disconnect };
+  return { disconnect, loading };
 };

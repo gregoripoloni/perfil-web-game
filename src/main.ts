@@ -7,7 +7,6 @@ import { definePreset, palette } from '@primeuix/themes';
 import { router } from '@/router';
 import './style.css';
 import App from './App.vue';
-import { ensureAnonymousUser } from '@/services/firebase';
 
 const Theme = definePreset(Aura, {
   semantic: {
@@ -29,12 +28,4 @@ app.use(PrimeVue, {
   },
 });
 app.use(ConfirmationService);
-
-void (async () => {
-  try {
-    await ensureAnonymousUser();
-  } catch (err) {
-    console.error('Falha na autenticação anónima do Firebase:', err);
-  }
-  app.mount('#app');
-})();
+app.mount('#app');

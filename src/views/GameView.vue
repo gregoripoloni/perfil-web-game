@@ -5,13 +5,14 @@ import Sidebar from '@/components/game/Sidebar.vue';
 import RoundBoard from '@/components/game/RoundBoard.vue';
 import WaitingRoom from '@/components/game/WaitingRoom.vue';
 import NameEntry from '@/components/dialogs/NameEntry.vue';
+import LoadingOverlay from '@/components/LoadingOverlay.vue';
 import { useRoomConnection } from '@/composables/useRoomConnection';
 import { usePlayersStore } from '@/stores/playersStore';
 import { usePlayerStore } from '@/stores/playerStore';
 import { useGameStateStore } from '@/stores/gameStateStore';
 import { GamePhase } from '@/types/round';
 
-const { disconnect } = useRoomConnection();
+const { disconnect, loading } = useRoomConnection();
 
 const playersStore = usePlayersStore();
 const playerStore = usePlayerStore();
@@ -44,6 +45,7 @@ onUnmounted(() => {
       </div>
     </Transition>
     <NameEntry />
+    <LoadingOverlay :visible="loading" />
   </div>
 </template>
 
