@@ -147,4 +147,8 @@ p {
     border-color: var(--p-surface-800) !important;
     border-radius: 8px !important;
   }
+
+  .p-toast-message-icon {
+    display: none !important;
+  }
 }

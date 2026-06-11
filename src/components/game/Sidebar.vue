@@ -7,6 +7,7 @@ import { usePlayerStore } from '@/stores/playerStore';
 import { usePlayersStore } from '@/stores/playersStore';
 import { useGameState } from '@/composables/useGameState';
 import { useGameActions } from '@/composables/useGameActions';
+import { useCopyRoomUrl } from '@/composables/useCopyRoomUrl';
 import { useRoomId } from '@/composables/useRoomId';
 
 const router = useRouter();
@@ -15,6 +16,7 @@ const confirm = useConfirm();
 const { activePlayer } = useGameState();
 const { leaveGame } = useGameActions();
 const { roomId } = useRoomId();
+const { copyRoomUrl } = useCopyRoomUrl();
 
 const playersStore = usePlayersStore();
 const playerStore = usePlayerStore();
@@ -22,9 +24,7 @@ const playerStore = usePlayerStore();
 const handleCopy = () => {
   if (!roomId.value) return;
 
-  navigator.clipboard.writeText(
-    window.location.href.replace(/^https?:\/\//, ''),
-  );
+  copyRoomUrl();
 };
 
 const handleLeaveGame = () => {

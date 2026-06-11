@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { ConfirmDialog } from 'primevue';
+import { ConfirmDialog, Toast } from 'primevue';
 import LoadingOverlay from '@/components/LoadingOverlay.vue';
 import { ensureAnonymousUser } from '@/services/firebase';
 
@@ -25,4 +25,5 @@ onMounted(async () => {
     </Transition>
   </RouterView>
   <ConfirmDialog />
+  <Toast position="bottom-center" />
 </template>

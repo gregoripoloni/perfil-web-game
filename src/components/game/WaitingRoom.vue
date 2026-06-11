@@ -1,19 +1,15 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { Button, InputText } from 'primevue';
+import { useCopyRoomUrl } from '@/composables/useCopyRoomUrl';
 import { useGameState } from '@/composables/useGameState';
 import { useGameActions } from '@/composables/useGameActions';
 
 const { isRoomCreator } = useGameState();
 const { startGame } = useGameActions();
+const { roomUrl, copyRoomUrl } = useCopyRoomUrl();
 
 const loading = ref(false);
-
-const location = window.location.href.replace(/^https?:\/\//, '');
-
-const handleCopy = () => {
-  navigator.clipboard.writeText(location);
-};
 
 const handleStartGame = async () => {
   loading.value = true;
@@ -29,8 +25,8 @@ const handleStartGame = async () => {
       Compartilhe o link abaixo com seus amigos:
     </p>
     <div class="flex items-center gap-2">
-      <InputText :value="location" disabled />
-      <Button icon="pi pi-copy" severity="secondary" @click="handleCopy" />
+      <InputText :value="roomUrl" disabled />
+      <Button icon="pi pi-copy" severity="secondary" @click="copyRoomUrl" />
     </div>
     <Button
       v-if="isRoomCreator"
