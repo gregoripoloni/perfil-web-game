@@ -49,6 +49,7 @@ export interface RoundState {
   cardId: number | null;
   openedTipIds: Record<string, number>;
   answer: AnswerResult | null;
+  incorrectGuesses: string[];
 }
 
 export const DEFAULT_ROOM_META: RoomMeta = {
@@ -68,4 +69,5 @@ export const DEFAULT_ROUND_STATE: RoundState = {
   cardId: null,
   openedTipIds: {},
   answer: null,
+  incorrectGuesses: [],
 };

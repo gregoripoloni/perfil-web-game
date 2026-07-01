@@ -98,10 +98,20 @@ export const useRoomConnection = () => {
           ? { ...partial.openedTipIds }
           : {};
 
+      const incorrectGuesses =
+        partial.incorrectGuesses !== undefined &&
+        partial.incorrectGuesses !== null
+          ? [...partial.incorrectGuesses]
+          : [];
+
       roundStore.mergeState({
         cardId: partial.cardId !== undefined ? partial.cardId : prev.cardId,
         openedTipIds,
         answer: partial.answer !== undefined ? partial.answer : prev.answer,
+        incorrectGuesses:
+          partial.incorrectGuesses !== undefined
+            ? incorrectGuesses
+            : prev.incorrectGuesses,
       });
     },
   );
