@@ -94,24 +94,20 @@ export const useRoomConnection = () => {
     (partial: Partial<RoundState>) => {
       const prev = roundStore.state;
       const openedTipIds =
-        partial.openedTipIds !== undefined && partial.openedTipIds !== null
+        'openedTipIds' in partial && partial.openedTipIds != null
           ? { ...partial.openedTipIds }
           : {};
 
       const incorrectGuesses =
-        partial.incorrectGuesses !== undefined &&
-        partial.incorrectGuesses !== null
+        'incorrectGuesses' in partial && Array.isArray(partial.incorrectGuesses)
           ? [...partial.incorrectGuesses]
           : [];
 
       roundStore.mergeState({
         cardId: partial.cardId !== undefined ? partial.cardId : prev.cardId,
         openedTipIds,
-        answer: partial.answer !== undefined ? partial.answer : prev.answer,
-        incorrectGuesses:
-          partial.incorrectGuesses !== undefined
-            ? incorrectGuesses
-            : prev.incorrectGuesses,
+        answer: 'answer' in partial ? (partial.answer ?? null) : null,
+        incorrectGuesses,
       });
     },
   );
