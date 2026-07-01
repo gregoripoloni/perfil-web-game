@@ -12,7 +12,8 @@ defineProps<{
     class="transition-colors border-2"
     :class="{
       'bg-primary-400! border-primary-800 pointer-events-none': isDisabled,
-      'border-surface-800 hover:border-primary-400 cursor-pointer': !isDisabled,
+      'border-surface-800 hover:border-surface-700 hover:bg-surface-800! cursor-pointer':
+        !isDisabled,
     }"
   >
     <template #content>

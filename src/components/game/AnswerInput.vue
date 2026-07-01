@@ -80,8 +80,8 @@ const handleSkipTurn = () => {
 
 <template>
   <div
-    class="flex flex-col gap-2 p-2 rounded-xl cursor-text bg-surface-950 border-2 border-surface-800 transition-colors hover:border-surface-700"
-    :class="{ 'border-primary-400!': isFocused }"
+    class="flex flex-col gap-2 p-2 rounded-xl cursor-text bg-surface-950 border-2 border-surface-800 transition-colors hover:border-surface-700 hover:bg-surface-900"
+    :class="{ 'border-primary-400! bg-surface-900!': isFocused }"
     @click="inputRef?.focus()"
   >
     <input
