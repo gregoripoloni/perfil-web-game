@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, useTemplateRef } from 'vue';
 import { Button, useConfirm, useToast } from 'primevue';
+import IncorrectGuessesDialog from '@/components/dialogs/IncorrectGuessesDialog.vue';
 import { usePlayerStore } from '@/stores/playerStore';
 import { useGameState } from '@/composables/useGameState';
 import { useGameActions } from '@/composables/useGameActions';
@@ -12,13 +13,14 @@ const toast = useToast();
 
 const playerStore = usePlayerStore();
 
-const { currentCard, isActivePlayer, currentTips, revealedTips } =
+const { currentCard, isActivePlayer, currentTips, revealedTips, incorrectGuesses } =
   useGameState();
 const { submitAnswer, setNextPlayer } = useGameActions();
 
 const inputRef = useTemplateRef<HTMLInputElement>('input');
 const answer = ref('');
 const isFocused = ref(false);
+const showIncorrectGuesses = ref(false);
 
 const handleSendAnswer = async () => {
   if (!isActivePlayer.value || !playerStore.player || !answer.value.length)
@@ -93,13 +95,23 @@ const handleSkipTurn = () => {
       @keydown.prevent.enter="handleSendAnswer"
     />
     <div class="flex justify-between gap-2">
-      <Button
-        icon="pi pi-forward"
-        variant="text"
-        severity="secondary"
-        class="shrink-0"
-        @click.stop="handleSkipTurn"
-      />
+      <div class="flex gap-2">
+        <Button
+          icon="pi pi-forward"
+          variant="text"
+          severity="secondary"
+          class="shrink-0"
+          @click.stop="handleSkipTurn"
+        />
+        <Button
+          icon="pi pi-history"
+          variant="text"
+          severity="secondary"
+          class="shrink-0"
+          :disabled="!incorrectGuesses.length"
+          @click.stop="showIncorrectGuesses = true"
+        />
+      </div>
       <Button
         icon="pi pi-send"
         :severity="answer.length ? 'primary' : 'secondary'"
@@ -108,5 +120,6 @@ const handleSkipTurn = () => {
         @click.stop="handleSendAnswer"
       />
     </div>
+    <IncorrectGuessesDialog v-model:visible="showIncorrectGuesses" />
   </div>
 </template>
