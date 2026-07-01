@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, useTemplateRef } from 'vue';
-import { Button, useConfirm } from 'primevue';
+import { Button, useConfirm, useToast } from 'primevue';
 import { usePlayerStore } from '@/stores/playerStore';
 import { useGameState } from '@/composables/useGameState';
 import { useGameActions } from '@/composables/useGameActions';
@@ -8,6 +8,7 @@ import { calculateAwardedPoints } from '@/utils/scoring';
 import { normalizeAnswer } from '@/utils/text';
 
 const confirm = useConfirm();
+const toast = useToast();
 
 const playerStore = usePlayerStore();
 
@@ -33,12 +34,24 @@ const handleSendAnswer = async () => {
       )
     : 0;
 
-  await submitAnswer(
+  const result = await submitAnswer(
     answer.value,
     playerStore.player.id,
     isCorrect,
     pointsAwarded,
   );
+
+  if (!result.ok && result.reason === 'duplicate') {
+    toast.add({
+      severity: 'warn',
+      summary: 'Palpite já enviado',
+      detail: 'Esse palpite já foi tentado nesta carta.',
+      life: 4000,
+    });
+    return;
+  }
+
+  answer.value = '';
 };
 
 const handleSkipTurn = () => {

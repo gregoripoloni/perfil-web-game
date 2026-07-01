@@ -1,5 +1,5 @@
 import { auth, ensureAnonymousUser } from '@/services/firebase';
-import { roomRepository } from '@/services/roomRepository';
+import { roomRepository, DuplicateGuessError } from '@/services/roomRepository';
 import { usePlayersStore } from '@/stores/playersStore';
 import { usePlayerStore } from '@/stores/playerStore';
 import { useGameStateStore } from '@/stores/gameStateStore';
@@ -8,6 +8,7 @@ import { CARDS } from '@/constants/cards';
 import { TIPS } from '@/constants/tips';
 import { useRoomId } from '@/composables/useRoomId';
 import { hasRemainingTips } from '@/utils/tips';
+import { isDuplicateGuess } from '@/utils/text';
 import { GamePhase, TipKind } from '@/types/round';
 import type { RoomPlayerStored } from '@/types/player';
 
@@ -94,13 +95,28 @@ export const useGameActions = () => {
     playerId: string,
     isCorrect: boolean,
     pointsAwarded = 0,
-  ): Promise<void> => {
-    await roomRepository.submitAnswer(roomId.value, {
-      text: answer.trim(),
-      playerId,
-      isCorrect,
-      pointsAwarded,
-    });
+  ): Promise<{ ok: true } | { ok: false; reason: 'duplicate' }> => {
+    const trimmed = answer.trim();
+
+    if (!isCorrect && isDuplicateGuess(trimmed, roundStore.state.incorrectGuesses)) {
+      return { ok: false, reason: 'duplicate' };
+    }
+
+    try {
+      await roomRepository.submitAnswer(roomId.value, {
+        text: trimmed,
+        playerId,
+        isCorrect,
+        pointsAwarded,
+      });
+    } catch (error) {
+      if (error instanceof DuplicateGuessError) {
+        return { ok: false, reason: 'duplicate' };
+      }
+      throw error;
+    }
+
+    return { ok: true };
   };
 
   const awardPoints = async (

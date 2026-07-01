@@ -91,6 +91,10 @@ export const useGameState = () => {
     () => roundStore.state.answer?.pointsAwarded ?? 0,
   );
 
+  const incorrectGuesses = computed(
+    () => roundStore.state.incorrectGuesses,
+  );
+
   return {
     currentCard,
     currentTips,
@@ -105,5 +109,6 @@ export const useGameState = () => {
     answeredBy,
     isCorrectAnswer,
     pointsAwarded,
+    incorrectGuesses,
   };
 };

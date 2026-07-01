@@ -21,6 +21,14 @@ import type {
   AnswerResult,
 } from '@/types/round';
 import { GamePhase } from '@/types/round';
+import { isDuplicateGuess } from '@/utils/text';
+
+export class DuplicateGuessError extends Error {
+  constructor() {
+    super('DUPLICATE_GUESS');
+    this.name = 'DuplicateGuessError';
+  }
+}
 
 const db = getDatabase(app);
 
@@ -38,6 +46,7 @@ interface RoomPatch {
     cardId?: number | null;
     openedTipIds?: Record<string, number> | null;
     answer?: AnswerResult | null;
+    incorrectGuesses?: string[] | null;
   };
   players?: Record<string, RoomPlayerStored | null>;
 }
@@ -201,9 +210,23 @@ export const roomRepository = {
   },
 
   async submitAnswer(roomId: string, answer: AnswerResult): Promise<void> {
+    const roundUpdates: NonNullable<RoomPatch['round']> = { answer };
+
+    if (!answer.isCorrect) {
+      const guessesRef = ref(db, `${roundPath(roomId)}/incorrectGuesses`);
+      const snap = await get(guessesRef);
+      const current = Array.isArray(snap.val()) ? (snap.val() as string[]) : [];
+
+      if (isDuplicateGuess(answer.text, current)) {
+        throw new DuplicateGuessError();
+      }
+
+      roundUpdates.incorrectGuesses = [...current, answer.text];
+    }
+
     await patchRoom(roomId, {
       state: { phase: GamePhase.Result },
-      round: { answer },
+      round: roundUpdates,
     });
   },
 
@@ -283,6 +306,7 @@ export const roomRepository = {
         cardId: params.cardId,
         openedTipIds: null,
         answer: null,
+        incorrectGuesses: null,
       },
     });
   },
@@ -303,6 +327,7 @@ export const roomRepository = {
         cardId: null,
         openedTipIds: null,
         answer: null,
+        incorrectGuesses: null,
       },
     });
   },

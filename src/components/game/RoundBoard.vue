@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import RevealedTip from '@/components/game/RevealedTip.vue';
 import AnswerInput from '@/components/game/AnswerInput.vue';
+import IncorrectGuessesHistory from '@/components/game/IncorrectGuessesHistory.vue';
 import TipSelection from '@/components/dialogs/TipSelection.vue';
 import AnswerResult from '@/components/messages/AnswerResult.vue';
 import TipEffect from '@/components/messages/TipEffect.vue';
@@ -20,6 +21,7 @@ const {
   isDisabledSendAnswer,
   submittedAnswer,
   isCorrectAnswer,
+  incorrectGuesses,
 } = useGameState();
 
 const { selectTip } = useGameActions();
@@ -86,6 +88,10 @@ const categoryIcon = computed(() => {
           </TransitionGroup>
         </div>
       </Transition>
+      <IncorrectGuessesHistory
+        v-if="!showAnswerResult && !showTipEffect && !showWinner"
+        :guesses="incorrectGuesses"
+      />
       <Transition>
         <AnswerInput v-if="!isDisabledSendAnswer" />
       </Transition>
